@@ -6,7 +6,7 @@ import ThemeProvider from "./(theme)/theme-provider";
 import CssBaseline from "./(theme)/css-baseline";
 import AppHeader from "./app-header";
 import AppBody from "./app-body";
-import LocaleProvider, { ALLOWED_LOCALES, Locale } from "./locale-provider";
+import LocaleProvider, { Locale } from "./locale-provider";
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
