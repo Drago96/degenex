@@ -13,11 +13,6 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-// TODO: Uncomment when issue https://github.com/vercel/next.js/issues/43392 is resolved 
-// export function generateStaticParams() {
-  // return ALLOWED_LOCALES.map((locale) => ({ locale }));
-// }
-
 type LayoutProps = {
   children: ReactNode;
   params: {
