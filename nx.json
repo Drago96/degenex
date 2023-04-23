@@ -1,6 +1,4 @@
 {
-  "extends": "nx/presets/npm.json",
-  "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/nx-cloud",
@@ -14,5 +12,7 @@
         "accessToken": "YTc5NTY4NTctMDE3Mi00N2NkLThlM2YtYmU3MzVhZWIzNjJmfHJlYWQtd3JpdGU="
       }
     }
-  }
+  },
+  "extends": "nx/presets/npm.json",
+  "$schema": "./node_modules/nx/schemas/nx-schema.json"
 }
