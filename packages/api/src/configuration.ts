@@ -1,13 +1,36 @@
-import * as Joi from 'joi';
+import { plainToInstance } from 'class-transformer';
+import { IsEnum, IsNumber, validateSync } from 'class-validator';
 
-export interface EnvironmentVariables {
+enum Environment {
+  Development = 'development',
+  Production = 'production',
+  Staging = 'staging',
+  Test = 'test',
+}
+
+export class EnvironmentVariables {
+  @IsEnum(Environment)
+  NODE_ENV: Environment;
+
+  @IsNumber()
   PORT: number;
+
   JWT_SECRET: string;
   DATABASE_URL: string;
 }
 
-export const validationSchema = Joi.object({
-  PORT: Joi.number().greater(0).max(65535).required(),
-  JWT_SECRET: Joi.string().required(),
-  DATABASE_URL: Joi.string().required(),
-});
+export function validate(config: Record<string, unknown>) {
+  const validatedConfig = plainToInstance(EnvironmentVariables, config, {
+    enableImplicitConversion: true,
+  });
+
+  const errors = validateSync(validatedConfig, {
+    skipMissingProperties: false,
+  });
+
+  if (errors.length > 0) {
+    throw new Error(errors.toString());
+  }
+
+  return validatedConfig;
+}
