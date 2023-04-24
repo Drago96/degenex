@@ -23,7 +23,7 @@ export class AuthController {
   }
 
   @Get('profile')
-  currentUser(@Request() req): UserResponseDto {
+  getProfile(@Request() req): UserResponseDto {
     return req.user;
   }
 }
