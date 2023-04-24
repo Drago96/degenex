@@ -4,7 +4,8 @@ import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 import { UsersService } from 'src/users/users.service';
-import { AuthDto } from './auth.dto';
+import { AuthCreateDto } from './auth-create.dto';
+import { AuthResponseDto } from './auth-response.dto';
 import { AuthException } from './auth.exception';
 
 @Injectable()
@@ -14,7 +15,7 @@ export class AuthService {
     private usersService: UsersService,
   ) {}
 
-  async register(authDto: AuthDto) {
+  async register(authDto: AuthCreateDto): Promise<AuthResponseDto> {
     const saltOrRounds = 10;
     const passwordHash = await bcrypt.hash(authDto.password, saltOrRounds);
 
@@ -30,7 +31,7 @@ export class AuthService {
     };
   }
 
-  async login(authDto: AuthDto) {
+  async login(authDto: AuthCreateDto): Promise<AuthResponseDto> {
     const user = await this.usersService.getUser({ email: authDto.email });
 
     if (!user) {
