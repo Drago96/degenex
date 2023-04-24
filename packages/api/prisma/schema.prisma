@@ -12,3 +12,22 @@ model User {
   email    String @unique
   password String
 }
+
+model Asset {
+  id          Int       @id @default(autoincrement())
+  ticker      String    @unique
+  type        AssetType
+  fullName    String
+  description String?
+}
+
+enum AssetType {
+  Stock
+  Crypto
+}
+
+model Currency {
+  id       Int    @id @default(autoincrement())
+  code     String @unique
+  fullName String
+}
