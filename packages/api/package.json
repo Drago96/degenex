@@ -18,9 +18,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migrate:dev": "dotenv -e .env.local prisma migrate dev"
+    "migrate:dev": "dotenv -e .env.local prisma migrate dev",
+    "seed:dev": "dotenv -e .env.local ts-node prisma/seeds/main.ts"
   },
   "dependencies": {
+    "@casl/ability": "^6.4.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
@@ -28,6 +30,7 @@
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.3.0",
+    "@nestjs/terminus": "^9.2.2",
     "@prisma/client": "^4.13.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",

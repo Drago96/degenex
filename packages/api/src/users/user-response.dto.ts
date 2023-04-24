@@ -1,4 +1,7 @@
+import { UserRole } from '.prisma/client';
+
 export class UserResponseDto {
-  id: string;
+  id: number;
   email: string;
+  roles: UserRole[];
 }

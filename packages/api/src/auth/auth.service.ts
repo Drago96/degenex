@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { AuthCreateDto } from './auth-create.dto';
 import { AuthResponseDto } from './auth-response.dto';
 import { AuthException } from './auth.exception';
+import { JwtPayloadDto } from './jwt-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -54,7 +55,7 @@ export class AuthService {
     };
   }
 
-  generateJwtPayload(user: User) {
-    return { sub: user.id, email: user.email };
+  generateJwtPayload(user: User): JwtPayloadDto {
+    return { sub: user.id, email: user.email, roles: user.roles };
   }
 }

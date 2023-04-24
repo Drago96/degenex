@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
+import { HealthModule } from './health/health.module';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { UsersModule } from './users/users.module';
     PrismaModule,
     AuthModule,
     UsersModule,
+    HealthModule,
+    CaslModule,
   ],
   providers: [
     {

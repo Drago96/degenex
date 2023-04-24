@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -8,9 +9,16 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
+  id       Int        @id @default(autoincrement())
+  email    String     @unique
   password String
+  roles    UserRole[]
+
+  @@index([roles(ops: ArrayOps)], type: Gin)
+}
+
+enum UserRole {
+  Admin
 }
 
 model Asset {
@@ -19,6 +27,9 @@ model Asset {
   type        AssetType
   fullName    String
   description String?
+
+  @@index([type], type: Hash)
+  @@index([ticker, fullName])
 }
 
 enum AssetType {
@@ -30,4 +41,6 @@ model Currency {
   id       Int    @id @default(autoincrement())
   code     String @unique
   fullName String
+
+  @@index([code, fullName])
 }
