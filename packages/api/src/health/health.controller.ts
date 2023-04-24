@@ -18,7 +18,7 @@ export class HealthController {
 
   @Get()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, 'health'))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, 'all'))
   @HealthCheck()
   check() {
     return this.health.check([() => this.db.pingCheck('database')]);
