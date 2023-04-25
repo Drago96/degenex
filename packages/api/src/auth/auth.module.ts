@@ -9,7 +9,10 @@ import { UsersModule } from 'src/users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
-import { QUEUE_NAME } from './send-activation-email.consumer';
+import {
+  QUEUE_NAME,
+  SendActivationEmailConsumer,
+} from './send-activation-email.consumer';
 
 @Module({
   imports: [
@@ -30,6 +33,6 @@ import { QUEUE_NAME } from './send-activation-email.consumer';
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, SendActivationEmailConsumer],
 })
 export class AuthModule {}

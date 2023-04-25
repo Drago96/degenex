@@ -27,8 +27,8 @@ import { BullModule } from '@nestjs/bull';
         configService: ConfigService<EnvironmentVariables>,
       ) => ({
         redis: {
-          host: configService.get('REDIS_PORT'),
-          port: configService.get('REDIS_HOST'),
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
         },
         defaultJobOptions: {
           attempts: 3,
