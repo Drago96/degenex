@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 
-import { validate } from './configuration';
+import { EnvironmentVariables, validate } from './configuration';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { HealthModule } from './health/health.module';
 import { CaslModule } from './casl/casl.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -18,6 +19,25 @@ import { CaslModule } from './casl/casl.module';
       isGlobal: true,
       cache: true,
       expandVariables: true,
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (
+        configService: ConfigService<EnvironmentVariables>,
+      ) => ({
+        redis: {
+          host: configService.get('REDIS_PORT'),
+          port: configService.get('REDIS_HOST'),
+        },
+        defaultJobOptions: {
+          attempts: 3,
+          backoff: {
+            type: 'exponential',
+            delay: 60 * 1000,
+          },
+        },
+      }),
     }),
     PrismaModule,
     AuthModule,

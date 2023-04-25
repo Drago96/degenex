@@ -1,17 +1,26 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Transport } from '@nestjs/microservices';
 import { ApiExcludeController } from '@nestjs/swagger';
-import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
+import {
+  HealthCheck,
+  HealthCheckService,
+  MicroserviceHealthIndicator,
+} from '@nestjs/terminus';
 
 import { Action, AppAbility } from 'src/casl/casl-ability.factory';
 import { CheckPolicies, PoliciesGuard } from 'src/casl/policies.guard';
+import { EnvironmentVariables } from 'src/configuration';
 import { PrismaHealthIndicator } from './prisma.health';
 
 @ApiExcludeController()
 @Controller('health')
 export class HealthController {
   constructor(
+    private configService: ConfigService<EnvironmentVariables>,
     private health: HealthCheckService,
     private db: PrismaHealthIndicator,
+    private microservice: MicroserviceHealthIndicator,
   ) {}
 
   @Get()
@@ -19,6 +28,17 @@ export class HealthController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, 'health'))
   @HealthCheck()
   check() {
-    return this.health.check([() => this.db.pingCheck('database')]);
+    return this.health.check([
+      () => this.db.pingCheck('database'),
+      () =>
+        this.microservice.pingCheck('redis', {
+          transport: Transport.REDIS,
+          options: {
+            url: `redis://${this.configService.get(
+              'REDIS_HOST',
+            )}:${this.configService.get('REDIS_PORT')}`,
+          },
+        }),
+    ]);
   }
 }

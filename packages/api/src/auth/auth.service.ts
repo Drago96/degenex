@@ -1,6 +1,7 @@
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
+import { Queue } from 'bull';
 import * as bcrypt from 'bcrypt';
 
 import { UsersService } from 'src/users/users.service';
@@ -8,28 +9,28 @@ import { AuthCreateDto } from './auth-create.dto';
 import { AuthResponseDto } from './auth-response.dto';
 import { AuthException } from './auth.exception';
 import { JwtPayloadDto } from './jwt-payload.dto';
+import { QUEUE_NAME } from './send-activation-email.consumer';
+import { SendActivationEmailDto } from './send-activation-email.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
+    @InjectQueue(QUEUE_NAME)
+    private sendActivationEmailQueue: Queue<SendActivationEmailDto>,
   ) {}
 
-  async register(authDto: AuthCreateDto): Promise<AuthResponseDto> {
+  async register(authDto: AuthCreateDto) {
     const saltOrRounds = 10;
     const passwordHash = await bcrypt.hash(authDto.password, saltOrRounds);
 
-    const user = await this.usersService.createUser({
+    await this.usersService.createUser({
       email: authDto.email,
       password: passwordHash,
     });
 
-    const payload = this.generateJwtPayload(user);
-
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-    };
+    await this.sendActivationEmail(authDto.email);
   }
 
   async login(authDto: AuthCreateDto): Promise<AuthResponseDto> {
@@ -48,14 +49,22 @@ export class AuthService {
       throw new AuthException();
     }
 
-    const payload = this.generateJwtPayload(user);
+    if (user.status === 'Pending') {
+      throw new AuthException('User has not been activated');
+    }
+
+    const jwtPayload: JwtPayloadDto = {
+      sub: user.id,
+      email: user.email,
+      roles: user.roles,
+    };
 
     return {
-      accessToken: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(jwtPayload),
     };
   }
 
-  generateJwtPayload(user: User): JwtPayloadDto {
-    return { sub: user.id, email: user.email, roles: user.roles };
+  async sendActivationEmail(userEmail: string) {
+    this.sendActivationEmailQueue.add({ email: userEmail });
   }
 }

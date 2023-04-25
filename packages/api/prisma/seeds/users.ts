@@ -9,6 +9,7 @@ export const seedUsers = async (prisma: PrismaClient) => {
       email: 'dragproychev@gmail.com',
       password: await hashPassword('TestAdminPassword1!'),
       roles: ['Admin'],
+      status: 'Active',
     },
   });
 
@@ -19,6 +20,7 @@ export const seedUsers = async (prisma: PrismaClient) => {
       email: 'dr.proychev@gmail.com',
       password: await hashPassword('TestUserPassword1!'),
       roles: [],
+      status: 'Active',
     },
   });
 

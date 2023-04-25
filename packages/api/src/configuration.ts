@@ -17,6 +17,11 @@ export class EnvironmentVariables {
 
   JWT_SECRET: string;
   DATABASE_URL: string;
+
+  REDIS_HOST: string;
+
+  @IsNumber()
+  REDIS_PORT: number;
 }
 
 export function validate(config: Record<string, unknown>) {

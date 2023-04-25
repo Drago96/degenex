@@ -13,23 +13,30 @@ model User {
   email    String     @unique
   password String
   roles    UserRole[]
+  status   UserStatus @default(Pending)
 
   @@index([roles(ops: ArrayOps)], type: Gin)
+  @@index([status], type: Hash)
 }
 
 enum UserRole {
   Admin
 }
 
+enum UserStatus {
+  Pending
+  Active
+}
+
 model Asset {
-  id          Int       @id @default(autoincrement())
-  ticker      String    @unique
-  type        AssetType
-  fullName    String
-  description String?
+  id           Int       @id @default(autoincrement())
+  tickerSymbol String    @unique
+  type         AssetType
+  fullName     String
+  description  String?
 
   @@index([type], type: Hash)
-  @@index([ticker, fullName])
+  @@index([tickerSymbol, fullName])
 }
 
 enum AssetType {
