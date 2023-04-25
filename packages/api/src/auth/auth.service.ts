@@ -65,6 +65,6 @@ export class AuthService {
   }
 
   async sendActivationEmail(userEmail: string) {
-    this.sendActivationEmailQueue.add({ email: userEmail });
+    await this.sendActivationEmailQueue.add({ email: userEmail });
   }
 }
