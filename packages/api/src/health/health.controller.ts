@@ -2,10 +2,8 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 
-import { Action } from 'src/casl/action.enum';
-import { AppAbility } from 'src/casl/casl-ability.factory';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { CheckPolicies } from 'src/casl/policy.handler';
+import { Action, AppAbility } from 'src/casl/casl-ability.factory';
+import { CheckPolicies, PoliciesGuard } from 'src/casl/policies.guard';
 import { PrismaHealthIndicator } from './prisma.health';
 
 @ApiExcludeController()
@@ -18,7 +16,7 @@ export class HealthController {
 
   @Get()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, 'all'))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, 'health'))
   @HealthCheck()
   check() {
     return this.health.check([() => this.db.pingCheck('database')]);
