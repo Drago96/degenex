@@ -20,4 +20,8 @@ export class UsersService {
       data,
     });
   }
+
+  async updateUser(updateArgs: Prisma.UserUpdateArgs) {
+    return this.prisma.user.update(updateArgs);
+  }
 }

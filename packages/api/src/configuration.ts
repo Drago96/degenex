@@ -28,7 +28,7 @@ export class EnvironmentVariables {
   @IsEmail()
   MAILER_SOURCE_EMAIL: string;
 
-  ENCRYPTION_KEY: string;
+  ENCRYPTION_PASSWORD: string;
 }
 
 export function validate(config: Record<string, unknown>) {

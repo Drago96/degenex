@@ -1,4 +1,5 @@
 import { Controller, Post, Body, HttpCode, Get, Request } from '@nestjs/common';
+import { EncryptionDto } from 'src/encryption/encryption.dto';
 
 import { UserResponseDto } from 'src/users/user-response.dto';
 import { AuthCreateDto } from './auth-create.dto';
@@ -25,5 +26,12 @@ export class AuthController {
   @Get('profile')
   getProfile(@Request() req): UserResponseDto {
     return req.user;
+  }
+
+  @Public()
+  @Post('activate-user')
+  @HttpCode(204)
+  async activateUser(@Body() encryptionDto: EncryptionDto) {
+    await this.authService.activateUser(encryptionDto);
   }
 }

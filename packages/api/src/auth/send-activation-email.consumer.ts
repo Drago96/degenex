@@ -30,7 +30,7 @@ export class SendActivationEmailConsumer {
 
     // TODO: Generate a proper confirmation link, once the front end logic has been implemented
     return this.mailerService.sendEmail({
-      body: `<p>Please confirm your email by clicking the link below:</p>
+      body: `<p>In order to activate your account, please confirm your email by clicking the link below:</p>
              <a>${JSON.stringify(activationToken)}</a>`,
       receiver: job.data.email,
       subject: 'Welcome to Degenex!',
