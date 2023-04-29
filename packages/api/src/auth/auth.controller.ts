@@ -34,4 +34,11 @@ export class AuthController {
   async activateUser(@Body() encryptionDto: EncryptionDto) {
     await this.authService.activateUser(encryptionDto);
   }
+
+  @Public()
+  @Post('send-activation-email')
+  @HttpCode(204)
+  async sendActivationEmail(@Body('email') email: string) {
+    await this.authService.sendActivationEmail(email);
+  }
 }
