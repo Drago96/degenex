@@ -22,8 +22,7 @@ export class AuthService {
   ) {}
 
   async register(authDto: AuthCreateDto) {
-    const saltOrRounds = 10;
-    const passwordHash = await bcrypt.hash(authDto.password, saltOrRounds);
+    const passwordHash = await bcrypt.hash(authDto.password, 10);
 
     await this.usersService.createUser({
       email: authDto.email,

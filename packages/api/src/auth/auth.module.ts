@@ -5,6 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 import { EnvironmentVariables } from 'src/configuration';
+import { EncryptionModule } from 'src/encryption/encryption.module';
+import { MailerModule } from 'src/mailer/mailer.module';
 import { UsersModule } from 'src/users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -31,6 +33,8 @@ import {
       name: QUEUE_NAME,
     }),
     UsersModule,
+    MailerModule,
+    EncryptionModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, SendActivationEmailConsumer],

@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNumber, validateSync } from 'class-validator';
+import { IsEmail, IsEnum, IsNumber, validateSync } from 'class-validator';
 
 enum Environment {
   Development = 'development',
@@ -16,12 +16,19 @@ export class EnvironmentVariables {
   PORT: number;
 
   JWT_SECRET: string;
-  DATABASE_URL: string;
 
-  REDIS_HOST: string;
+  DATABASE_URL: string;
 
   @IsNumber()
   REDIS_PORT: number;
+  REDIS_HOST: string;
+
+  AWS_REGION: string;
+
+  @IsEmail()
+  MAILER_SOURCE_EMAIL: string;
+
+  ENCRYPTION_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

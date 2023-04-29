@@ -10,6 +10,8 @@ import { UsersModule } from './users/users.module';
 import { HealthModule } from './health/health.module';
 import { CaslModule } from './casl/casl.module';
 import { BullModule } from '@nestjs/bull';
+import { MailerModule } from './mailer/mailer.module';
+import { EncryptionModule } from './encryption/encryption.module';
 
 @Module({
   imports: [
@@ -44,6 +46,8 @@ import { BullModule } from '@nestjs/bull';
     UsersModule,
     HealthModule,
     CaslModule,
+    MailerModule,
+    EncryptionModule,
   ],
   providers: [
     {
