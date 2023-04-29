@@ -21,7 +21,10 @@ export class UsersService {
     });
   }
 
-  async updateUser(updateArgs: Prisma.UserUpdateArgs) {
-    return this.prisma.user.update(updateArgs);
+  async updateUser(
+    where: Prisma.UserWhereUniqueInput,
+    data: Prisma.UserUpdateInput,
+  ) {
+    return this.prisma.user.update({ where, data });
   }
 }

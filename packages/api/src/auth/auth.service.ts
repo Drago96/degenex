@@ -96,9 +96,9 @@ export class AuthService {
       throw new AuthException('User has already been activated');
     }
 
-    await this.usersService.updateUser({
-      data: { status: 'Active' },
-      where: { email: activationToken.email },
-    });
+    await this.usersService.updateUser(
+      { email: activationToken.email },
+      { status: 'Active' },
+    );
   }
 }
