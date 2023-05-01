@@ -12,6 +12,7 @@ import { CaslModule } from './casl/casl.module';
 import { BullModule } from '@nestjs/bull';
 import { MailerModule } from './mailer/mailer.module';
 import { EncryptionModule } from './encryption/encryption.module';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 @Module({
   imports: [
@@ -38,6 +39,18 @@ import { EncryptionModule } from './encryption/encryption.module';
             type: 'exponential',
             delay: 60 * 1000,
           },
+        },
+      }),
+    }),
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (
+        configService: ConfigService<EnvironmentVariables>,
+      ) => ({
+        config: {
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
         },
       }),
     }),

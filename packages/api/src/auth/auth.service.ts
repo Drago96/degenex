@@ -1,43 +1,57 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { User } from '@prisma/client';
 import { Queue } from 'bull';
 import * as bcrypt from 'bcrypt';
-import * as moment from 'moment';
+import Redis from 'ioredis';
 
 import { UsersService } from 'src/users/users.service';
-import { EncryptionDto } from 'src/encryption/encryption.dto';
-import { EncryptionService } from 'src/encryption/encryption.service';
-import { AuthCreateDto } from './auth-create.dto';
 import { AuthResponseDto } from './auth-response.dto';
 import { AuthException } from './auth.exception';
 import { JwtPayloadDto } from './jwt-payload.dto';
-import { QUEUE_NAME } from './send-activation-email.consumer';
-import { SendActivationEmailDto } from './send-activation-email.dto';
-import { ActivationTokenDto } from './activation-token.dto';
+import { QUEUE_NAME } from './send-verification-code.consumer';
+import { RegisterDto } from './register.dto';
+import { LoginDto } from './login.dto';
+import { SendVerificationCodeDto } from './send-verification-code.dto';
+import { buildVerificationCodeKey } from './send-verification-code.utils';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
-    private encryptionService: EncryptionService,
     @InjectQueue(QUEUE_NAME)
-    private sendActivationEmailQueue: Queue<SendActivationEmailDto>,
+    private sendVerificationCodeQueue: Queue<SendVerificationCodeDto>,
+    @InjectRedis()
+    private redis: Redis,
   ) {}
 
-  async register(authDto: AuthCreateDto) {
-    const passwordHash = await bcrypt.hash(authDto.password, 10);
+  async sendVerificationCode(userEmail: string) {
+    await this.sendVerificationCodeQueue.add({ email: userEmail });
+  }
 
-    await this.usersService.createUser({
-      email: authDto.email,
+  async register(registerDto: RegisterDto) {
+    const verificationCode = await this.redis.get(
+      buildVerificationCodeKey(registerDto.email),
+    );
+
+    if (verificationCode !== registerDto.verificationCode) {
+      throw new AuthException('Verification code mismatch');
+    }
+
+    const passwordHash = await bcrypt.hash(registerDto.password, 10);
+
+    const user = await this.usersService.createUser({
+      email: registerDto.email,
       password: passwordHash,
     });
 
-    await this.sendActivationEmail(authDto.email);
+    return this.generateAuthTokens(user);
   }
 
-  async login(authDto: AuthCreateDto): Promise<AuthResponseDto> {
+  async login(authDto: LoginDto): Promise<AuthResponseDto> {
     const user = await this.usersService.getUser({ email: authDto.email });
 
     if (!user) {
@@ -53,10 +67,10 @@ export class AuthService {
       throw new AuthException();
     }
 
-    if (user.status === 'Pending') {
-      throw new AuthException('User has not been activated');
-    }
+    return this.generateAuthTokens(user);
+  }
 
+  private async generateAuthTokens(user: User): Promise<AuthResponseDto> {
     const jwtPayload: JwtPayloadDto = {
       sub: user.id,
       email: user.email,
@@ -66,39 +80,5 @@ export class AuthService {
     return {
       accessToken: await this.jwtService.signAsync(jwtPayload),
     };
-  }
-
-  async sendActivationEmail(userEmail: string) {
-    await this.sendActivationEmailQueue.add({ email: userEmail });
-  }
-
-  async activateUser(encryptionDto: EncryptionDto) {
-    const activationToken =
-      await this.encryptionService.decrypt<ActivationTokenDto>(encryptionDto);
-
-    const hasTokenExpired = moment(activationToken.expirationDate).isBefore(
-      moment.now(),
-    );
-
-    if (hasTokenExpired) {
-      throw new AuthException('Activation token has expired');
-    }
-
-    const user = await this.usersService.getUser({
-      email: activationToken.email,
-    });
-
-    if (!user) {
-      throw new AuthException('User does not exist');
-    }
-
-    if (user.status !== 'Pending') {
-      throw new AuthException('User has already been activated');
-    }
-
-    await this.usersService.updateUser(
-      { email: activationToken.email },
-      { status: 'Active' },
-    );
   }
 }

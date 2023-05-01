@@ -13,19 +13,12 @@ model User {
   email    String     @unique
   password String
   roles    UserRole[]
-  status   UserStatus @default(Pending)
 
   @@index([roles(ops: ArrayOps)], type: Gin)
-  @@index([status], type: Hash)
 }
 
 enum UserRole {
   Admin
-}
-
-enum UserStatus {
-  Pending
-  Active
 }
 
 model Asset {

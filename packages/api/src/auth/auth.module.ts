@@ -5,7 +5,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 import { EnvironmentVariables } from 'src/configuration';
-import { EncryptionModule } from 'src/encryption/encryption.module';
 import { MailerModule } from 'src/mailer/mailer.module';
 import { UsersModule } from 'src/users/users.module';
 import { AuthController } from './auth.controller';
@@ -13,8 +12,8 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import {
   QUEUE_NAME,
-  SendActivationEmailConsumer,
-} from './send-activation-email.consumer';
+  SendVerificationCodeConsumer,
+} from './send-verification-code.consumer';
 
 @Module({
   imports: [
@@ -34,9 +33,8 @@ import {
     }),
     UsersModule,
     MailerModule,
-    EncryptionModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, SendActivationEmailConsumer],
+  providers: [AuthService, JwtStrategy, SendVerificationCodeConsumer],
 })
 export class AuthModule {}
