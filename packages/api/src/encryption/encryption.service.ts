@@ -1,25 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  BinaryLike,
   createCipheriv,
   createDecipheriv,
   randomBytes,
-  scryptSync,
+  scrypt,
 } from 'crypto';
+import { promisify } from 'util';
 
 import { EnvironmentVariables } from 'src/configuration';
 import { EncryptionDto } from './encryption.dto';
 
+const scryptAsync = promisify<BinaryLike, BinaryLike, number, Buffer>(scrypt);
+
+const ENCRYPTION_ALGORITHM = 'aes-256-cbc';
+
 @Injectable()
 export class EncryptionService {
-  private readonly algorithm = 'aes-256-cbc';
-
   constructor(private configService: ConfigService<EnvironmentVariables>) {}
 
-  encrypt<T>(data: T): EncryptionDto {
+  async encrypt<T>(data: T): Promise<EncryptionDto> {
     const iv = randomBytes(16);
 
-    const cipher = createCipheriv(this.algorithm, this.encryptionKey, iv);
+    const cipher = createCipheriv(
+      ENCRYPTION_ALGORITHM,
+      await this.getEncryptionKey(),
+      iv,
+    );
 
     const encryptedData = Buffer.concat([
       cipher.update(JSON.stringify(data)),
@@ -32,10 +40,10 @@ export class EncryptionService {
     };
   }
 
-  decrypt<T>(encryptionDto: EncryptionDto): T {
+  async decrypt<T>(encryptionDto: EncryptionDto): Promise<T> {
     const decipher = createDecipheriv(
-      this.algorithm,
-      this.encryptionKey,
+      ENCRYPTION_ALGORITHM,
+      await this.getEncryptionKey(),
       Buffer.from(encryptionDto.iv, 'hex'),
     );
 
@@ -47,7 +55,11 @@ export class EncryptionService {
     return JSON.parse(decryptedData.toString());
   }
 
-  get encryptionKey() {
-    return scryptSync(this.configService.get('ENCRYPTION_PASSWORD'), 'GfG', 32);
+  async getEncryptionKey() {
+    return scryptAsync(
+      this.configService.get('ENCRYPTION_PASSWORD'),
+      'GfG',
+      32,
+    );
   }
 }

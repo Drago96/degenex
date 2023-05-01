@@ -74,7 +74,7 @@ export class AuthService {
 
   async activateUser(encryptionDto: EncryptionDto) {
     const activationToken =
-      this.encryptionService.decrypt<ActivationTokenDto>(encryptionDto);
+      await this.encryptionService.decrypt<ActivationTokenDto>(encryptionDto);
 
     const hasTokenExpired = moment(activationToken.expirationDate).isBefore(
       moment.now(),

@@ -26,7 +26,7 @@ export class SendActivationEmailConsumer {
       return;
     }
 
-    const activationToken = this.generateActivationToken(job.data.email);
+    const activationToken = await this.generateActivationToken(job.data.email);
 
     // TODO: Generate a proper confirmation link, once the front end logic has been implemented
     return this.mailerService.sendEmail({
@@ -37,7 +37,7 @@ export class SendActivationEmailConsumer {
     });
   }
 
-  private generateActivationToken(userEmail: string) {
+  private async generateActivationToken(userEmail: string) {
     const content: ActivationTokenDto = {
       email: userEmail,
       expirationDate: moment().add(30, 'minutes').toDate(),
