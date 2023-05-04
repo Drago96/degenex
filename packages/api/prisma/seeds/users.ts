@@ -7,7 +7,7 @@ export const seedUsers = async (prisma: PrismaClient) => {
     update: {},
     create: {
       email: 'dragproychev@gmail.com',
-      password: await hashPassword('TestAdminPassword1!'),
+      password: await bcrypt.hash('TestAdminPassword1!', 10),
       roles: ['Admin'],
     },
   });
@@ -17,17 +17,10 @@ export const seedUsers = async (prisma: PrismaClient) => {
     update: {},
     create: {
       email: 'dr.proychev@gmail.com',
-      password: await hashPassword('TestUserPassword1!'),
+      password: await bcrypt.hash('TestUserPassword1!', 10),
       roles: [],
     },
   });
 
   console.log('Seeded users...');
-};
-
-const hashPassword = async (password: string) => {
-  const saltOrRounds = 10;
-  const passwordHash = await bcrypt.hash(password, saltOrRounds);
-
-  return passwordHash;
 };

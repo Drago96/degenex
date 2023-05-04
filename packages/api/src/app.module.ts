@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BullModule } from '@nestjs/bull';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 import { EnvironmentVariables, validate } from './configuration';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { PrismaModule } from './prisma/prisma.module';
-import { UsersModule } from './users/users.module';
 import { HealthModule } from './health/health.module';
 import { CaslModule } from './casl/casl.module';
-import { BullModule } from '@nestjs/bull';
 import { MailerModule } from './mailer/mailer.module';
 import { EncryptionModule } from './encryption/encryption.module';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { AssetsModule } from './assets/assets.module';
 
 @Module({
   imports: [
@@ -54,13 +55,14 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
         },
       }),
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     AuthModule,
-    UsersModule,
     HealthModule,
     CaslModule,
     MailerModule,
     EncryptionModule,
+    AssetsModule,
   ],
   providers: [
     {

@@ -18,7 +18,9 @@ const ENCRYPTION_ALGORITHM = 'aes-256-cbc';
 
 @Injectable()
 export class EncryptionService {
-  constructor(private configService: ConfigService<EnvironmentVariables>) {}
+  constructor(
+    private readonly configService: ConfigService<EnvironmentVariables>,
+  ) {}
 
   async encrypt<T>(data: T): Promise<EncryptionDto> {
     const iv = randomBytes(16);

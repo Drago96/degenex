@@ -6,7 +6,6 @@ import { PassportModule } from '@nestjs/passport';
 
 import { EnvironmentVariables } from 'src/configuration';
 import { MailerModule } from 'src/mailer/mailer.module';
-import { UsersModule } from 'src/users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
@@ -31,7 +30,6 @@ import {
     BullModule.registerQueue({
       name: QUEUE_NAME,
     }),
-    UsersModule,
     MailerModule,
   ],
   controllers: [AuthController],

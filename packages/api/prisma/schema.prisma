@@ -22,11 +22,12 @@ enum UserRole {
 }
 
 model Asset {
-  id           Int       @id @default(autoincrement())
-  tickerSymbol String    @unique
+  id           Int           @id @default(autoincrement())
+  tickerSymbol String        @unique
   type         AssetType
   fullName     String
   description  String?
+  TradingPair  TradingPair[]
 
   @@index([type], type: Hash)
   @@index([tickerSymbol, fullName])
@@ -38,9 +39,20 @@ enum AssetType {
 }
 
 model Currency {
-  id       Int    @id @default(autoincrement())
-  code     String @unique
-  fullName String
+  id          Int           @id @default(autoincrement())
+  code        String        @unique
+  fullName    String
+  TradingPair TradingPair[]
 
   @@index([code, fullName])
+}
+
+model TradingPair {
+  id         Int      @id @default(autoincrement())
+  assetId    Int
+  asset      Asset    @relation(fields: [assetId], references: [id])
+  currencyId Int
+  currency   Currency @relation(fields: [currencyId], references: [id])
+
+  @@unique([assetId, currencyId])
 }

@@ -29,6 +29,8 @@ export class EnvironmentVariables {
   MAILER_SOURCE_EMAIL: string;
 
   ENCRYPTION_PASSWORD: string;
+
+  RAPID_API_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

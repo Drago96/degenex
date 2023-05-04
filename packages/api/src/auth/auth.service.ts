@@ -7,7 +7,7 @@ import { Queue } from 'bull';
 import * as bcrypt from 'bcrypt';
 import Redis from 'ioredis';
 
-import { UsersService } from 'src/users/users.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthResponseDto } from './auth-response.dto';
 import { AuthException } from './auth.exception';
 import { JwtPayloadDto } from './jwt-payload.dto';
@@ -20,12 +20,12 @@ import { buildVerificationCodeKey } from './send-verification-code.utils';
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
-    private usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService,
     @InjectQueue(QUEUE_NAME)
-    private sendVerificationCodeQueue: Queue<SendVerificationCodeDto>,
+    private readonly sendVerificationCodeQueue: Queue<SendVerificationCodeDto>,
     @InjectRedis()
-    private redis: Redis,
+    private readonly redis: Redis,
   ) {}
 
   async sendVerificationCode(userEmail: string) {
@@ -43,16 +43,20 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(registerDto.password, 10);
 
-    const user = await this.usersService.createUser({
-      email: registerDto.email,
-      password: passwordHash,
+    const user = await this.prisma.user.create({
+      data: {
+        email: registerDto.email,
+        password: passwordHash,
+      },
     });
 
     return this.generateAuthTokens(user);
   }
 
   async login(authDto: LoginDto): Promise<AuthResponseDto> {
-    const user = await this.usersService.getUser({ email: authDto.email });
+    const user = await this.prisma.user.findUnique({
+      where: { email: authDto.email },
+    });
 
     if (!user) {
       throw new AuthException();

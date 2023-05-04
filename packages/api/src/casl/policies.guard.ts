@@ -23,8 +23,8 @@ export const CheckPolicies = (...handlers: PolicyHandler[]) =>
 @Injectable()
 export class PoliciesGuard implements CanActivate {
   constructor(
-    private reflector: Reflector,
-    private caslAbilityFactory: CaslAbilityFactory,
+    private readonly reflector: Reflector,
+    private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

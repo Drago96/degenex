@@ -10,7 +10,9 @@ import { EmailDto } from './email.dto.ts';
 export class MailerService {
   private readonly ses: aws.SES;
 
-  constructor(private configService: ConfigService<EnvironmentVariables>) {
+  constructor(
+    private readonly configService: ConfigService<EnvironmentVariables>,
+  ) {
     this.ses = new aws.SES({ region: this.configService.get('AWS_REGION') });
   }
 

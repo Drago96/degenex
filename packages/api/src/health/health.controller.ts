@@ -17,10 +17,10 @@ import { PrismaHealthIndicator } from './prisma.health';
 @Controller('health')
 export class HealthController {
   constructor(
-    private configService: ConfigService<EnvironmentVariables>,
-    private health: HealthCheckService,
-    private db: PrismaHealthIndicator,
-    private microservice: MicroserviceHealthIndicator,
+    private readonly configService: ConfigService<EnvironmentVariables>,
+    private readonly health: HealthCheckService,
+    private readonly db: PrismaHealthIndicator,
+    private readonly microservice: MicroserviceHealthIndicator,
   ) {}
 
   @Get()

@@ -4,7 +4,7 @@ import { Job } from 'bull';
 import { Redis } from 'ioredis';
 
 import { MailerService } from 'src/mailer/mailer.service';
-import { UsersService } from 'src/users/users.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { SendVerificationCodeDto } from './send-verification-code.dto';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
 
@@ -13,17 +13,19 @@ export const QUEUE_NAME = 'send-verification-code';
 @Processor(QUEUE_NAME)
 export class SendVerificationCodeConsumer {
   constructor(
-    private mailerService: MailerService,
-    private usersService: UsersService,
+    private readonly mailerService: MailerService,
+    private readonly prisma: PrismaService,
     @InjectRedis()
-    private redis: Redis,
+    private readonly redis: Redis,
   ) {}
 
   @Process()
   async process(job: Job<SendVerificationCodeDto>) {
-    const user = await this.usersService.getUser({ email: job.data.email });
+    const userExists = await this.prisma.user.findUnique({
+      where: { email: job.data.email },
+    });
 
-    if (user) {
+    if (userExists) {
       return;
     }
 
