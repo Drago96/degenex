@@ -1,5 +1,5 @@
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import { Injectable, OnApplicationShutdown } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import Redis from 'ioredis';
 import { pick } from 'lodash';
@@ -10,7 +10,7 @@ import { AssetPriceDto } from './asset-price.dto';
 import { AssetPricesCacheService } from './asset-prices-cache.service';
 
 @Injectable()
-export class AssetPricesStreamService implements OnApplicationShutdown {
+export class AssetPricesStreamService implements OnModuleDestroy {
   constructor(
     private readonly prisma: PrismaService,
     private readonly assetPricesCacheService: AssetPricesCacheService,
@@ -89,7 +89,7 @@ export class AssetPricesStreamService implements OnApplicationShutdown {
     );
   }
 
-  onApplicationShutdown() {
+  onModuleDestroy() {
     this.assetPriceUpdate$.complete();
   }
 
