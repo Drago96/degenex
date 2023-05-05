@@ -33,7 +33,7 @@ export class AssetPricesStreamService implements OnApplicationShutdown {
   );
 
   @Interval(1000)
-  async updateLatestAssetPrices() {
+  async setLatestAssetPrices() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
         asset: true,
@@ -59,7 +59,7 @@ export class AssetPricesStreamService implements OnApplicationShutdown {
   }
 
   @Interval(1000)
-  async fetchLatestAssetPrices() {
+  async getLatestAssetPrices() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
         asset: true,

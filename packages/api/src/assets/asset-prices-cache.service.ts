@@ -17,7 +17,7 @@ export class AssetPricesCacheService implements OnApplicationBootstrap {
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
-  async fetchAssetPrices() {
+  async fetchAndCacheAssetPrices() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
         asset: true,
@@ -28,7 +28,10 @@ export class AssetPricesCacheService implements OnApplicationBootstrap {
     await Promise.all(
       tradingPairs.map(
         async (tradingPair) =>
-          await this.fetchAssetPrice(tradingPair.asset, tradingPair.currency),
+          await this.fetchAndCacheAssetPrice(
+            tradingPair.asset,
+            tradingPair.currency,
+          ),
       ),
     );
   }
@@ -57,13 +60,16 @@ export class AssetPricesCacheService implements OnApplicationBootstrap {
         );
 
         if (cachedAssetPrice === null) {
-          await this.fetchAssetPrice(tradingPair.asset, tradingPair.currency);
+          await this.fetchAndCacheAssetPrice(
+            tradingPair.asset,
+            tradingPair.currency,
+          );
         }
       }),
     );
   }
 
-  private async fetchAssetPrice(asset: Asset, currency: Currency) {
+  private async fetchAndCacheAssetPrice(asset: Asset, currency: Currency) {
     const price = await this.twelveDataService.fetchPrice(asset, currency);
 
     await this.redis.set(
