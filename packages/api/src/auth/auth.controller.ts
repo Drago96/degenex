@@ -80,11 +80,13 @@ export class AuthController {
   ) {
     const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE_KEY];
 
-    if (refreshToken) {
-      await this.authService.clearSession(refreshToken);
-
-      response.clearCookie(REFRESH_TOKEN_COOKIE_KEY);
+    if (!refreshToken) {
+      return;
     }
+
+    await this.authService.clearSession(refreshToken);
+
+    response.clearCookie(REFRESH_TOKEN_COOKIE_KEY);
   }
 
   @Get('profile')
