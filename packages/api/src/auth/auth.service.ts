@@ -81,21 +81,9 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string): Promise<AuthResultDto> {
-    let refreshTokenPayload: RefreshTokenPayloadDto;
+    const refreshTokenPayload = await this.verifyRefreshToken(refreshToken);
 
-    try {
-      refreshTokenPayload =
-        await this.jwtService.verifyAsync<RefreshTokenPayloadDto>(
-          refreshToken,
-          {
-            secret: this.configService.get('REFRESH_TOKEN_SECRET'),
-          },
-        );
-    } catch (error) {
-      throw new AuthException('Invalid refresh token');
-    }
-
-    const fetchedRefreshToken = await this.prisma.refreshToken.findFirst({
+    const storedRefreshToken = await this.prisma.refreshToken.findFirst({
       where: {
         userId: refreshTokenPayload.sub,
         token: refreshToken,
@@ -106,7 +94,7 @@ export class AuthService {
       },
     });
 
-    const isRefreshTokenReusedOrExpired = fetchedRefreshToken === null;
+    const isRefreshTokenReusedOrExpired = storedRefreshToken === null;
 
     if (isRefreshTokenReusedOrExpired) {
       await this.prisma.refreshToken.deleteMany({
@@ -120,8 +108,6 @@ export class AuthService {
 
     await this.prisma.refreshToken.deleteMany({
       where: {
-        userId: refreshTokenPayload.sub,
-        token: refreshToken,
         sessionId: refreshTokenPayload.sessionId,
       },
     });
@@ -131,6 +117,26 @@ export class AuthService {
     });
 
     return this.generateAuthTokens(user, refreshTokenPayload.sessionId);
+  }
+
+  async clearSession(refreshToken: string) {
+    const refreshTokenPayload = await this.verifyRefreshToken(refreshToken);
+
+    await this.prisma.refreshToken.deleteMany({
+      where: {
+        sessionId: refreshTokenPayload.sessionId,
+      },
+    });
+  }
+
+  private async verifyRefreshToken(refreshToken: string) {
+    try {
+      return this.jwtService.verifyAsync<RefreshTokenPayloadDto>(refreshToken, {
+        secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+      });
+    } catch (error) {
+      throw new AuthException('Invalid refresh token');
+    }
   }
 
   private async generateAuthTokens(

@@ -71,6 +71,22 @@ export class AuthController {
     return { accessToken: authResult.accessToken };
   }
 
+  @Public()
+  @Post('logout')
+  @HttpCode(204)
+  async logout(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE_KEY];
+
+    if (refreshToken) {
+      await this.authService.clearSession(refreshToken);
+
+      response.clearCookie(REFRESH_TOKEN_COOKIE_KEY);
+    }
+  }
+
   @Get('profile')
   getProfile(@Req() req): UserResponseDto {
     return req.user;
