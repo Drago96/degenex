@@ -6,22 +6,28 @@ import { User } from '@prisma/client';
 import { Queue } from 'bull';
 import * as bcrypt from 'bcrypt';
 import Redis from 'ioredis';
+import { ConfigService } from '@nestjs/config';
+import { randomUUID } from 'crypto';
+import * as moment from 'moment';
 
+import { EnvironmentVariables } from 'src/configuration';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthResponseDto } from './auth-response.dto';
+import { AuthResultDto } from './auth-result.dto';
 import { AuthException } from './auth.exception';
-import { JwtPayloadDto } from './jwt-payload.dto';
+import { AccessTokenPayloadDto } from './access-token-payload.dto';
 import { QUEUE_NAME } from './send-verification-code.consumer';
 import { RegisterDto } from './register.dto';
 import { LoginDto } from './login.dto';
 import { SendVerificationCodeDto } from './send-verification-code.dto';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
+import { RefreshTokenPayloadDto } from './refresh-token-payload.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    private readonly configService: ConfigService<EnvironmentVariables>,
     @InjectQueue(QUEUE_NAME)
     private readonly sendVerificationCodeQueue: Queue<SendVerificationCodeDto>,
     @InjectRedis()
@@ -53,7 +59,7 @@ export class AuthService {
     return this.generateAuthTokens(user);
   }
 
-  async login(authDto: LoginDto): Promise<AuthResponseDto> {
+  async login(authDto: LoginDto): Promise<AuthResultDto> {
     const user = await this.prisma.user.findUnique({
       where: { email: authDto.email },
     });
@@ -74,15 +80,96 @@ export class AuthService {
     return this.generateAuthTokens(user);
   }
 
-  private async generateAuthTokens(user: User): Promise<AuthResponseDto> {
-    const jwtPayload: JwtPayloadDto = {
+  async refresh(refreshToken: string): Promise<AuthResultDto> {
+    let refreshTokenPayload: RefreshTokenPayloadDto;
+
+    try {
+      refreshTokenPayload =
+        await this.jwtService.verifyAsync<RefreshTokenPayloadDto>(
+          refreshToken,
+          {
+            secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+          },
+        );
+    } catch (error) {
+      throw new AuthException('Invalid refresh token');
+    }
+
+    const fetchedRefreshToken = await this.prisma.refreshToken.findFirst({
+      where: {
+        userId: refreshTokenPayload.sub,
+        token: refreshToken,
+        sessionId: refreshTokenPayload.sessionId,
+        expiresAt: {
+          gte: moment().toDate(),
+        },
+      },
+    });
+
+    const isRefreshTokenReusedOrExpired = fetchedRefreshToken === null;
+
+    if (isRefreshTokenReusedOrExpired) {
+      await this.prisma.refreshToken.deleteMany({
+        where: {
+          sessionId: refreshTokenPayload.sessionId,
+        },
+      });
+
+      throw new AuthException('Refresh token integrity compromised');
+    }
+
+    await this.prisma.refreshToken.deleteMany({
+      where: {
+        userId: refreshTokenPayload.sub,
+        token: refreshToken,
+        sessionId: refreshTokenPayload.sessionId,
+      },
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: refreshTokenPayload.sub },
+    });
+
+    return this.generateAuthTokens(user, refreshTokenPayload.sessionId);
+  }
+
+  private async generateAuthTokens(
+    user: User,
+    sessionId: string = null,
+  ): Promise<AuthResultDto> {
+    const accessTokenPayload: AccessTokenPayloadDto = {
       sub: user.id,
       email: user.email,
       roles: user.roles,
     };
 
+    const accessToken = await this.jwtService.signAsync(accessTokenPayload, {
+      secret: this.configService.get('ACCESS_TOKEN_SECRET'),
+      expiresIn: '3m',
+    });
+
+    const refreshTokenPayload: RefreshTokenPayloadDto = {
+      sub: user.id,
+      sessionId: sessionId || randomUUID(),
+    };
+
+    const refreshToken = await this.jwtService.signAsync(refreshTokenPayload, {
+      secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+      expiresIn: '7d',
+    });
+
+    await this.prisma.refreshToken.create({
+      data: {
+        userId: user.id,
+        token: refreshToken,
+        sessionId: refreshTokenPayload.sessionId,
+        expiresAt: moment().add(7, 'days').toDate(),
+      },
+    });
+
     return {
-      accessToken: await this.jwtService.signAsync(jwtPayload),
+      accessToken,
+      refreshToken,
     };
   }
 }

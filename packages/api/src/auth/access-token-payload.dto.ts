@@ -1,6 +1,6 @@
 import { UserRole } from '@prisma/client';
 
-export class JwtPayloadDto {
+export class AccessTokenPayloadDto {
   sub: number;
   email: string;
   roles: UserRole[];

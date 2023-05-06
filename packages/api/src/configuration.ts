@@ -15,7 +15,8 @@ export class EnvironmentVariables {
   @IsNumber()
   PORT: number;
 
-  JWT_SECRET: string;
+  ACCESS_TOKEN_SECRET: string;
+  REFRESH_TOKEN_SECRET: string;
 
   DATABASE_URL: string;
 

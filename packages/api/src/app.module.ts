@@ -7,7 +7,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 import { EnvironmentVariables, validate } from './configuration';
 import { AuthModule } from './auth/auth.module';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { AccessTokenAuthGuard } from './auth/access-token-auth.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthModule } from './health/health.module';
 import { CaslModule } from './casl/casl.module';
@@ -67,7 +67,7 @@ import { AssetsModule } from './assets/assets.module';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useClass: AccessTokenAuthGuard,
     },
   ],
 })
