@@ -1,20 +1,11 @@
-import { HTMLInputTypeAttribute } from "react";
+import { HTMLInputTypeAttribute, HTMLProps } from "react";
 
 type InputProps = {
   name: string;
   type?: HTMLInputTypeAttribute;
-  label?: string;
-  placeholder?: string;
-  required?: boolean;
-};
+} & HTMLProps<HTMLInputElement>;
 
-export default function Input({
-  name,
-  label,
-  type = "text",
-  placeholder = "",
-  required = false,
-}: InputProps) {
+export default function Input({ name, label, ...props }: InputProps) {
   return (
     <div>
       {label && (
@@ -26,12 +17,10 @@ export default function Input({
         </label>
       )}
       <input
-        type={type}
         id={name}
         name={name}
         className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-        placeholder={placeholder}
-        required={required}
+        {...props}
       />
     </div>
   );
