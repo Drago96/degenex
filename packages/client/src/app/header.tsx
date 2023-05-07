@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import AppLink from "./components/link";
+import Link from "./components/link";
 import ThemeSwitcher from "./theme-switcher";
 
 export default function Header() {
@@ -8,12 +8,12 @@ export default function Header() {
     <header>
       <nav className="border-gray-200 bg-gray-100 px-4 py-2.5 dark:bg-gray-800 lg:px-6">
         <div className="mx-auto flex flex-wrap items-center justify-between">
-          <AppLink href="/">
+          <Link href="/">
             <Image src="/logo.png" alt="Degenex" width="150" height="80" />
-          </AppLink>
+          </Link>
           <div className="flex items-center lg:order-2">
-            <AppLink href="/login">Log in</AppLink>
-            <AppLink href="/register">Register</AppLink>
+            <Link href="/login">Log in</Link>
+            <Link href="/register">Register</Link>
             <ThemeSwitcher />
           </div>
         </div>
