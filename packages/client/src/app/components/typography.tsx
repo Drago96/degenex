@@ -1,7 +1,22 @@
-import { ReactNode } from "react";
+import classNames from "classnames";
+import { createElement, ReactNode } from "react";
 
-type TypographyProps = { children: ReactNode };
+type Variant = "p" | "div" | "h1" | "h2" | "h3" | "h4";
 
-export default function Typography({ children }: TypographyProps) {
-  return <div className="dark:text-white">{children}</div>;
+type TypographyProps = {
+  children: ReactNode;
+  variant?: Variant;
+  className?: string;
+};
+
+export default function Typography({
+  children,
+  className,
+  variant = "p",
+}: TypographyProps) {
+  return createElement(
+    variant,
+    { className: classNames("dark:text-white", className) },
+    children
+  );
 }
