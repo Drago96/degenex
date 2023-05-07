@@ -1,3 +1,5 @@
+import Typography from "./components/typography";
+
 export default function Home() {
-  return <div>Welcome to Degenex!</div>;
+  return <Typography>Welcome to Degenex!</Typography>;
 }

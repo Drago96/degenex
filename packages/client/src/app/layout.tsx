@@ -19,7 +19,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={inter.className}>
         <ThemeProvider>
           <Header />
-          <main className="mx-auto my-2.5 max-w-screen-xl">{children}</main>
+          <div className="min-h-screen px-2.5 py-2.5 dark:bg-gray-900">
+            <main className="mx-auto max-w-screen-xl">{children}</main>
+          </div>
         </ThemeProvider>
       </body>
     </html>
