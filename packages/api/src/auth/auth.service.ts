@@ -9,7 +9,7 @@ import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import * as moment from 'moment';
-
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { EnvironmentVariables } from 'src/configuration';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthResultDto } from './auth-result.dto';
@@ -33,6 +33,17 @@ export class AuthService {
     @InjectRedis()
     private readonly redis: Redis,
   ) {}
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async deleteExpiredRefreshTokens() {
+    await this.prisma.refreshToken.deleteMany({
+      where: {
+        expiresAt: {
+          gt: moment().toDate(),
+        },
+      },
+    });
+  }
 
   async sendVerificationCode(userEmail: string) {
     await this.sendVerificationCodeQueue.add({ email: userEmail });
