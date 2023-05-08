@@ -5,6 +5,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "nestjs-zod": "^2.3.2"
+    "nestjs-zod": "^2.3.2",
+    "zod": "^3.21.4"
   }
 }

@@ -12,9 +12,9 @@ import { Response, Request } from 'express';
 
 import { UserResponseDto } from 'src/users/user-response.dto';
 import { AuthResponseDto } from './auth-response.dto';
-import { LoginDto } from './login.dto';
 import { AuthService } from './auth.service';
 import { Public } from './access-token-auth.guard';
+import { LoginDto } from './login.dto';
 import { RegisterDto } from './register.dto';
 import { SendVerificationCodeDto } from './send-verification-code.dto';
 
