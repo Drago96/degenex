@@ -10,11 +10,12 @@ import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import * as moment from 'moment';
 import { Cron, CronExpression } from '@nestjs/schedule';
+
 import { EnvironmentVariables } from 'src/configuration';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AccessTokenPayloadDto } from './access-token-payload.dto';
 import { AuthResultDto } from './auth-result.dto';
 import { AuthException } from './auth.exception';
-import { AccessTokenPayloadDto } from './access-token-payload.dto';
 import { QUEUE_NAME } from './send-verification-code.consumer';
 import { RegisterDto } from './register.dto';
 import { LoginDto } from './login.dto';

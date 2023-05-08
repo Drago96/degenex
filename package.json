@@ -5,12 +5,10 @@
   "scripts": {},
   "private": true,
   "devDependencies": {
-    "nx": "16.1.1",
-    "nx-cloud": "16.0.5",
-    "@nx/workspace": "16.1.1"
+    "nx": "16.1.2",
+    "nx-cloud": "latest"
   },
   "workspaces": [
     "packages/*"
   ]
 }
-
