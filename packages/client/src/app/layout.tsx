@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider>
-          <div className="flex min-h-screen flex-col dark:bg-gray-900">
+          <div className="flex min-h-screen flex-col bg-background dark:bg-background-dark">
             <Header />
             <main className="mx-auto w-full max-w-screen-xl grow px-2.5 py-20">
               {children}

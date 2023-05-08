@@ -1,3 +1,5 @@
+const colors = require("tailwindcss/colors");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
@@ -8,10 +10,32 @@ module.exports = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      colors: {
+        primary: {
+          DEFAULT: colors.gray[100],
+          dark: colors.gray[800],
+          contrastText: {
+            DEFAULT: colors.black,
+            dark: colors.gray[50],
+          },
+        },
+        secondary: {
+          DEFAULT: "#2489e0",
+          contrastText: {
+            DEFAULT: colors.white,
+          },
+        },
+        transparent: {
+          DEFAULT: colors.gray[100],
+          dark: colors.gray[700],
+          contrastText: {
+            DEFAULT: colors.gray[400],
+          },
+        },
+        background: {
+          DEFAULT: colors.white,
+          dark: colors.black,
+        },
       },
     },
   },

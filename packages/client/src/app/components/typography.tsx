@@ -16,7 +16,13 @@ export default function Typography({
 }: TypographyProps) {
   return createElement(
     variant,
-    { className: classNames("dark:text-white", className) },
+    {
+      className: classNames(
+        "text-primary-contrastText",
+        "dark:text-primary-contrastText-dark",
+        className
+      ),
+    },
     children
   );
 }
