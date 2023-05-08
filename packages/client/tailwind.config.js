@@ -21,13 +21,16 @@ module.exports = {
         },
         secondary: {
           DEFAULT: "#2489e0",
+          disabled: {
+            DEFAULT: "#228ebc",
+          },
           contrastText: {
             DEFAULT: colors.white,
           },
         },
         error: {
           DEFAULT: colors.red[600],
-          dark: colors.red[300]
+          dark: colors.red[300],
         },
         transparent: {
           DEFAULT: colors.gray[100],

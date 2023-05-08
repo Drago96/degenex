@@ -3,12 +3,12 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import Button from "@/app/components/button";
 import Input from "@/app/components/input";
 import Paper from "@/app/components/paper";
 import Typography from "@/app/components/typography";
 import { RegisterDto, RegisterSchema } from "./register-schema";
 import { registerUser } from "./actions";
+import { SubmitButton } from "@/app/components/submit-button";
 
 export default function Register() {
   const {
@@ -57,7 +57,7 @@ export default function Register() {
             errors={errors}
             {...register("confirmPassword")}
           />
-          <Button type="submit">Register</Button>
+          <SubmitButton>Register</SubmitButton>
         </form>
       </Paper>
     </div>

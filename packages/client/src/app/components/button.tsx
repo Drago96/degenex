@@ -7,7 +7,7 @@ type ButtonProps = {
 export default function Button({ children, ...props }: ButtonProps) {
   return (
     <button
-      className="rounded bg-secondary px-4 py-2 text-secondary-contrastText"
+      className="rounded bg-secondary px-4 py-2 text-secondary-contrastText disabled:bg-secondary-disabled"
       {...props}
     >
       {children}
