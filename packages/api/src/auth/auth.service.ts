@@ -142,9 +142,12 @@ export class AuthService {
 
   private async verifyRefreshToken(refreshToken: string) {
     try {
-      return this.jwtService.verifyAsync<RefreshTokenPayloadDto>(refreshToken, {
-        secret: this.configService.get('REFRESH_TOKEN_SECRET'),
-      });
+      return await this.jwtService.verifyAsync<RefreshTokenPayloadDto>(
+        refreshToken,
+        {
+          secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+        },
+      );
     } catch (error) {
       throw new AuthException('Invalid refresh token');
     }

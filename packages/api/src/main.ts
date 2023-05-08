@@ -1,12 +1,12 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import { patchNestJsSwagger } from 'nestjs-zod';
 
 import { AppModule } from './app.module';
 import { EnvironmentVariables } from './configuration';
-import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,11 +14,6 @@ async function bootstrap() {
   app.setGlobalPrefix('/api');
 
   app.use(cookieParser());
-
-  app.useGlobalPipes(new ValidationPipe());
-
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
   setupSwagger(app);
 
@@ -28,6 +23,7 @@ async function bootstrap() {
 }
 
 function setupSwagger(app: INestApplication) {
+  patchNestJsSwagger();
   const config = new DocumentBuilder()
     .addBearerAuth()
     .setTitle('Degenex API')

@@ -7,6 +7,7 @@ import {
   Res,
   Req,
 } from '@nestjs/common';
+import { ZodSerializerDto } from 'nestjs-zod';
 import { Response, Request } from 'express';
 
 import { UserResponseDto } from 'src/users/user-response.dto';
@@ -14,6 +15,8 @@ import { LoginDto } from './login.dto';
 import { AuthService } from './auth.service';
 import { Public } from './access-token-auth.guard';
 import { RegisterDto } from './register.dto';
+import { SendVerificationCodeDto } from './send-verification-code.dto';
+import { AuthResponseDto } from './auth-response.dto';
 
 const REFRESH_TOKEN_COOKIE_KEY = 'refresh-token';
 
@@ -24,16 +27,17 @@ export class AuthController {
   @Public()
   @Post('send-verification-code')
   @HttpCode(204)
-  async activateUser(@Body('email') email: string) {
-    await this.authService.sendVerificationCode(email);
+  async activateUser(@Body() sendVerificationCodeDto: SendVerificationCodeDto) {
+    await this.authService.sendVerificationCode(sendVerificationCodeDto.email);
   }
 
   @Public()
   @Post('register')
+  @ZodSerializerDto(AuthResponseDto)
   async register(
     @Res({ passthrough: true }) response: Response,
     @Body() registerDto: RegisterDto,
-  ) {
+  ): Promise<AuthResponseDto> {
     const authResult = await this.authService.register(registerDto);
 
     this.setRefreshTokenCookie(response, authResult.refreshToken);
@@ -44,10 +48,11 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(200)
+  @ZodSerializerDto(AuthResponseDto)
   async login(
     @Res({ passthrough: true }) response: Response,
     @Body() loginDto: LoginDto,
-  ) {
+  ): Promise<AuthResponseDto> {
     const authResult = await this.authService.login(loginDto);
 
     this.setRefreshTokenCookie(response, authResult.refreshToken);
@@ -58,10 +63,11 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(200)
+  @ZodSerializerDto(AuthResponseDto)
   async refresh(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
-  ) {
+  ): Promise<AuthResponseDto> {
     const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE_KEY];
 
     const authResult = await this.authService.refresh(refreshToken);
@@ -90,6 +96,7 @@ export class AuthController {
   }
 
   @Get('profile')
+  @ZodSerializerDto(UserResponseDto)
   getProfile(@Req() req): UserResponseDto {
     return req.user;
   }

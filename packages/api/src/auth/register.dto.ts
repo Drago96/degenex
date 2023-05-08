@@ -1,8 +1,10 @@
-import { IsNumberString, Length } from 'class-validator';
-import { LoginDto } from './login.dto';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'nestjs-zod/z';
 
-export class RegisterDto extends LoginDto {
-  @IsNumberString()
-  @Length(6, 6)
-  verificationCode: string;
-}
+import { LoginSchema } from './login.dto';
+
+export const RegisterSchema = LoginSchema.extend({
+  verificationCode: z.string().length(6).regex(/\d{6}/),
+});
+
+export class RegisterDto extends createZodDto(RegisterSchema) {}

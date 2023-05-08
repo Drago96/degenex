@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
@@ -14,6 +14,8 @@ import { CaslModule } from './casl/casl.module';
 import { MailerModule } from './mailer/mailer.module';
 import { EncryptionModule } from './encryption/encryption.module';
 import { AssetsModule } from './assets/assets.module';
+import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
+import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.filter';
 
 @Module({
   imports: [
@@ -68,6 +70,18 @@ import { AssetsModule } from './assets/assets.module';
     {
       provide: APP_GUARD,
       useClass: AccessTokenAuthGuard,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: PrismaClientExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ZodSerializerInterceptor,
     },
   ],
 })
