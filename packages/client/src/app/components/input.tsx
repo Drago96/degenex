@@ -1,17 +1,20 @@
+import { ErrorMessage } from "@hookform/error-message";
 import {
   forwardRef,
   HTMLInputTypeAttribute,
   HTMLProps,
   LegacyRef,
 } from "react";
+import { FieldErrors, FieldValues } from "react-hook-form";
 
 type InputProps = {
   name: string;
   type?: HTMLInputTypeAttribute;
+  errors?: FieldErrors<FieldValues>;
 } & HTMLProps<HTMLInputElement>;
 
 export default forwardRef(function Input(
-  { name, label, ...props }: InputProps,
+  { name, label, errors, ...props }: InputProps,
   ref: LegacyRef<HTMLInputElement>
 ) {
   return (
@@ -31,6 +34,13 @@ export default forwardRef(function Input(
         ref={ref}
         {...props}
       />
+      {errors && (
+        <ErrorMessage
+          errors={errors}
+          name={name}
+          render={({ message }) => <div className="text-error dark:text-error-dark">{message}</div>}
+        />
+      )}
     </div>
   );
 });

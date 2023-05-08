@@ -25,6 +25,10 @@ module.exports = {
             DEFAULT: colors.white,
           },
         },
+        error: {
+          DEFAULT: colors.red[600],
+          dark: colors.red[300]
+        },
         transparent: {
           DEFAULT: colors.gray[100],
           dark: colors.gray[700],

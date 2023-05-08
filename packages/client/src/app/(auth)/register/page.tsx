@@ -8,7 +8,7 @@ import Button from "@/app/components/button";
 import Input from "@/app/components/input";
 import Paper from "@/app/components/paper";
 import Typography from "@/app/components/typography";
-import { RegisterDto, RegisterSchema } from "./schema";
+import { RegisterDto, RegisterSchema } from "./register-schema";
 import { registerUser } from "./actions";
 
 export default function Register() {
@@ -18,16 +18,17 @@ export default function Register() {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(RegisterSchema),
+    mode: "onTouched",
   });
 
   async function registerAction(formData: FormData) {
     const isFormValid = await trigger();
 
-    const registerDto = Object.fromEntries(formData.entries()) as RegisterDto;
-
     if (!isFormValid) {
       return;
     }
+
+    const registerDto = Object.fromEntries(formData.entries()) as RegisterDto;
 
     await registerUser(registerDto);
   }
@@ -39,27 +40,23 @@ export default function Register() {
           <Typography className="text-center text-5xl" variant="h1">
             Register
           </Typography>
-          <Input type="email" label="Email" {...register("email")} />
-          <ErrorMessage
+          <Input
+            type="email"
+            label="Email"
             errors={errors}
-            name="email"
-            render={({ message }) => <p>{message}</p>}
+            {...register("email")}
           />
-          <Input type="password" label="Password" {...register("password")} />
-          <ErrorMessage
+          <Input
+            type="password"
+            label="Password"
             errors={errors}
-            name="password"
-            render={({ message }) => <p>{message}</p>}
+            {...register("password")}
           />
           <Input
             type="password"
             label="Confirm Password"
-            {...register("confirmPassword")}
-          />
-          <ErrorMessage
             errors={errors}
-            name="confirmPassword"
-            render={({ message }) => <p>{message}</p>}
+            {...register("confirmPassword")}
           />
           <Button type="submit">Register</Button>
         </form>
