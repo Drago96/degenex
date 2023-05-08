@@ -1,5 +1,5 @@
-import { plainToInstance } from 'class-transformer';
-import { IsEmail, IsEnum, IsNumber, validateSync } from 'class-validator';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'nestjs-zod/z';
 
 enum Environment {
   Development = 'development',
@@ -8,44 +8,24 @@ enum Environment {
   Test = 'test',
 }
 
-export class EnvironmentVariables {
-  @IsEnum(Environment)
-  NODE_ENV: Environment;
+export const EnvironmentVariablesSchema = z.object({
+  NODE_ENV: z.nativeEnum(Environment),
+  PORT: z.string().regex(/\d+/),
+  ACCESS_TOKEN_SECRET: z.string(),
+  REFRESH_TOKEN_SECRET: z.string(),
+  DATABASE_URL: z.string(),
+  REDIS_PORT: z.string().regex(/\d+/),
+  REDIS_HOST: z.string(),
+  AWS_REGION: z.string(),
+  MAILER_SOURCE_EMAIL: z.string().email(),
+  ENCRYPTION_PASSWORD: z.string(),
+  RAPID_API_KEY: z.string(),
+});
 
-  @IsNumber()
-  PORT: number;
-
-  ACCESS_TOKEN_SECRET: string;
-  REFRESH_TOKEN_SECRET: string;
-
-  DATABASE_URL: string;
-
-  @IsNumber()
-  REDIS_PORT: number;
-  REDIS_HOST: string;
-
-  AWS_REGION: string;
-
-  @IsEmail()
-  MAILER_SOURCE_EMAIL: string;
-
-  ENCRYPTION_PASSWORD: string;
-
-  RAPID_API_KEY: string;
-}
+export class EnvironmentVariables extends createZodDto(
+  EnvironmentVariablesSchema,
+) {}
 
 export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToInstance(EnvironmentVariables, config, {
-    enableImplicitConversion: true,
-  });
-
-  const errors = validateSync(validatedConfig, {
-    skipMissingProperties: false,
-  });
-
-  if (errors.length > 0) {
-    throw new Error(errors.toString());
-  }
-
-  return validatedConfig;
+  return EnvironmentVariablesSchema.parse(config);
 }

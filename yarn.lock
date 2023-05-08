@@ -2660,11 +2660,13 @@
     "ioredis" "^5.3.2"
     "lodash" "^4.17.21"
     "moment" "^2.29.4"
+    "nestjs-zod" "^2.3.2"
     "nodemailer" "^6.9.1"
     "passport" "^0.6.0"
     "passport-jwt" "^4.0.1"
     "reflect-metadata" "^0.1.13"
     "rxjs" "^7.8.1"
+    "zod" "^3.21.4"
 
 "append-field@^1.0.0":
   "integrity" "sha512-klpgFSWLW1ZEs8svjfb7g4qWY0YS5imI82dTg+QahUvJ8YqAY0P10Uk8tTyh9ZGuYEZEMaeJYCF5BFuX552hsw=="
@@ -3103,12 +3105,12 @@
   "resolved" "https://registry.npmjs.org/cjs-module-lexer/-/cjs-module-lexer-1.2.2.tgz"
   "version" "1.2.2"
 
-"class-transformer@*", "class-transformer@^0.2.0 || ^0.3.0 || ^0.4.0 || ^0.5.0", "class-transformer@^0.5.1":
+"class-transformer@*", "class-transformer@^0.2.0 || ^0.3.0 || ^0.4.0 || ^0.5.0":
   "integrity" "sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw=="
   "resolved" "https://registry.npmjs.org/class-transformer/-/class-transformer-0.5.1.tgz"
   "version" "0.5.1"
 
-"class-validator@*", "class-validator@^0.11.1 || ^0.12.0 || ^0.13.0 || ^0.14.0", "class-validator@^0.14.0":
+"class-validator@*", "class-validator@^0.11.1 || ^0.12.0 || ^0.13.0 || ^0.14.0":
   "integrity" "sha512-ct3ltplN8I9fOwUd8GrP8UQixwff129BkEtuWDKL5W45cQuLd19xqmTLu5ge78YDm/fdje6FMt0hGOhl0lii3A=="
   "resolved" "https://registry.npmjs.org/class-validator/-/class-validator-0.14.0.tgz"
   "version" "0.14.0"
