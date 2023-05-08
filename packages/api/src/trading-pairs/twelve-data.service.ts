@@ -1,16 +1,20 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { Asset, AssetType, Currency } from '@prisma/client';
+import { AssetType } from '@prisma/client';
+import {
+  buildTradingPairSymbol,
+  TradingPairWithAssociations,
+} from './trading-pairs.utils';
 
 @Injectable()
 export class TwelveDataService {
   constructor(private readonly httpService: HttpService) {}
 
-  async fetchPrice(asset: Asset, currency: Currency) {
+  async fetchPrice(tradingPair: TradingPairWithAssociations) {
     const symbol =
-      asset.type === AssetType.Stock
-        ? asset.tickerSymbol
-        : `${asset.tickerSymbol}/${currency.code}`;
+      tradingPair.asset.type === AssetType.Stock
+        ? tradingPair.asset.tickerSymbol
+        : buildTradingPairSymbol(tradingPair);
 
     const response = await this.httpService.axiosRef.get<{ price: number }>(
       '/price',

@@ -13,7 +13,7 @@ import { HealthModule } from './health/health.module';
 import { CaslModule } from './casl/casl.module';
 import { MailerModule } from './mailer/mailer.module';
 import { EncryptionModule } from './encryption/encryption.module';
-import { AssetsModule } from './assets/assets.module';
+import { TradingPairsModule } from './trading-pairs/trading-pairs.module';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.filter';
 
@@ -64,7 +64,7 @@ import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.fi
     CaslModule,
     MailerModule,
     EncryptionModule,
-    AssetsModule,
+    TradingPairsModule,
   ],
   providers: [
     {

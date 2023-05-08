@@ -1,14 +1,17 @@
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Asset, Currency } from '@prisma/client';
 import Redis from 'ioredis';
 
 import { PrismaService } from 'src/prisma/prisma.service';
+import {
+  buildTradingPairSymbol,
+  TradingPairWithAssociations,
+} from './trading-pairs.utils';
 import { TwelveDataService } from './twelve-data.service';
 
 @Injectable()
-export class AssetPricesCacheService implements OnApplicationBootstrap {
+export class TradingPairsPriceCacheService implements OnApplicationBootstrap {
   constructor(
     private readonly prisma: PrismaService,
     private readonly twelveDataService: TwelveDataService,
@@ -17,7 +20,7 @@ export class AssetPricesCacheService implements OnApplicationBootstrap {
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
-  async fetchAndCacheAssetPrices() {
+  async fetchAndCacheTradingPairsPrice() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
         asset: true,
@@ -28,19 +31,14 @@ export class AssetPricesCacheService implements OnApplicationBootstrap {
     await Promise.all(
       tradingPairs.map(
         async (tradingPair) =>
-          await this.fetchAndCacheAssetPrice(
-            tradingPair.asset,
-            tradingPair.currency,
-          ),
+          await this.fetchAndCacheTradingPairPrice(tradingPair),
       ),
     );
   }
 
-  async getCachedAssetPrice(assetTickerSymbol: string, currencyCode: string) {
+  async getCachedTradingPairPrice(tradingPair: TradingPairWithAssociations) {
     return Number(
-      await this.redis.get(
-        this.buildAssetPriceCachedKey(assetTickerSymbol, currencyCode),
-      ),
+      await this.redis.get(this.buildTradingPairPriceCacheKey(tradingPair)),
     );
   }
 
@@ -54,36 +52,33 @@ export class AssetPricesCacheService implements OnApplicationBootstrap {
 
     await Promise.all(
       tradingPairs.map(async (tradingPair) => {
-        const cachedAssetPrice = await this.getCachedAssetPrice(
-          tradingPair.asset.tickerSymbol,
-          tradingPair.currency.code,
+        const cachedTradingPairPrice = await this.getCachedTradingPairPrice(
+          tradingPair,
         );
 
-        if (cachedAssetPrice === null) {
-          await this.fetchAndCacheAssetPrice(
-            tradingPair.asset,
-            tradingPair.currency,
-          );
+        if (cachedTradingPairPrice === null) {
+          await this.fetchAndCacheTradingPairPrice(tradingPair);
         }
       }),
     );
   }
 
-  private async fetchAndCacheAssetPrice(asset: Asset, currency: Currency) {
-    const price = await this.twelveDataService.fetchPrice(asset, currency);
+  private async fetchAndCacheTradingPairPrice(
+    tradingPair: TradingPairWithAssociations,
+  ) {
+    const price = await this.twelveDataService.fetchPrice(tradingPair);
 
     await this.redis.set(
-      this.buildAssetPriceCachedKey(asset.tickerSymbol, currency.code),
+      this.buildTradingPairPriceCacheKey(tradingPair),
       price,
       'EX',
       60 * 60,
     );
   }
 
-  private buildAssetPriceCachedKey(
-    assetTickerSymbol: string,
-    currencyCode: string,
+  private buildTradingPairPriceCacheKey(
+    tradingPair: TradingPairWithAssociations,
   ) {
-    return `asset-price-cached:${assetTickerSymbol}/${currencyCode}`;
+    return `trading-pair-price-cached:${buildTradingPairSymbol(tradingPair)}`;
   }
 }
