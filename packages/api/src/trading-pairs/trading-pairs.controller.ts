@@ -19,7 +19,9 @@ export class TradingPairsController {
           tradingPairSymbols,
         ),
       ),
-      map(([_, tradingPairPrices]) => ({ data: tradingPairPrices })),
+      map(([_, tradingPairPrices]) => ({
+        data: tradingPairPrices,
+      })),
     );
   }
 }
