@@ -1,4 +1,4 @@
-import { ErrorMessage } from "@hookform/error-message";
+import { ErrorMessage as FormErrorMessage } from "@hookform/error-message";
 import {
   forwardRef,
   HTMLInputTypeAttribute,
@@ -6,6 +6,8 @@ import {
   LegacyRef,
 } from "react";
 import { FieldErrors, FieldValues } from "react-hook-form";
+
+import AppErrorMessage from "./error-message";
 
 type InputProps = {
   name: string;
@@ -35,10 +37,10 @@ export default forwardRef(function Input(
         {...props}
       />
       {errors && (
-        <ErrorMessage
+        <FormErrorMessage
           errors={errors}
           name={name}
-          render={({ message }) => <div className="text-error dark:text-error-dark">{message}</div>}
+          render={({ message }) => <AppErrorMessage>{message}</AppErrorMessage>}
         />
       )}
     </div>

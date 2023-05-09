@@ -9,12 +9,14 @@ import Typography from "@/app/components/typography";
 import { RegisterDto, RegisterSchema } from "./register-schema";
 import { registerUser } from "./actions";
 import { SubmitButton } from "@/app/components/submit-button";
+import ErrorMessage from "@/app/components/error-message";
 
 export default function Register() {
   const {
     register,
     trigger,
     formState: { errors },
+    setError,
   } = useForm({
     resolver: zodResolver(RegisterSchema),
     mode: "onTouched",
@@ -29,7 +31,13 @@ export default function Register() {
 
     const registerDto = Object.fromEntries(formData.entries()) as RegisterDto;
 
-    await registerUser(registerDto);
+    try {
+      await registerUser(registerDto);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError("root", { message: error.message });
+      }
+    }
   }
 
   return (
@@ -39,6 +47,11 @@ export default function Register() {
           <Typography className="text-center text-5xl" variant="h1">
             Register
           </Typography>
+          {errors.root && (
+            <ErrorMessage className="text-center">
+              {errors.root.message}
+            </ErrorMessage>
+          )}
           <Input
             type="email"
             label="Email"

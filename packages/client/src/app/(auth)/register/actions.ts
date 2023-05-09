@@ -4,9 +4,11 @@ import { RegisterDto } from "./register-schema";
 
 export async function registerUser(registerDto: RegisterDto) {
   const wait = () =>
-    new Promise((res, rej) => setTimeout(() => res(null), 5000));
+    new Promise((res, rej) => setTimeout(() => res(null), 1000));
 
   await wait();
 
-  console.log("Finished waiting...");
+  throw new Error("Test error");
+
+  return "Test response";
 }
