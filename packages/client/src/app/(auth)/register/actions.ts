@@ -1,6 +1,6 @@
-"use server";
+'use server';
 
-import { RegisterDto } from "./register-schema";
+import { RegisterDto } from './register-schema';
 
 export async function registerUser(registerDto: RegisterDto) {
   const wait = () =>
@@ -8,5 +8,5 @@ export async function registerUser(registerDto: RegisterDto) {
 
   await wait();
 
-  return "Test response";
+  return 'Test response';
 }

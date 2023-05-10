@@ -1,23 +1,23 @@
-import "./globals.scss";
+import './globals.scss';
 
-import { ReactNode } from "react";
-import { Inter } from "next/font/google";
-import { cookies } from "next/headers";
+import { ReactNode } from 'react';
+import { Inter } from 'next/font/google';
+import { cookies } from 'next/headers';
 
-import Header from "./header";
-import ThemeProvider, { Theme } from "./theme-provider";
+import Header from './header';
+import ThemeProvider, { Theme } from './theme-provider';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: "Degenex",
-  description: "The online trading platform for degenerates",
+  title: 'Degenex',
+  description: 'The online trading platform for degenerates',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const cookieStore = cookies();
 
-  const theme = cookieStore.get("theme")?.value as Theme | undefined;
+  const theme = cookieStore.get('theme')?.value as Theme | undefined;
 
   return (
     <html lang="en">

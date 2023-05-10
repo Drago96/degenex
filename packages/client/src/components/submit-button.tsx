@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
+import { ReactNode } from 'react';
+import { experimental_useFormStatus as useFormStatus } from 'react-dom';
 
-import Button from "./button";
+import Button from './button';
 
 type SubmitButtonProps = { children: ReactNode };
 

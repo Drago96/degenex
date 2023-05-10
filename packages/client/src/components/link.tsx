@@ -1,5 +1,5 @@
-import NextLink, { LinkProps } from "next/link";
-import { ReactNode } from "react";
+import NextLink, { LinkProps } from 'next/link';
+import { ReactNode } from 'react';
 
 type AppLinkProps = { children: ReactNode } & LinkProps;
 
