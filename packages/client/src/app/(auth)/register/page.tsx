@@ -8,7 +8,7 @@ import Input from '../../../components/input';
 import Paper from '../../../components/paper';
 import Typography from '../../../components/typography';
 import { RegisterSchema } from './register-schema';
-import { registerUser } from './actions';
+import { sendVerificationCode } from './actions';
 import { SubmitButton } from '../../../components/submit-button';
 import ErrorMessage from '../../../components/error-message';
 import { createFormServerAction } from '../../../lib/create-form-server-action';
@@ -33,7 +33,7 @@ export default function Register() {
       <Paper>
         <form
           action={createFormServerAction({
-            action: registerUser,
+            action: sendVerificationCode,
             validateForm: trigger,
             setError,
           })}

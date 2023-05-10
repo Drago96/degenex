@@ -2,11 +2,18 @@
 
 import { RegisterDto } from './register-schema';
 
-export async function registerUser(registerDto: RegisterDto) {
-  const wait = () =>
-    new Promise((res, rej) => setTimeout(() => res(null), 1000));
+export async function sendVerificationCode(registerDto: RegisterDto) {
+  const response = await fetch(
+    `${process.env.API_BASE_URL}/api/auth/send-verification-code`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: registerDto.email }),
+    }
+  );
 
-  await wait();
-
-  return 'Test response';
+  console.log(await response.json());
 }
