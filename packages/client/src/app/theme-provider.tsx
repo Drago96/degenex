@@ -1,8 +1,9 @@
 "use client";
 
 import { createContext, ReactNode, useContext, useState } from "react";
+import cookies from "js-cookie";
 
-type Theme = "light" | "dark";
+export type Theme = "light" | "dark";
 
 type ThemeContextProps = {
   theme: Theme;
@@ -14,37 +15,20 @@ const ThemeContext = createContext<ThemeContextProps>({
   setTheme: () => {},
 });
 
-type ThemeProviderProps = { children: ReactNode };
+type ThemeProviderProps = { children: ReactNode; defaultTheme?: Theme };
 
-const THEME_KEY = "app-theme";
-
-function getDefaultTheme(): Theme {
-  const userSelectedTheme = localStorage.getItem(THEME_KEY) as Theme | null;
-
-  if (userSelectedTheme !== null) {
-    return userSelectedTheme;
-  }
-
-  const userPrefersDarkMode = window.matchMedia(
-    "(prefers-color-scheme: dark)"
-  ).matches;
-
-  if (userPrefersDarkMode) {
-    return "dark";
-  }
-
-  return "light";
-}
-
-export default function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(getDefaultTheme());
+export default function ThemeProvider({
+  children,
+  defaultTheme,
+}: ThemeProviderProps) {
+  const [theme, setTheme] = useState<Theme>(defaultTheme || "light");
 
   return (
     <ThemeContext.Provider
       value={{
         theme,
         setTheme: (theme: Theme) => {
-          localStorage.setItem(THEME_KEY, theme);
+          cookies.set("theme", theme);
 
           setTheme(theme);
         },

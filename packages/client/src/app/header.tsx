@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import Link from "./components/link";
+import Link from "@/components/link";
 import ThemeSwitcher from "./theme-switcher";
 
 export default function Header() {

@@ -3,13 +3,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import Input from "@/app/components/input";
-import Paper from "@/app/components/paper";
-import Typography from "@/app/components/typography";
+import Input from "@/components/input";
+import Paper from "@/components/paper";
+import Typography from "@/components/typography";
 import { RegisterDto, RegisterSchema } from "./register-schema";
 import { registerUser } from "./actions";
-import { SubmitButton } from "@/app/components/submit-button";
-import ErrorMessage from "@/app/components/error-message";
+import { SubmitButton } from "@/components/submit-button";
+import ErrorMessage from "@/components/error-message";
 
 export default function Register() {
   const {
