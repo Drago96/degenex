@@ -8,7 +8,5 @@ export async function registerUser(registerDto: RegisterDto) {
 
   await wait();
 
-  throw new Error("Test error");
-
   return "Test response";
 }
