@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "devDependencies": {
+    "@types/js-cookie": "^3.0.3",
     "nx": "16.1.2",
     "nx-cloud": "latest"
   },
