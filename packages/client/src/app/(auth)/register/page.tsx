@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
-import Input from '../../../components/input';
-import Paper from '../../../components/paper';
-import Typography from '../../../components/typography';
-import { RegisterSchema } from './register-schema';
-import { sendVerificationCode } from './actions';
-import { SubmitButton } from '../../../components/submit-button';
-import ErrorMessage from '../../../components/error-message';
-import { createFormServerAction } from '../../../lib/create-form-server-action';
-import { useToggle } from '../../../hooks/use-toggle';
-import IconButton from '../../../components/icon-button';
+import Input from "../../../components/input";
+import Paper from "../../../components/paper";
+import Typography from "../../../components/typography";
+import { RegisterSchema } from "./register-schema";
+import { sendVerificationCode } from "./actions";
+import { SubmitButton } from "../../../components/submit-button";
+import ErrorMessage from "../../../components/error-message";
+import { createFormServerAction } from "../../../lib/create-form-server-action";
+import { useToggle } from "../../../hooks/use-toggle";
+import IconButton from "../../../components/icon-button";
 
 export default function Register() {
   const {
@@ -23,7 +23,7 @@ export default function Register() {
     setError,
   } = useForm({
     resolver: zodResolver(RegisterSchema),
-    mode: 'onTouched',
+    mode: "onTouched",
   });
 
   const [isPasswordVisible, togglePasswordVisibility] = useToggle();
@@ -51,10 +51,11 @@ export default function Register() {
             type="email"
             label="Email"
             errors={errors}
-            {...register('email')}
+            autoFocus
+            {...register("email")}
           />
           <Input
-            type={isPasswordVisible ? 'text' : 'password'}
+            type={isPasswordVisible ? "text" : "password"}
             label="Password"
             errors={errors}
             endAdornment={
@@ -62,13 +63,13 @@ export default function Register() {
                 {isPasswordVisible ? <MdVisibilityOff /> : <MdVisibility />}
               </IconButton>
             }
-            {...register('password')}
+            {...register("password")}
           />
           <Input
-            type={isPasswordVisible ? 'text' : 'password'}
+            type={isPasswordVisible ? "text" : "password"}
             label="Confirm Password"
             errors={errors}
-            {...register('confirmPassword')}
+            {...register("confirmPassword")}
           />
           <SubmitButton>Register</SubmitButton>
         </form>

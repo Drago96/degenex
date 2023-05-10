@@ -1,4 +1,4 @@
-import { FieldValues, UseFormSetError, UseFormTrigger } from 'react-hook-form';
+import { FieldValues, UseFormSetError, UseFormTrigger } from "react-hook-form";
 
 type CreateFormServerActionArgs<FormDataT> = {
   action: (args: FormDataT) => Promise<any>;
@@ -20,13 +20,13 @@ export function createFormServerAction<FormDataT>({
       }
     }
 
-    const formData = Object.entries(rawFormData.entries()) as FormDataT;
+    const formData = Object.fromEntries(rawFormData.entries()) as FormDataT;
 
     try {
       await action(formData);
     } catch (error) {
       if (error instanceof Error && setError) {
-        setError('root', { message: 'Internal server error' });
+        setError("root", { message: "Internal server error" });
       }
     }
   };
