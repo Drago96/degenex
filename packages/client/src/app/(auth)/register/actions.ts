@@ -1,14 +1,14 @@
-'use server';
+"use server";
 
-import { RegisterDto } from './register-schema';
+import { AuthDto } from "./auth.dto";
 
-export async function sendVerificationCode(registerDto: RegisterDto) {
+export async function sendVerificationCode(authDto: AuthDto) {
   await fetch(`${process.env.API_BASE_URL}/api/auth/send-verification-code`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email: registerDto.email }),
+    body: JSON.stringify({ email: authDto.email }),
   });
 }

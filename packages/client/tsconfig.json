@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "module": "commonjs",
     "jsx": "preserve",
     "allowJs": true,
     "esModuleInterop": true,

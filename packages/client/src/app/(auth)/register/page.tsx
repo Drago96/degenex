@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
+import { AuthSchema } from "@degenex/common";
 import Input from "../../../components/input";
 import Paper from "../../../components/paper";
 import Typography from "../../../components/typography";
-import { RegisterSchema } from "./register-schema";
 import { sendVerificationCode } from "./actions";
 import { SubmitButton } from "../../../components/submit-button";
 import ErrorMessage from "../../../components/error-message";
@@ -22,7 +22,7 @@ export default function Register() {
     formState: { errors },
     setError,
   } = useForm({
-    resolver: zodResolver(RegisterSchema),
+    resolver: zodResolver(AuthSchema),
     mode: "onTouched",
   });
 
@@ -64,12 +64,6 @@ export default function Register() {
               </IconButton>
             }
             {...register("password")}
-          />
-          <Input
-            type={isPasswordVisible ? "text" : "password"}
-            label="Confirm Password"
-            errors={errors}
-            {...register("confirmPassword")}
           />
           <SubmitButton>Register</SubmitButton>
         </form>

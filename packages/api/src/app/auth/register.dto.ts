@@ -1,9 +1,9 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'nestjs-zod/z';
 
-import { LoginSchema } from '@degenex/common';
+import { AuthSchema } from '@degenex/common';
 
-export const RegisterSchema = LoginSchema.extend({
+export const RegisterSchema = AuthSchema.extend({
   verificationCode: z.string().length(6).regex(/\d{6}/),
 });
 

@@ -1,5 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
 
-import { LoginSchema } from '@degenex/common';
+import { AuthSchema } from '@degenex/common';
 
-export class LoginDto extends createZodDto(LoginSchema) {}
+export class LoginDto extends createZodDto(AuthSchema) {}

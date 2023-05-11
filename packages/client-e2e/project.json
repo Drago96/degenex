@@ -8,7 +8,6 @@
       "executor": "@nx/cypress:cypress",
       "options": {
         "cypressConfig": "packages/client-e2e/cypress.config.ts",
-        "baseUrl": "http://localhost:4200",
         "testingType": "e2e"
       },
       "configurations": {
