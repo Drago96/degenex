@@ -1,4 +1,5 @@
 import "./globals.scss";
+import "react-toastify/dist/ReactToastify.css";
 
 import { ReactNode } from "react";
 import { Inter } from "next/font/google";
@@ -6,7 +7,8 @@ import { cookies } from "next/headers";
 
 import Header from "./header";
 import ThemeProvider, { Theme } from "./theme-provider";
-import { Footer } from "./footer";
+import Footer from "./footer";
+import ToastContainer from "./toast-container";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </main>
             <Footer />
           </div>
+          <ToastContainer theme={theme} />
         </ThemeProvider>
       </body>
     </html>

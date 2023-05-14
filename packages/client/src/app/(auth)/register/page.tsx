@@ -1,5 +1,6 @@
 "use client";
 
+import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
@@ -14,6 +15,8 @@ import ErrorMessage from "../../../components/error-message";
 import { createFormServerAction } from "../../../lib/create-form-server-action";
 import { useToggle } from "../../../hooks/use-toggle";
 import IconButton from "../../../components/icon-button";
+import { useRegisterCredentials } from "./register-credentials-provider";
+import { AuthDto } from "./auth.dto";
 
 export default function Register() {
   const {
@@ -26,17 +29,31 @@ export default function Register() {
     mode: "onTouched",
   });
 
+  const { setRegisterCredentials } = useRegisterCredentials();
+
   const [isPasswordVisible, togglePasswordVisibility] = useToggle();
+
+  const sendVerificationCodeAction = createFormServerAction({
+    action: sendVerificationCode,
+    validateForm: trigger,
+    setError,
+  });
 
   return (
     <div className="flex justify-center">
       <Paper>
         <form
-          action={createFormServerAction({
-            action: sendVerificationCode,
-            validateForm: trigger,
-            setError,
-          })}
+          action={async (formData: FormData) => {
+            await sendVerificationCodeAction(formData);
+
+            const registerCredentials = Object.fromEntries(
+              formData.entries()
+            ) as AuthDto;
+
+            setRegisterCredentials(registerCredentials);
+
+            redirect("register/confirm-verification-code");
+          }}
           className="flex flex-col gap-7"
         >
           <Typography className="text-center text-5xl" variant="h1">
