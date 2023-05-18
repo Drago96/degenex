@@ -1,7 +1,7 @@
-import classNames from 'classnames';
-import { createElement, ReactNode } from 'react';
+import classNames from "classnames";
+import { createElement, ReactNode } from "react";
 
-type Variant = 'p' | 'div' | 'h1' | 'h2' | 'h3' | 'h4';
+type Variant = "p" | "div" | "span" | "h1" | "h2" | "h3" | "h4";
 
 type TypographyProps = {
   children: ReactNode;
@@ -12,14 +12,14 @@ type TypographyProps = {
 export default function Typography({
   children,
   className,
-  variant = 'p',
+  variant = "p",
 }: TypographyProps) {
   return createElement(
     variant,
     {
       className: classNames(
-        'text-primary-contrastText',
-        'dark:text-primary-contrastText-dark',
+        "text-primary-contrastText",
+        "dark:text-primary-contrastText-dark",
         className
       ),
     },
