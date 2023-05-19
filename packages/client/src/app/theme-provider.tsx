@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { createContext, ReactNode, useContext, useState } from 'react';
-import cookies from 'js-cookie';
+import { createContext, ReactNode, useContext, useState } from "react";
+import cookies from "js-cookie";
 
-export type Theme = 'light' | 'dark';
+export type Theme = "light" | "dark";
 
 type ThemeContextProps = {
   theme: Theme;
@@ -11,7 +11,7 @@ type ThemeContextProps = {
 };
 
 const ThemeContext = createContext<ThemeContextProps>({
-  theme: 'light',
+  theme: "light",
   setTheme: () => void 0,
 });
 
@@ -21,14 +21,14 @@ export default function ThemeProvider({
   children,
   defaultTheme,
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(defaultTheme || 'light');
+  const [theme, setTheme] = useState<Theme>(defaultTheme || "light");
 
   return (
     <ThemeContext.Provider
       value={{
         theme,
         setTheme: (theme: Theme) => {
-          cookies.set('theme', theme);
+          cookies.set("theme", theme, { expires: 365 });
 
           setTheme(theme);
         },

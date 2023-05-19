@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
@@ -30,8 +30,8 @@ export default function Register() {
   });
 
   const { setRegisterCredentials } = useRegisterCredentials();
-
   const [isPasswordVisible, togglePasswordVisibility] = useToggle();
+  const { push } = useRouter();
 
   const sendVerificationCodeAction = createFormServerAction({
     action: sendVerificationCode,
@@ -52,7 +52,7 @@ export default function Register() {
 
             setRegisterCredentials(registerCredentials);
 
-            redirect("register/confirm-verification-code");
+            push("register/confirm-verification-code");
           }}
           className="flex flex-col gap-7"
         >
