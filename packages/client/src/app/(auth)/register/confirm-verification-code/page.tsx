@@ -63,7 +63,7 @@ export default function ConfirmVerificationCode() {
                       onChange={async (event) => {
                         const newValue =
                           find(
-                            event.target.value,
+                            event.currentTarget.value,
                             (inputValue) => inputValue !== value
                           ) || value;
 

@@ -16,7 +16,6 @@ import { createFormServerAction } from "../../../lib/create-form-server-action";
 import { useToggle } from "../../../hooks/use-toggle";
 import IconButton from "../../../components/icon-button";
 import { useRegisterCredentials } from "./register-credentials-provider";
-import { AuthDto } from "./auth.dto";
 
 export default function Register() {
   const {
@@ -34,26 +33,21 @@ export default function Register() {
   const { push } = useRouter();
 
   const sendVerificationCodeAction = createFormServerAction({
-    action: sendVerificationCode,
+    serverAction: sendVerificationCode,
     validateForm: trigger,
     setError,
+    onSuccess: async (registerCredentials) => {
+      setRegisterCredentials(registerCredentials);
+
+      push("register/confirm-verification-code");
+    },
   });
 
   return (
     <div className="flex justify-center">
       <Paper>
         <form
-          action={async (formData: FormData) => {
-            await sendVerificationCodeAction(formData);
-
-            const registerCredentials = Object.fromEntries(
-              formData.entries()
-            ) as AuthDto;
-
-            setRegisterCredentials(registerCredentials);
-
-            push("register/confirm-verification-code");
-          }}
+          action={sendVerificationCodeAction}
           className="flex flex-col gap-7"
         >
           <Typography className="text-center text-5xl" variant="h1">
@@ -76,7 +70,11 @@ export default function Register() {
             label="Password"
             errors={errors}
             endAdornment={
-              <IconButton tabIndex={-1} onClick={togglePasswordVisibility}>
+              <IconButton
+                type="button"
+                tabIndex={-1}
+                onClick={togglePasswordVisibility}
+              >
                 {isPasswordVisible ? <MdVisibilityOff /> : <MdVisibility />}
               </IconButton>
             }
