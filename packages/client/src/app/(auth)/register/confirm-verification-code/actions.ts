@@ -1,5 +1,6 @@
 "use server";
 
+import { appFetch } from "../../../../lib/app-fetch";
 import { RegisterDto } from "./register.dto";
 
 export async function registerUser({
@@ -7,7 +8,7 @@ export async function registerUser({
   password,
   verificationCode,
 }: RegisterDto) {
-  await fetch(`${process.env.API_BASE_URL}/api/auth/register`, {
+  return await appFetch(`${process.env.API_BASE_URL}/api/auth/register`, {
     method: "POST",
     headers: {
       Accept: "application/json",
