@@ -14,7 +14,14 @@ export async function appFetch<DataT = unknown>(
   input: RequestInfo | URL,
   init?: RequestInit | undefined
 ): Promise<FetchResponse<DataT>> {
-  const response = await fetch(input, init);
+  const response = await fetch(input, {
+    ...init,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+  });
 
   const responseJson = await response.json();
 

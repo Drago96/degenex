@@ -1,4 +1,4 @@
-import { FieldValues, UseFormTrigger } from "react-hook-form";
+import { FieldValues, UseFormSetError, UseFormTrigger } from "react-hook-form";
 
 import { FetchResponse } from "./app-fetch";
 
@@ -7,6 +7,7 @@ type CreateFormServerActionArgs<FormDataT, ActionResponseT = unknown> = {
   onSuccess?: (response: ActionResponseT, args: FormDataT) => Promise<unknown>;
   onError?: (error: string, args: FormDataT) => Promise<unknown>;
   validateForm?: UseFormTrigger<FieldValues>;
+  setFormError?: UseFormSetError<FieldValues>;
 };
 
 export function createFormServerAction<FormDataT, ActionResponseT = unknown>({
@@ -14,6 +15,7 @@ export function createFormServerAction<FormDataT, ActionResponseT = unknown>({
   onSuccess,
   onError,
   validateForm,
+  setFormError,
 }: CreateFormServerActionArgs<FormDataT, ActionResponseT>) {
   return async (rawFormData: FormData) => {
     if (validateForm) {
@@ -33,6 +35,10 @@ export function createFormServerAction<FormDataT, ActionResponseT = unknown>({
         await onSuccess(result.data, formData);
       }
     } else {
+      if (setFormError) {
+        setFormError("root", { message: result.error });
+      }
+
       if (onError) {
         await onError(result.error, formData);
       }

@@ -10,10 +10,6 @@ export async function registerUser({
 }: RegisterDto) {
   return await appFetch(`${process.env.API_BASE_URL}/api/auth/register`, {
     method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ email, password, verificationCode }),
   });
 }

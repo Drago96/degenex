@@ -35,13 +35,11 @@ export default function Register() {
   const sendVerificationCodeAction = createFormServerAction({
     serverAction: sendVerificationCode,
     validateForm: trigger,
+    setFormError: setError,
     onSuccess: async (_response, registerCredentials) => {
       setRegisterCredentials(registerCredentials);
 
       push("register/confirm-verification-code");
-    },
-    onError: async (error) => {
-      setError("root", { message: error });
     },
   });
 

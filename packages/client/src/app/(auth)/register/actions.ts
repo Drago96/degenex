@@ -8,10 +8,6 @@ export async function sendVerificationCode({ email }: AuthDto) {
     `${process.env.API_BASE_URL}/api/auth/send-verification-code`,
     {
       method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ email }),
     }
   );
