@@ -8,5 +8,5 @@ export const RegisterSchema = AuthSchema.extend({
   verificationCode: z
     .string()
     .length(VERIFICATION_CODE_LENGTH)
-    .regex(new RegExp(`\\d${VERIFICATION_CODE_LENGTH}`)),
+    .regex(/^[0-9]+$/),
 });

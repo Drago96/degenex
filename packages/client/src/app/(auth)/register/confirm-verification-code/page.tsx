@@ -1,7 +1,8 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { find } from "lodash";
 
@@ -12,12 +13,15 @@ import { useIsHydrated } from "../../../../hooks/use-is-hydrated";
 import Paper from "../../../../components/paper";
 import Typography from "../../../../components/typography";
 import Input from "../../../../components/input";
+import { createFormServerAction } from "../../../../lib/create-form-server-action";
 import { registerUser } from "./actions";
 
 export default function ConfirmVerificationCode() {
+  const [isPending, startTransition] = useTransition();
   const isHydrated = useIsHydrated();
   const { registerCredentials } = useRegisterCredentials();
   const { control, setFocus, reset, getValues } = useForm();
+  const { push } = useRouter();
 
   if (!isHydrated) {
     return <Loading />;
@@ -30,6 +34,18 @@ export default function ConfirmVerificationCode() {
 
     redirect("register");
   }
+
+  const registerUserAction = createFormServerAction({
+    serverAction: registerUser,
+    onSuccess: async () => {
+      push("/");
+    },
+    onError: async (error) => {
+      toast.error(error);
+
+      reset();
+    },
+  });
 
   return (
     <div className="flex justify-center">
@@ -60,6 +76,7 @@ export default function ConfirmVerificationCode() {
                       key={index}
                       type="tel"
                       value={value || ""}
+                      disabled={isPending}
                       onChange={async (event) => {
                         const newValue =
                           find(
@@ -85,20 +102,24 @@ export default function ConfirmVerificationCode() {
                         const verificationCodeCharacters: string[] =
                           getValues("verificationCode");
 
-                        if (
+                        const isVerificationCodeIncomplete =
                           verificationCodeCharacters.some(
                             (codeCharacter) => codeCharacter === undefined
-                          )
-                        ) {
+                          );
+
+                        if (isVerificationCodeIncomplete) {
                           return;
                         }
 
                         const verificationCode =
                           verificationCodeCharacters.join("");
 
-                        // Register User
-
-                        reset();
+                        startTransition(async () => {
+                          await registerUserAction({
+                            ...registerCredentials,
+                            verificationCode,
+                          });
+                        });
                       }}
                       {...fieldProps}
                     />

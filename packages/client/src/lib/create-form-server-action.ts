@@ -2,22 +2,28 @@ import { FieldValues, UseFormSetError, UseFormTrigger } from "react-hook-form";
 
 import { FetchResponse } from "./app-fetch";
 
-type CreateFormServerActionArgs<FormDataT, ActionResponseT = unknown> = {
-  serverAction: (args: FormDataT) => Promise<FetchResponse<ActionResponseT>>;
-  onSuccess?: (response: ActionResponseT, args: FormDataT) => Promise<unknown>;
-  onError?: (error: string, args: FormDataT) => Promise<unknown>;
+type CreateFormServerActionArgs<ActionInputT, ActionResponseT = unknown> = {
+  serverAction: (args: ActionInputT) => Promise<FetchResponse<ActionResponseT>>;
+  onSuccess?: (
+    response: ActionResponseT,
+    args: ActionInputT
+  ) => Promise<unknown>;
+  onError?: (error: string, args: ActionInputT) => Promise<unknown>;
   validateForm?: UseFormTrigger<FieldValues>;
   setFormError?: UseFormSetError<FieldValues>;
 };
 
-export function createFormServerAction<FormDataT, ActionResponseT = unknown>({
+export function createFormServerAction<
+  ActionInputT,
+  ActionResponseT = unknown
+>({
   serverAction,
   onSuccess,
   onError,
   validateForm,
   setFormError,
-}: CreateFormServerActionArgs<FormDataT, ActionResponseT>) {
-  return async (rawFormData: FormData) => {
+}: CreateFormServerActionArgs<ActionInputT, ActionResponseT>) {
+  return async (rawActionInput: FormData | ActionInputT) => {
     if (validateForm) {
       const isFormValid = await validateForm();
 
@@ -26,21 +32,29 @@ export function createFormServerAction<FormDataT, ActionResponseT = unknown>({
       }
     }
 
-    const formData = Object.fromEntries(rawFormData.entries()) as FormDataT;
+    let actionInput: ActionInputT;
 
-    const result = await serverAction(formData);
+    if (rawActionInput instanceof FormData) {
+      actionInput = Object.fromEntries(
+        rawActionInput.entries()
+      ) as ActionInputT;
+    } else {
+      actionInput = rawActionInput;
+    }
+
+    const result = await serverAction(actionInput);
 
     if (result.isSuccess) {
       if (onSuccess) {
-        await onSuccess(result.data, formData);
+        await onSuccess(result.data, actionInput);
       }
     } else {
-      if (setFormError) {
-        setFormError("root", { message: result.error });
+      if (onError) {
+        await onError(result.error, actionInput);
       }
 
-      if (onError) {
-        await onError(result.error, formData);
+      if (setFormError) {
+        setFormError("root", { message: result.error });
       }
     }
   };

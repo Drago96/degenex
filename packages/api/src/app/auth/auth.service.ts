@@ -32,7 +32,7 @@ export class AuthService {
     @InjectQueue(QUEUE_NAME)
     private readonly sendVerificationCodeQueue: Queue<SendVerificationCodeDto>,
     @InjectRedis()
-    private readonly redis: Redis,
+    private readonly redis: Redis
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
@@ -52,7 +52,7 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     const verificationCode = await this.redis.get(
-      buildVerificationCodeKey(registerDto.email),
+      buildVerificationCodeKey(registerDto.email)
     );
 
     if (verificationCode !== registerDto.verificationCode) {
@@ -82,7 +82,7 @@ export class AuthService {
 
     const isPasswordValid = await bcrypt.compare(
       authDto.password,
-      user.password,
+      user.password
     );
 
     if (!isPasswordValid) {
@@ -147,7 +147,7 @@ export class AuthService {
         refreshToken,
         {
           secret: this.configService.get('REFRESH_TOKEN_SECRET'),
-        },
+        }
       );
     } catch (error) {
       throw new AuthException('Invalid refresh token');
@@ -156,7 +156,7 @@ export class AuthService {
 
   private async generateAuthTokens(
     user: User,
-    sessionId: string = null,
+    sessionId: string = null
   ): Promise<AuthResultDto> {
     const accessTokenPayload: AccessTokenPayloadDto = {
       sub: user.id,

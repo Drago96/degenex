@@ -1,14 +1,14 @@
-import { ErrorMessage as FormErrorMessage } from '@hookform/error-message';
+import { ErrorMessage as FormErrorMessage } from "@hookform/error-message";
 import {
   forwardRef,
   HTMLInputTypeAttribute,
   HTMLProps,
   LegacyRef,
   ReactNode,
-} from 'react';
-import { FieldErrors, FieldValues } from 'react-hook-form';
+} from "react";
+import { FieldErrors, FieldValues } from "react-hook-form";
 
-import AppErrorMessage from './error-message';
+import AppErrorMessage from "./error-message";
 
 type InputProps = {
   name: string;
@@ -35,7 +35,8 @@ export default forwardRef(function Input(
         <input
           id={name}
           name={name}
-          className="inline-block w-full rounded-lg border border-gray-300 p-2.5 text-sm placeholder-transparent-contrastText dark:bg-transparent-dark dark:text-primary-contrastText-dark"
+          className="inline-block w-full rounded-lg border border-gray-300 p-2.5
+          text-sm placeholder-transparent-contrastText disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none dark:bg-transparent-dark dark:text-primary-contrastText-dark"
           ref={ref}
           {...props}
         />

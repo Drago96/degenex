@@ -16,6 +16,7 @@ export async function appFetch<DataT = unknown>(
 ): Promise<FetchResponse<DataT>> {
   const response = await fetch(input, {
     ...init,
+    credentials: "include",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
