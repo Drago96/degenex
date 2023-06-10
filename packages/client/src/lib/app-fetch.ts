@@ -23,19 +23,25 @@ export async function appFetch<DataT = unknown>(
     },
   });
 
-  const responseJson = await response.json();
+  let responseBody = null;
+
+  try {
+    responseBody = await response.json();
+  } catch {
+    responseBody = await response.text();
+  }
 
   if (response.status >= 400 || response.status >= 500) {
     return {
       isSuccess: false,
       data: null,
-      error: responseJson.message,
+      error: responseBody?.message || responseBody,
     };
   }
 
   return {
     isSuccess: true,
-    data: responseJson,
+    data: responseBody,
     error: null,
   };
 }

@@ -17,7 +17,6 @@ import { Public } from './access-token-auth.guard';
 import { LoginDto } from './login.dto';
 import { RegisterDto } from './register.dto';
 import { SendVerificationCodeDto } from './send-verification-code.dto';
-import { AuthException } from './auth.exception';
 
 const REFRESH_TOKEN_COOKIE_KEY = 'refresh-token';
 
@@ -29,7 +28,6 @@ export class AuthController {
   @Post('send-verification-code')
   @HttpCode(204)
   async activateUser(@Body() sendVerificationCodeDto: SendVerificationCodeDto) {
-    throw new AuthException('asd');
     await this.authService.sendVerificationCode(sendVerificationCodeDto.email);
   }
 
