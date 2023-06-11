@@ -6,15 +6,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 import { AuthSchema } from "@degenex/common";
-import Input from "../../../components/input";
-import Paper from "../../../components/paper";
-import Typography from "../../../components/typography";
+import Input from "@/components/input";
+import Paper from "@/components/paper";
+import Typography from "@/components/typography";
 import { sendVerificationCode } from "./actions";
-import { SubmitButton } from "../../../components/submit-button";
-import ErrorMessage from "../../../components/error-message";
-import { createFormServerAction } from "../../../lib/create-form-server-action";
-import { useToggle } from "../../../hooks/use-toggle";
-import IconButton from "../../../components/icon-button";
+import { SubmitButton } from "@/components/submit-button";
+import ErrorMessage from "@/components/error-message";
+import { createFormServerAction } from "@/lib/create-form-server-action";
+import { useToggle } from "@/hooks/use-toggle";
+import IconButton from "@/components/icon-button";
 import { useRegisterCredentials } from "./register-credentials-provider";
 
 export default function Register() {

@@ -1,6 +1,6 @@
 "use server";
 
-import { appFetch } from "../../../lib/app-fetch";
+import { appFetch } from "@/lib/app-fetch";
 import { AuthDto } from "./auth.dto";
 
 export async function sendVerificationCode({ email }: AuthDto) {

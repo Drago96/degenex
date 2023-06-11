@@ -11,6 +11,10 @@
     }
   ],
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@degenex/common": ["packages/common/src/index.ts"],
+      "@/*": ["packages/api/src/app/*"]
+    },
   }
 }

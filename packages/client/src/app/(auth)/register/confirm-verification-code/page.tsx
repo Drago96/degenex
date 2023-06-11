@@ -7,13 +7,13 @@ import { Controller, useForm } from "react-hook-form";
 import { find } from "lodash";
 
 import { VERIFICATION_CODE_LENGTH } from "@degenex/common";
+import Loading from "@/app/loading";
+import { useIsHydrated } from "@/hooks/use-is-hydrated";
+import Paper from "@/components/paper";
+import Typography from "@/components/typography";
+import Input from "@/components/input";
+import { createFormServerAction } from "@/lib/create-form-server-action";
 import { useRegisterCredentials } from "../register-credentials-provider";
-import Loading from "../../../loading";
-import { useIsHydrated } from "../../../../hooks/use-is-hydrated";
-import Paper from "../../../../components/paper";
-import Typography from "../../../../components/typography";
-import Input from "../../../../components/input";
-import { createFormServerAction } from "../../../../lib/create-form-server-action";
 import { registerUser } from "./actions";
 
 export default function ConfirmVerificationCode() {

@@ -1,7 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { appFetch } from "../../../../lib/app-fetch";
+
+import { appFetch } from "@/lib/app-fetch";
 import { AuthResponseDto } from "./auth-response.dto";
 import { RegisterDto } from "./register.dto";
 
