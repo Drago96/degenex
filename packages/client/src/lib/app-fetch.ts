@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import setCookieParser from "set-cookie-parser";
 
 export type FetchResponse<DataT = unknown> =
@@ -18,8 +18,10 @@ export async function appFetch<DataT = unknown>(
   init?: RequestInit | undefined
 ): Promise<FetchResponse<DataT>> {
   const cookieStore = cookies();
+  const headersStore = headers();
 
   const accessToken = cookieStore.get("access-token");
+  const forwardedFor = headersStore.get("x-forwarded-for") as string;
 
   const response = await fetch(`${process.env.API_BASE_URL}/api/${input}`, {
     ...init,
@@ -28,13 +30,14 @@ export async function appFetch<DataT = unknown>(
       Accept: "application/json",
       Authorization: `Bearer ${accessToken?.value}`,
       "Content-Type": "application/json",
+      "X-Forwarded-For": forwardedFor,
       ...init?.headers,
     },
   });
 
   let responseBody = null;
 
-  const responseCookiesHeader = response.headers.get("Set-cookie");
+  const responseCookiesHeader = response.headers.get("Set-Cookie");
 
   if (responseCookiesHeader) {
     const responseCookies = setCookieParser(responseCookiesHeader);
