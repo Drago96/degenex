@@ -29,7 +29,7 @@
     "**/*.jsx",
     "next-env.d.ts",
     ".next/types/**/*.ts"
-, "src/app/(auth)/register/register-credentials-provider.tsx"  ],
+  ],
   "exclude": [
     "node_modules",
     "jest.config.ts",
