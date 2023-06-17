@@ -5,10 +5,10 @@ import { ReactNode } from "react";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 
-import Header from "./header";
-import ThemeProvider, { Theme } from "./theme-provider";
-import Footer from "./footer";
-import ToastContainer from "./toast-container";
+import Header from "@/components/header";
+import ThemeProvider, { Theme } from "@/components/theme-provider";
+import Footer from "@/components/footer";
+import ToastContainer from "@/components/toast-container";
 
 const inter = Inter({ subsets: ["latin"] });
 

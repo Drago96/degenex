@@ -1,7 +1,7 @@
 import Image from "next/image";
 
-import Link from "../components/link";
-import { appFetch } from "../lib/app-fetch";
+import { appFetch } from "@/lib/app-fetch";
+import Link from "./link";
 import ThemeSwitcher from "./theme-switcher";
 
 export default async function Header() {

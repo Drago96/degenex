@@ -5,16 +5,12 @@ import moment from "moment";
 
 import { appFetch } from "@/lib/app-fetch";
 import { AuthResponseDto } from "@/types/auth/auth-response.dto";
-import { RegisterDto } from "@/types/auth/register.dto";
+import { AuthDto } from "@/types/auth/auth.dto";
 
-export async function registerUser({
-  email,
-  password,
-  verificationCode,
-}: RegisterDto) {
-  const response = await appFetch<AuthResponseDto>("auth/register", {
+export async function loginUser({ email, password }: AuthDto) {
+  const response = await appFetch<AuthResponseDto>("auth/login", {
     method: "POST",
-    body: JSON.stringify({ email, password, verificationCode }),
+    body: JSON.stringify({ email, password }),
   });
 
   if (response.isSuccess) {

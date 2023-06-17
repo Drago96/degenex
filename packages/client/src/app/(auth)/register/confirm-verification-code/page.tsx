@@ -12,8 +12,8 @@ import { useIsHydrated } from "@/hooks/use-is-hydrated";
 import Paper from "@/components/paper";
 import Typography from "@/components/typography";
 import Input from "@/components/input";
+import { useRegisterCredentials } from "@/components/auth/register-credentials-provider";
 import { createFormServerAction } from "@/lib/create-form-server-action";
-import { useRegisterCredentials } from "../register-credentials-provider";
 import { registerUser } from "./actions";
 
 export default function ConfirmVerificationCode() {

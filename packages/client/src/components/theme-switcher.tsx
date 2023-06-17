@@ -2,7 +2,7 @@
 
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
 
-import IconButton from '../components/icon-button';
+import IconButton from './icon-button';
 import { useTheme } from './theme-provider';
 
 export default function ThemeSwitcher() {

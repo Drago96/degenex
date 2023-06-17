@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { Response, Request } from 'express';
+import moment from 'moment';
 
 import { UserResponseDto } from '../users/user-response.dto';
 import { AuthResponseDto } from './auth-response.dto';
@@ -105,6 +106,7 @@ export class AuthController {
     response.cookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken, {
       httpOnly: true,
       secure: true,
+      expires: moment().add(7, 'days').toDate(),
     });
   }
 }

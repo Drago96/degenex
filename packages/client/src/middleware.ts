@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 const FORWARDED_FOR_HEADER_KEY = "x-forwarded-for";
 
-export function middleware(request: NextRequest) {
-  const headers = new Headers(request.headers);
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt).*)"],
+};
 
-  if (!headers.get(FORWARDED_FOR_HEADER_KEY) && request.ip) {
-    headers.set(FORWARDED_FOR_HEADER_KEY, request.ip);
+export async function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+
+  if (!request.headers.get(FORWARDED_FOR_HEADER_KEY) && request.ip) {
+    response.headers.set(FORWARDED_FOR_HEADER_KEY, request.ip);
   }
 
-  return NextResponse.next({ headers });
+  return response;
 }
