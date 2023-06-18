@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
 async function refreshAuth(request: NextRequest, response: NextResponse) {
   const accessTokenJwt = request.cookies.get(ACCESS_TOKEN_COOKIE_KEY);
 
-  if (!accessTokenJwt) {
+  if (!accessTokenJwt || !accessTokenJwt.value) {
     return;
   }
 
@@ -46,7 +46,7 @@ async function refreshAuth(request: NextRequest, response: NextResponse) {
 
   const refreshTokenJwt = request.cookies.get(REFRESH_TOKEN_COOKIE_KEY);
 
-  if (!refreshTokenJwt) {
+  if (!refreshTokenJwt || !refreshTokenJwt.value) {
     clearAuth(response.cookies);
 
     return;

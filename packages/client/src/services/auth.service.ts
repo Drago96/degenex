@@ -1,5 +1,6 @@
 import moment from "moment";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 import { CookiesStore } from "@/types/cookies-store";
 

@@ -11,7 +11,7 @@ export const getCurrentUser = cache(async (cookiesStore?: CookiesStore) => {
 
   const accessTokenJwt = cookiesStore.get(ACCESS_TOKEN_COOKIE_KEY);
 
-  if (!accessTokenJwt) {
+  if (!accessTokenJwt || !accessTokenJwt.value) {
     return null;
   }
 

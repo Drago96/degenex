@@ -5,14 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 import { AuthSchema } from "@degenex/common";
-import Input from "@/components/input";
-import Paper from "@/components/paper";
-import Typography from "@/components/typography";
-import SubmitButton from "@/components/submit-button";
-import ErrorMessage from "@/components/error-message";
+import Input from "@/components/common/input";
+import Paper from "@/components/common/paper";
+import Typography from "@/components/common/typography";
+import IconButton from "@/components/common/icon-button";
+import SubmitButton from "@/components/common/submit-button";
+import ErrorMessage from "@/components/common/error-message";
 import { createFormServerAction } from "@/lib/create-form-server-action";
 import { useToggle } from "@/hooks/use-toggle";
-import IconButton from "@/components/icon-button";
 import { AuthDto } from "@/types/auth/auth.dto";
 import { FetchResponse } from "@/lib/app-fetch";
 

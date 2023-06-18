@@ -17,7 +17,11 @@ export const metadata = {
   description: "The online trading platform for degenerates",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const cookiesStore = cookies();
 
   const theme = cookiesStore.get("theme")?.value as Theme | undefined;
