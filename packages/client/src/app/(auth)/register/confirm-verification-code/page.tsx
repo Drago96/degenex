@@ -2,7 +2,7 @@
 
 import { redirect, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { useTransition } from "react";
+import { FormEvent, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { find } from "lodash";
 
@@ -17,10 +17,10 @@ import { createFormServerAction } from "@/lib/create-form-server-action";
 import { registerUser } from "./actions";
 
 export default function ConfirmVerificationCode() {
-  const [isPending, startTransition] = useTransition();
   const isHydrated = useIsHydrated();
   const { registerCredentials } = useRegisterCredentials();
   const { control, setFocus, reset, getValues } = useForm();
+  const [isVerificationPending, startVerificationTransition] = useTransition();
   const { push } = useRouter();
 
   if (!isHydrated) {
@@ -76,7 +76,7 @@ export default function ConfirmVerificationCode() {
                       key={index}
                       type="tel"
                       value={value || ""}
-                      disabled={isPending}
+                      disabled={isVerificationPending}
                       onChange={async (event) => {
                         const newValue =
                           find(
@@ -114,7 +114,7 @@ export default function ConfirmVerificationCode() {
                         const verificationCode =
                           verificationCodeCharacters.join("");
 
-                        startTransition(async () => {
+                        startVerificationTransition(async () => {
                           await registerUserAction({
                             ...registerCredentials,
                             verificationCode,
