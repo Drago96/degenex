@@ -1,7 +1,7 @@
-import { UserRole } from '@prisma/client';
+import { createZodDto } from 'nestjs-zod';
 
-export class AccessTokenPayloadDto {
-  sub: number;
-  email: string;
-  roles: UserRole[];
-}
+import { AccessTokenPayloadSchema } from '@degenex/common';
+
+export class AccessTokenPayloadDto extends createZodDto(
+  AccessTokenPayloadSchema
+) {}

@@ -1,13 +1,11 @@
 import Image from "next/image";
 
-import { appFetch } from "@/lib/app-fetch";
+import { getCurrentUser } from "@/services/users.service";
 import Link from "./link";
 import ThemeSwitcher from "./theme-switcher";
 
 export default async function Header() {
-  const { data: currentUser } = await appFetch("auth/profile", {
-    next: { tags: ["current-user"] },
-  });
+  const currentUser = await getCurrentUser();
 
   return (
     <header>

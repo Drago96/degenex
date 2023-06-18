@@ -8,7 +8,7 @@ import { AuthSchema } from "@degenex/common";
 import Input from "@/components/input";
 import Paper from "@/components/paper";
 import Typography from "@/components/typography";
-import { SubmitButton } from "@/components/submit-button";
+import SubmitButton from "@/components/submit-button";
 import ErrorMessage from "@/components/error-message";
 import { createFormServerAction } from "@/lib/create-form-server-action";
 import { useToggle } from "@/hooks/use-toggle";

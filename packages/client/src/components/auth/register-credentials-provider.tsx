@@ -35,6 +35,6 @@ export default function RegisterCredentialsProvider({
   );
 }
 
-export function useRegisterCredentials() {
+export const useRegisterCredentials = () => {
   return useContext(RegisterCredentialsContext);
-}
+};

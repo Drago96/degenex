@@ -23,9 +23,9 @@ export const EnvironmentVariablesSchema = z.object({
 });
 
 export class EnvironmentVariables extends createZodDto(
-  EnvironmentVariablesSchema,
+  EnvironmentVariablesSchema
 ) {}
 
-export function validate(config: Record<string, unknown>) {
+export const validate = (config: Record<string, unknown>) => {
   return EnvironmentVariablesSchema.parse(config);
-}
+};

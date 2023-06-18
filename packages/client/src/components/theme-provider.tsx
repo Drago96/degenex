@@ -39,6 +39,6 @@ export default function ThemeProvider({
   );
 }
 
-export function useTheme() {
+export const useTheme = () => {
   return useContext(ThemeContext);
-}
+};
