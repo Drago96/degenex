@@ -2,7 +2,7 @@
 
 import { redirect, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { FormEvent, useTransition } from "react";
+import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { find } from "lodash";
 
@@ -14,6 +14,7 @@ import Typography from "@/components/common/typography";
 import Input from "@/components/common/input";
 import { useRegisterCredentials } from "@/components/auth/register-credentials-provider";
 import { createFormServerAction } from "@/lib/create-form-server-action";
+import { useClientAction } from "@/hooks/use-client-action";
 import { registerUser } from "./actions";
 
 export default function ConfirmVerificationCode() {
@@ -22,6 +23,7 @@ export default function ConfirmVerificationCode() {
   const { control, setFocus, reset, getValues } = useForm();
   const [isVerificationPending, startVerificationTransition] = useTransition();
   const { push } = useRouter();
+  const redirectToHome = useClientAction(() => push("/"));
 
   if (!isHydrated) {
     return <Loading />;
@@ -38,7 +40,7 @@ export default function ConfirmVerificationCode() {
   const registerUserAction = createFormServerAction({
     serverAction: registerUser,
     onSuccess: async () => {
-      push("/");
+      redirectToHome();
     },
     onError: async (error) => {
       toast.error(error);
