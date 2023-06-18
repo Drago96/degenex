@@ -6,6 +6,6 @@ import { AuthDto } from "@/types/auth/auth.dto";
 export async function sendVerificationCode({ email }: AuthDto) {
   return await appFetch("auth/send-verification-code", {
     method: "POST",
-    body: JSON.stringify({ email }),
+    body: { email },
   });
 }

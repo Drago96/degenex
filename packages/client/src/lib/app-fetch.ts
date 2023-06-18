@@ -1,5 +1,11 @@
 import { cookies, headers } from "next/headers";
 import setCookieParser from "set-cookie-parser";
+import { ResponseCookies } from "next/dist/compiled/@edge-runtime/cookies";
+
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/services/auth.service";
+import { CookiesStore } from "@/types/cookies-store";
+import { HeadersStore } from "@/types/headers-store";
+import { FORWARDED_FOR_HEADER_KEY } from "@/middleware";
 
 export type FetchResponse<DataT = unknown> =
   | {
@@ -13,57 +19,72 @@ export type FetchResponse<DataT = unknown> =
       error: string;
     };
 
-export async function appFetch<DataT = unknown>(
-  input: RequestInfo | URL,
-  init?: RequestInit | undefined
-): Promise<FetchResponse<DataT>> {
-  const cookieStore = cookies();
-  const headersStore = headers();
+type RequestInput = RequestInfo | URL;
+type RequestOptions<BodyT = unknown> = Omit<RequestInit, "body"> & {
+  body?: BodyT;
+};
 
-  const accessToken = cookieStore.get("access-token");
-  const forwardedFor = headersStore.get("x-forwarded-for") as string;
+export async function appFetch<ResponseT = unknown, BodyT = unknown>(
+  input: RequestInput,
+  options?: RequestOptions<BodyT>,
+  cookiesStore?: CookiesStore,
+  headersStore?: HeadersStore
+): Promise<FetchResponse<ResponseT>> {
+  cookiesStore = cookiesStore ?? cookies();
+  headersStore = headersStore ?? headers();
+  const nextResponseCookies = new ResponseCookies(headersStore as Headers);
 
-  const response = await fetch(`${process.env.API_BASE_URL}/api/${input}`, {
-    ...init,
-    credentials: "include",
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${accessToken?.value}`,
-      "Content-Type": "application/json",
-      "X-Forwarded-For": forwardedFor,
-      ...init?.headers,
-    },
-  });
+  const refreshedAccessToken = nextResponseCookies.get(ACCESS_TOKEN_COOKIE_KEY);
+  const accessToken = cookiesStore.get(ACCESS_TOKEN_COOKIE_KEY);
+  const forwardedFor = headersStore.get(FORWARDED_FOR_HEADER_KEY) as string;
 
-  let responseBody = null;
+  const fetchResponse = await fetch(
+    `${process.env.API_BASE_URL}/api/${input}`,
+    {
+      ...options,
+      body: JSON.stringify(options?.body),
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${
+          refreshedAccessToken?.value ?? accessToken?.value
+        }`,
+        "Content-Type": "application/json",
+        "X-Forwarded-For": forwardedFor,
+        ...options?.headers,
+      },
+    }
+  );
 
-  const responseCookiesHeader = response.headers.get("Set-Cookie");
+  const fetchResponseCookiesHeader = fetchResponse.headers.get("Set-Cookie");
 
-  if (responseCookiesHeader) {
-    const responseCookies = setCookieParser(responseCookiesHeader);
+  if (fetchResponseCookiesHeader) {
+    const fetchResponseCookies = setCookieParser(fetchResponseCookiesHeader);
 
-    responseCookies.forEach((cookie) => {
-      cookieStore.set({ ...cookie, sameSite: false });
+    fetchResponseCookies.forEach((cookie) => {
+      cookiesStore?.set({ ...cookie, sameSite: false });
     });
   }
 
+  let fetchResponseBody = null;
+
   try {
-    responseBody = await response.json();
+    fetchResponseBody = await fetchResponse.json();
   } catch {
-    responseBody = await response.text();
+    fetchResponseBody = await fetchResponse.text();
   }
 
-  if (response.status >= 400) {
+  if (fetchResponse.status >= 400) {
     return {
       isSuccess: false,
       data: null,
-      error: responseBody?.message || responseBody,
+      error: fetchResponseBody?.message || fetchResponseBody,
     };
   }
 
   return {
     isSuccess: true,
-    data: responseBody,
+    data: fetchResponseBody,
     error: null,
   };
 }
