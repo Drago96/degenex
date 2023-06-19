@@ -26,6 +26,13 @@
         "command": "next dev -p 4200"
       }
     },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/client",
+        "command": "next start -p 4200"
+      }
+    },
     "export": {
       "executor": "@nx/next:export",
       "options": {
