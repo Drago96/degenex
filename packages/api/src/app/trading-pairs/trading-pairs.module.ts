@@ -6,10 +6,12 @@ import { TradingPairsController } from './trading-pairs.controller';
 import { TwelveDataConfigService } from './twelve-data.config-service';
 import { TwelveDataService } from './twelve-data.service';
 import { TradingPairsPriceCacheService } from './trading-pairs-price-cache.service';
+import { TradingPairsService } from './trading-pairs.service';
 
 @Module({
   imports: [HttpModule.registerAsync({ useClass: TwelveDataConfigService })],
   providers: [
+    TradingPairsService,
     TradingPairsPriceStreamService,
     TradingPairsPriceCacheService,
     TwelveDataService,

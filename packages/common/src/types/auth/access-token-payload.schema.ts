@@ -1,6 +1,6 @@
 import { z } from 'nestjs-zod/z';
 
-import { UserRole } from '../users';
+import { UserRole } from '@prisma/client';
 
 export const AccessTokenPayloadSchema = z.object({
   sub: z.number(),

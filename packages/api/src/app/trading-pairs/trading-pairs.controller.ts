@@ -1,13 +1,23 @@
-import { Controller, Query, Sse, MessageEvent } from '@nestjs/common';
+import { Controller, Query, Sse, MessageEvent, Get } from '@nestjs/common';
+import { ZodSerializerDto } from 'nestjs-zod';
 import { interval, map, Observable, withLatestFrom } from 'rxjs';
+import { TradingPairResponseDto } from './trading-pair-response.dto';
 
 import { TradingPairsPriceStreamService } from './trading-pairs-price-stream.service';
+import { TradingPairsService } from './trading-pairs.service';
 
 @Controller('trading-pairs')
 export class TradingPairsController {
   constructor(
+    private tradingPairsService: TradingPairsService,
     private tradingPairPricesStreamService: TradingPairsPriceStreamService
   ) {}
+
+  @Get()
+  @ZodSerializerDto(TradingPairResponseDto)
+  async getAll(): Promise<TradingPairResponseDto[]> {
+    return this.tradingPairsService.getAll();
+  }
 
   @Sse('track-prices')
   trackPrices(

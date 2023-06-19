@@ -1,5 +1,6 @@
 import { z } from 'nestjs-zod/z';
-import { UserRole } from './user-role';
+
+import { UserRole } from '@prisma/client';
 
 export const UserResponseSchema = z.object({
   id: z.number(),
