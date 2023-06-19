@@ -6,6 +6,7 @@ import {
   Get,
   Res,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { Response, Request } from 'express';
@@ -14,10 +15,10 @@ import moment from 'moment';
 import { UserResponseDto } from '../users/user-response.dto';
 import { AuthResponseDto } from './auth-response.dto';
 import { AuthService } from './auth.service';
-import { Public } from './access-token-auth.guard';
 import { LoginDto } from './login.dto';
 import { RegisterDto } from './register.dto';
 import { SendVerificationCodeDto } from './send-verification-code.dto';
+import { AccessTokenAuthGuard } from './access-token-auth.guard';
 
 const REFRESH_TOKEN_COOKIE_KEY = 'refresh-token';
 
@@ -25,14 +26,12 @@ const REFRESH_TOKEN_COOKIE_KEY = 'refresh-token';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Public()
   @Post('send-verification-code')
   @HttpCode(204)
   async activateUser(@Body() sendVerificationCodeDto: SendVerificationCodeDto) {
     await this.authService.sendVerificationCode(sendVerificationCodeDto.email);
   }
 
-  @Public()
   @Post('register')
   @ZodSerializerDto(AuthResponseDto)
   async register(
@@ -46,7 +45,6 @@ export class AuthController {
     return { accessToken: authResult.accessToken };
   }
 
-  @Public()
   @Post('login')
   @HttpCode(200)
   @ZodSerializerDto(AuthResponseDto)
@@ -61,7 +59,6 @@ export class AuthController {
     return { accessToken: authResult.accessToken };
   }
 
-  @Public()
   @Post('refresh')
   @HttpCode(200)
   @ZodSerializerDto(AuthResponseDto)
@@ -78,7 +75,7 @@ export class AuthController {
     return { accessToken: authResult.accessToken };
   }
 
-  @Public()
+  @UseGuards(AccessTokenAuthGuard)
   @Post('logout')
   @HttpCode(204)
   async logout(
@@ -96,6 +93,7 @@ export class AuthController {
     response.clearCookie(REFRESH_TOKEN_COOKIE_KEY);
   }
 
+  @UseGuards(AccessTokenAuthGuard)
   @Get('profile')
   @ZodSerializerDto(UserResponseDto)
   getProfile(@Req() req): UserResponseDto {

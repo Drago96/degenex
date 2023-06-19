@@ -8,6 +8,7 @@ import {
   MicroserviceHealthIndicator,
 } from '@nestjs/terminus';
 
+import { AccessTokenAuthGuard } from '../auth/access-token-auth.guard';
 import { Action, AppAbility } from '../casl/casl-ability.factory';
 import { CheckPolicies, PoliciesGuard } from '../casl/policies.guard';
 import { EnvironmentVariables } from '../configuration';
@@ -20,11 +21,11 @@ export class HealthController {
     private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly health: HealthCheckService,
     private readonly db: PrismaHealthIndicator,
-    private readonly microservice: MicroserviceHealthIndicator,
+    private readonly microservice: MicroserviceHealthIndicator
   ) {}
 
   @Get()
-  @UseGuards(PoliciesGuard)
+  @UseGuards(AccessTokenAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, 'health'))
   @HealthCheck()
   check() {
@@ -35,7 +36,7 @@ export class HealthController {
           transport: Transport.REDIS,
           options: {
             url: `redis://${this.configService.get(
-              'REDIS_HOST',
+              'REDIS_HOST'
             )}:${this.configService.get('REDIS_PORT')}`,
           },
         }),

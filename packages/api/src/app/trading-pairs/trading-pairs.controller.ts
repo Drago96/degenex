@@ -6,22 +6,22 @@ import { TradingPairsPriceStreamService } from './trading-pairs-price-stream.ser
 @Controller('trading-pairs')
 export class TradingPairsController {
   constructor(
-    private tradingPairPricesStreamService: TradingPairsPriceStreamService,
+    private tradingPairPricesStreamService: TradingPairsPriceStreamService
   ) {}
 
   @Sse('track-prices')
   trackPrices(
-    @Query('tradingPairSymbols') tradingPairSymbols: string[],
+    @Query('tradingPairSymbols') tradingPairSymbols: string[]
   ): Observable<MessageEvent> {
     return interval(1000).pipe(
       withLatestFrom(
         this.tradingPairPricesStreamService.getPricesForTradingPairSymbols$(
-          tradingPairSymbols,
-        ),
+          tradingPairSymbols
+        )
       ),
       map(([_, tradingPairPrices]) => ({
         data: tradingPairPrices,
-      })),
+      }))
     );
   }
 }

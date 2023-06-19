@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 import { EnvironmentVariables, validate } from './configuration';
 import { AuthModule } from './auth/auth.module';
-import { AccessTokenAuthGuard } from './auth/access-token-auth.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthModule } from './health/health.module';
 import { CaslModule } from './casl/casl.module';
@@ -30,7 +29,7 @@ import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.fi
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (
-        configService: ConfigService<EnvironmentVariables>,
+        configService: ConfigService<EnvironmentVariables>
       ) => ({
         redis: {
           host: configService.get('REDIS_HOST'),
@@ -49,7 +48,7 @@ import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.fi
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (
-        configService: ConfigService<EnvironmentVariables>,
+        configService: ConfigService<EnvironmentVariables>
       ) => ({
         config: {
           host: configService.get('REDIS_HOST'),
@@ -67,10 +66,6 @@ import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.fi
     TradingPairsModule,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AccessTokenAuthGuard,
-    },
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
