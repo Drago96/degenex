@@ -3,7 +3,7 @@ import Image from "next/image";
 import { getCurrentUser } from "@/services/users.service";
 import ThemeSwitcher from "./theme-switcher";
 import Link from "./common/link";
-import LogoutLink from "./logout-link";
+import UserActions from "./users/user-actions";
 
 export default async function Header() {
   const currentUser = await getCurrentUser();
@@ -24,7 +24,7 @@ export default async function Header() {
             )}
             {currentUser && (
               <>
-                <LogoutLink />
+                <UserActions />
               </>
             )}
             <ThemeSwitcher />

@@ -8,6 +8,7 @@
     "@aws-sdk/client-ses": "^3.350.0",
     "@casl/ability": "^6.5.0",
     "@casl/prisma": "^1.4.0",
+    "@headlessui/react": "^1.7.15",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.1.0",
     "@liaoliaots/nestjs-redis": "^9.0.5",

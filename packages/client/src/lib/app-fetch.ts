@@ -62,7 +62,7 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
     const fetchResponseCookies = setCookieParser(fetchResponseCookiesHeader);
 
     fetchResponseCookies.forEach((cookie) => {
-      cookiesStore?.set({ ...cookie, sameSite: false });
+      cookiesStore?.set({ ...cookie, sameSite: "strict" });
     });
   }
 
