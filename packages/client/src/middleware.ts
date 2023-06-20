@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextMiddleware, NextRequest, NextResponse } from "next/server";
 import jwtDecode, { JwtPayload } from "jwt-decode";
 import moment from "moment";
 
-import { AuthResponseDto } from "./types/auth/auth-response.dto";
+import { AuthResponseDto } from "@degenex/common";
 import {
   ACCESS_TOKEN_COOKIE_KEY,
   clearAuth,
@@ -17,7 +17,7 @@ export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt).*)"],
 };
 
-export async function middleware(request: NextRequest) {
+export const middleware: NextMiddleware = async (request: NextRequest) => {
   const response = NextResponse.next();
 
   if (!request.headers.get(FORWARDED_FOR_HEADER_KEY) && request.ip) {
@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
   await refreshAuth(request, response);
 
   return response;
-}
+};
 
 async function refreshAuth(request: NextRequest, response: NextResponse) {
   const accessTokenJwt = request.cookies.get(ACCESS_TOKEN_COOKIE_KEY);

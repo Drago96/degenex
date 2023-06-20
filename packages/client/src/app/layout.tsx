@@ -11,10 +11,11 @@ import Footer from "@/components/footer";
 import ToastContainer from "@/components/toast-container";
 import IconContextProvider from "@/components/icon-context-provider";
 import QueryClientProvider from "@/components/query-client-provider";
+import { Metadata } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Degenex",
   description: "The online trading platform for degenerates",
 };
