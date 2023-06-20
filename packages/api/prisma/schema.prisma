@@ -39,7 +39,7 @@ model Asset {
   type         AssetType
   fullName     String
   description  String?
-  TradingPair  TradingPair[]
+  tradingPairs TradingPair[]
 
   @@index([type], type: Hash)
   @@index([tickerSymbol, fullName])
@@ -51,10 +51,10 @@ enum AssetType {
 }
 
 model Currency {
-  id          Int           @id @default(autoincrement())
-  code        String        @unique
-  fullName    String
-  TradingPair TradingPair[]
+  id           Int           @id @default(autoincrement())
+  code         String        @unique
+  fullName     String
+  tradingPairs TradingPair[]
 
   @@index([code, fullName])
 }

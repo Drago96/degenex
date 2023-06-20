@@ -19,7 +19,7 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
     private readonly prisma: PrismaService,
     private readonly tradingPairsPriceCacheService: TradingPairsPriceCacheService,
     @InjectRedis()
-    private readonly redis: Redis,
+    private readonly redis: Redis
   ) {}
 
   private tradingPairPriceUpdate$ = new Subject<TradingPairPriceUpdateDto>();
@@ -31,12 +31,12 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
         ...accumulatedTradingPairsPrice,
         [tradingPairPriceUpdate.symbol]: tradingPairPriceUpdate.price,
       }),
-      {},
-    ),
+      {}
+    )
   );
 
   @Interval(1000)
-  async setLatestTradingPairsPrice() {
+  async setLatexaddstTradingPairsPrice() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
         asset: true,
@@ -48,14 +48,14 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
       tradingPairs.map(async (tradingPair) => {
         const cachedTradingPairPrice =
           await this.tradingPairsPriceCacheService.getCachedTradingPairPrice(
-            tradingPair,
+            tradingPair
           );
 
         await this.setLatestTradingPairPrice(
           tradingPair,
-          this.generateApproximateTradingPairPrice(cachedTradingPairPrice),
+          this.generateApproximateTradingPairPrice(cachedTradingPairPrice)
         );
-      }),
+      })
     );
   }
 
@@ -71,7 +71,7 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
     await Promise.all(
       tradingPairs.map(async (tradingPair) => {
         const latestTradingPairPrice = await this.getLatestTradingPairPrice(
-          tradingPair,
+          tradingPair
         );
 
         this.tradingPairPriceUpdate$.next({
@@ -79,15 +79,15 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
           symbol: buildTradingPairSymbol(tradingPair),
           price: latestTradingPairPrice,
         });
-      }),
+      })
     );
   }
 
   getPricesForTradingPairSymbols$(tradingPairSymbols: string[]) {
     return this.latestTradingPairsPrice$.pipe(
       map((latestTradingPairPrices) =>
-        pick(latestTradingPairPrices, tradingPairSymbols),
-      ),
+        pick(latestTradingPairPrices, tradingPairSymbols)
+      )
     );
   }
 
@@ -97,25 +97,25 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
 
   private async setLatestTradingPairPrice(
     tradingPair: TradingPairWithAssociations,
-    price: number,
+    price: number
   ) {
     await this.redis.xadd(
       this.buildTradingPairPriceStreamKey(tradingPair),
       '*',
       'price',
-      price,
+      price
     );
   }
 
   private async getLatestTradingPairPrice(
-    tradingPair: TradingPairWithAssociations,
+    tradingPair: TradingPairWithAssociations
   ) {
     const latestTradingPairPriceEntry = await this.redis.xrevrange(
       this.buildTradingPairPriceStreamKey(tradingPair),
       '+',
       '-',
       'COUNT',
-      1,
+      1
     );
 
     if (latestTradingPairPriceEntry.length === 0) {
@@ -135,7 +135,7 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
   }
 
   private buildTradingPairPriceStreamKey(
-    tradingPair: TradingPairWithAssociations,
+    tradingPair: TradingPairWithAssociations
   ) {
     return `trading-pair-price-stream:${buildTradingPairSymbol(tradingPair)}`;
   }

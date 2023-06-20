@@ -10,6 +10,7 @@ import ThemeProvider, { Theme } from "@/components/theme-provider";
 import Footer from "@/components/footer";
 import ToastContainer from "@/components/toast-container";
 import IconContextProvider from "@/components/icon-context-provider";
+import QueryClientProvider from "@/components/query-client-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,14 +33,16 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ThemeProvider defaultTheme={theme}>
           <IconContextProvider>
-            <div className="flex min-h-screen flex-col bg-background dark:bg-background-dark">
-              <Header />
-              <main className="mx-auto w-full max-w-screen-xl grow px-2.5 py-20">
-                {children}
-              </main>
-              <Footer />
-            </div>
-            <ToastContainer theme={theme} />
+            <QueryClientProvider>
+              <div className="flex min-h-screen flex-col bg-background dark:bg-background-dark">
+                <Header />
+                <main className="mx-auto w-full max-w-screen-xl grow px-2.5 py-20">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+              <ToastContainer theme={theme} />
+            </QueryClientProvider>
           </IconContextProvider>
         </ThemeProvider>
       </body>
