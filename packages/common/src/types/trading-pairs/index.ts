@@ -1,1 +1,1 @@
-export * from './trading-pair-response.schema';
+export * from './trading-pair-response.dto';

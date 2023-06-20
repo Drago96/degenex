@@ -1,8 +1,7 @@
 "use server";
 
+import { AuthDto, AuthResponseDto } from "@degenex/common";
 import { appFetch } from "@/lib/app-fetch";
-import { AuthResponseDto } from "@/types/auth/auth-response.dto";
-import { AuthDto } from "@/types/auth/auth.dto";
 import { setAccessToken } from "@/services/auth.service";
 
 export async function loginUser({ email, password }: AuthDto) {

@@ -12,12 +12,14 @@ import { ZodSerializerDto } from 'nestjs-zod';
 import { Response, Request } from 'express';
 import moment from 'moment';
 
-import { UserResponseDto } from '../users/user-response.dto';
-import { AuthResponseDto } from './auth-response.dto';
+import {
+  AuthDto,
+  AuthResponseDto,
+  RegisterDto,
+  SendVerificationCodeDto,
+  UserResponseDto,
+} from '@degenex/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './login.dto';
-import { RegisterDto } from './register.dto';
-import { SendVerificationCodeDto } from './send-verification-code.dto';
 import { AccessTokenAuthGuard } from './access-token-auth.guard';
 
 const REFRESH_TOKEN_COOKIE_KEY = 'refresh-token';
@@ -50,9 +52,9 @@ export class AuthController {
   @ZodSerializerDto(AuthResponseDto)
   async login(
     @Res({ passthrough: true }) response: Response,
-    @Body() loginDto: LoginDto
+    @Body() authDto: AuthDto
   ): Promise<AuthResponseDto> {
-    const authResult = await this.authService.login(loginDto);
+    const authResult = await this.authService.login(authDto);
 
     this.setRefreshTokenCookie(response, authResult.refreshToken);
 

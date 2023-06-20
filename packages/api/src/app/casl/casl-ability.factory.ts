@@ -2,7 +2,7 @@ import { AbilityBuilder, InferSubjects, PureAbility } from '@casl/ability';
 import { createPrismaAbility, PrismaQuery } from '@casl/prisma';
 import { Injectable } from '@nestjs/common';
 
-import { UserResponseDto } from '../users/user-response.dto';
+import { UserResponseDto } from '@degenex/common';
 
 export enum Action {
   Manage = 'manage',
@@ -20,7 +20,7 @@ export type AppAbility = PureAbility<[Action, Subjects], PrismaQuery>;
 export class CaslAbilityFactory {
   createForUser(user: UserResponseDto) {
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
-      createPrismaAbility,
+      createPrismaAbility
     );
 
     if (user.roles.includes('Admin')) {

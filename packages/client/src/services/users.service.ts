@@ -2,7 +2,7 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import jwtDecode from "jwt-decode";
 
-import { AccessTokenPayloadSchema } from "@/types/auth/access-token-payload.dto";
+import { AccessTokenPayloadDto } from "@degenex/common";
 import { CookiesStore } from "@/types/cookies-store";
 import { ACCESS_TOKEN_COOKIE_KEY } from "./auth.service";
 
@@ -15,7 +15,7 @@ export const getCurrentUser = cache(async (cookiesStore?: CookiesStore) => {
     return null;
   }
 
-  const accessToken = await jwtDecode<AccessTokenPayloadSchema>(
+  const accessToken = await jwtDecode<AccessTokenPayloadDto>(
     accessTokenJwt.value
   );
 

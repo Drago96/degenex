@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { TradingPairResponseDto } from '@degenex/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { TradingPairResponseDto } from './trading-pair-response.dto';
 
 @Injectable()
 export class TradingPairsService {

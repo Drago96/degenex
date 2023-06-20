@@ -1,3 +1,4 @@
+import { createZodDto } from 'nestjs-zod/dto';
 import { z } from 'nestjs-zod/z';
 
 import { UserRole } from '@prisma/client';
@@ -7,3 +8,7 @@ export const AccessTokenPayloadSchema = z.object({
   email: z.string().email(),
   roles: z.array(z.nativeEnum(UserRole)),
 });
+
+export class AccessTokenPayloadDto extends createZodDto(
+  AccessTokenPayloadSchema
+) {}

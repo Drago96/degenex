@@ -1,7 +1,8 @@
 "use client";
 
-import { logoutUser } from "@/app/actions";
 import { useTransition } from "react";
+
+import { logoutUser } from "@/app/actions";
 import LinkButton from "../common/link-button";
 
 export default function LogoutLink() {

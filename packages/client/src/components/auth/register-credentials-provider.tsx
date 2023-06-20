@@ -2,7 +2,7 @@
 
 import { createContext, ReactNode, useContext, useState } from "react";
 
-import { AuthDto } from "@/types/auth/auth.dto";
+import { AuthDto } from "@degenex/common";
 
 type RegisterCredentialsContextProps = {
   registerCredentials: AuthDto | null;

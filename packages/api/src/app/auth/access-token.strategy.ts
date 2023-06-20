@@ -3,9 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { AccessTokenPayloadDto, UserResponseDto } from '@degenex/common';
 import { EnvironmentVariables } from '../configuration';
-import { UserResponseDto } from '../users/user-response.dto';
-import { AccessTokenPayloadDto } from './access-token-payload.dto';
 
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy) {

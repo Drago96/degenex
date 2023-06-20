@@ -1,6 +1,7 @@
 import { z } from 'nestjs-zod/z';
 
 import { AssetType } from '@prisma/client';
+import { createZodDto } from 'nestjs-zod/dto';
 
 export const TradingPairResponseSchema = z.object({
   asset: z.object({
@@ -13,3 +14,7 @@ export const TradingPairResponseSchema = z.object({
     code: z.string(),
   }),
 });
+
+export class TradingPairResponseDto extends createZodDto(
+  TradingPairResponseSchema
+) {}

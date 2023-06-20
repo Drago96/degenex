@@ -1,4 +1,4 @@
-import { createZodDto } from 'nestjs-zod';
+import { createZodDto } from 'nestjs-zod/dto';
 import { z } from 'nestjs-zod/z';
 
 export const SendVerificationCodeSchema = z.object({

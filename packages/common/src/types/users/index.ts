@@ -1,1 +1,1 @@
-export * from './user-response.schema';
+export * from './user-response.dto';

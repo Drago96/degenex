@@ -11,15 +11,17 @@ import { randomUUID } from 'crypto';
 import moment from 'moment';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
+import {
+  AccessTokenPayloadDto,
+  AuthDto,
+  RegisterDto,
+  SendVerificationCodeDto,
+} from '@degenex/common';
 import { EnvironmentVariables } from '../configuration';
 import { PrismaService } from '../prisma/prisma.service';
-import { AccessTokenPayloadDto } from './access-token-payload.dto';
 import { AuthResultDto } from './auth-result.dto';
 import { AuthException } from './auth.exception';
 import { QUEUE_NAME } from './send-verification-code.consumer';
-import { LoginDto } from './login.dto';
-import { RegisterDto } from './register.dto';
-import { SendVerificationCodeDto } from './send-verification-code.dto';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
 import { RefreshTokenPayloadDto } from './refresh-token-payload.dto';
 
@@ -71,7 +73,7 @@ export class AuthService {
     return this.generateAuthTokens(user);
   }
 
-  async login(authDto: LoginDto): Promise<AuthResultDto> {
+  async login(authDto: AuthDto): Promise<AuthResultDto> {
     const user = await this.prisma.user.findUnique({
       where: { email: authDto.email },
     });

@@ -1,3 +1,4 @@
+import { createZodDto } from 'nestjs-zod/dto';
 import { z } from 'nestjs-zod/z';
 
 export const AuthSchema = z.object({
@@ -10,3 +11,5 @@ export const AuthSchema = z.object({
     .atLeastOne('uppercase')
     .atLeastOne('special'),
 });
+
+export class AuthDto extends createZodDto(AuthSchema) {}

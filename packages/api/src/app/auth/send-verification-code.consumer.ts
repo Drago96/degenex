@@ -3,9 +3,9 @@ import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
 import { Redis } from 'ioredis';
 
+import { SendVerificationCodeDto } from '@degenex/common';
 import { MailerService } from '../mailer/mailer.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { SendVerificationCodeDto } from './send-verification-code.dto';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
 
 export const QUEUE_NAME = 'send-verification-code';
@@ -16,7 +16,7 @@ export class SendVerificationCodeConsumer {
     private readonly mailerService: MailerService,
     private readonly prisma: PrismaService,
     @InjectRedis()
-    private readonly redis: Redis,
+    private readonly redis: Redis
   ) {}
 
   @Process()
@@ -35,7 +35,7 @@ export class SendVerificationCodeConsumer {
       buildVerificationCodeKey(job.data.email),
       verificationCode,
       'EX',
-      60 * 30,
+      60 * 30
     );
 
     return this.mailerService.sendEmail({
