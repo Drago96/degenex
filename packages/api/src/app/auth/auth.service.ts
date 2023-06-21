@@ -1,5 +1,5 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { User } from '@prisma/client';
@@ -49,6 +49,14 @@ export class AuthService {
   }
 
   async sendVerificationCode(userEmail: string) {
+    const userExists = await this.prisma.user.findUnique({
+      where: { email: userEmail },
+    });
+
+    if (userExists) {
+      throw new ConflictException('Email already taken');
+    }
+
     await this.sendVerificationCodeQueue.add({ email: userEmail });
   }
 
