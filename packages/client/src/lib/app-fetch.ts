@@ -5,7 +5,8 @@ import { ResponseCookies } from "next/dist/compiled/@edge-runtime/cookies";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/services/auth.service";
 import { CookiesStore } from "@/types/cookies-store";
 import { HeadersStore } from "@/types/headers-store";
-import { FORWARDED_FOR_HEADER_KEY } from "@/middleware";
+
+export const FORWARDED_FOR_HEADER_KEY = "x-forwarded-for";
 
 export type FetchResponse<DataT = unknown> =
   | {
@@ -24,6 +25,23 @@ type RequestOptions<BodyT = unknown> = Omit<RequestInit, "body"> & {
   body?: BodyT;
 };
 
+export const getAppFetchHeaders = (cookiesStore?: CookiesStore, headersStore?: HeadersStore) => {
+  cookiesStore = cookiesStore ?? cookies();
+  headersStore = headersStore ?? headers();
+  const nextResponseCookies = new ResponseCookies(headersStore as Headers);
+
+  const refreshedAccessToken = nextResponseCookies.get(ACCESS_TOKEN_COOKIE_KEY);
+  const accessToken = cookiesStore.get(ACCESS_TOKEN_COOKIE_KEY);
+  const forwardedFor = headersStore.get(FORWARDED_FOR_HEADER_KEY) as string;
+
+  return {
+    Authorization: `Bearer ${
+      refreshedAccessToken?.value ?? accessToken?.value
+    }`,
+    "X-Forwarded-For": forwardedFor
+  }
+}
+
 export async function appFetch<ResponseT = unknown, BodyT = unknown>(
   input: RequestInput,
   options?: RequestOptions<BodyT>,
@@ -32,11 +50,6 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
 ): Promise<FetchResponse<ResponseT>> {
   cookiesStore = cookiesStore ?? cookies();
   headersStore = headersStore ?? headers();
-  const nextResponseCookies = new ResponseCookies(headersStore as Headers);
-
-  const refreshedAccessToken = nextResponseCookies.get(ACCESS_TOKEN_COOKIE_KEY);
-  const accessToken = cookiesStore.get(ACCESS_TOKEN_COOKIE_KEY);
-  const forwardedFor = headersStore.get(FORWARDED_FOR_HEADER_KEY) as string;
 
   const fetchResponse = await fetch(
     `${process.env.API_BASE_URL}/api/${input}`,
@@ -46,11 +59,8 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
       credentials: "include",
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${
-          refreshedAccessToken?.value ?? accessToken?.value
-        }`,
         "Content-Type": "application/json",
-        "X-Forwarded-For": forwardedFor,
+        ...getAppFetchHeaders(cookiesStore, headersStore),
         ...options?.headers,
       },
     }

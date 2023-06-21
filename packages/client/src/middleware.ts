@@ -11,7 +11,6 @@ import {
 } from "./services/auth.service";
 import { appFetch } from "./lib/app-fetch";
 
-export const FORWARDED_FOR_HEADER_KEY = "x-forwarded-for";
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt).*)"],
@@ -19,10 +18,6 @@ export const config = {
 
 export const middleware: NextMiddleware = async (request: NextRequest) => {
   const response = NextResponse.next();
-
-  if (!request.headers.get(FORWARDED_FOR_HEADER_KEY) && request.ip) {
-    response.headers.set(FORWARDED_FOR_HEADER_KEY, request.ip);
-  }
 
   await refreshAuth(request, response);
 
@@ -63,7 +58,7 @@ async function refreshAuth(request: NextRequest, response: NextResponse) {
     response.cookies,
     response.headers
   );
-
+  
   if (!refreshAuthResponse.isSuccess) {
     clearAuth(response.cookies);
 
