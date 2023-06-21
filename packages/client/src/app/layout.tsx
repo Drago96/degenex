@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ReactNode } from "react";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
+import { Metadata } from "next";
 
 import Header from "@/components/header";
 import ThemeProvider, { Theme } from "@/components/theme-provider";
@@ -11,14 +12,13 @@ import Footer from "@/components/footer";
 import ToastContainer from "@/components/toast-container";
 import IconContextProvider from "@/components/icon-context-provider";
 import QueryClientProvider from "@/components/query-client-provider";
-import { Metadata } from "next";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Degenex",
   description: "The online trading platform for degenerates",
 };
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default async function RootLayout({
   children,
@@ -30,7 +30,7 @@ export default async function RootLayout({
   const theme = cookiesStore.get("theme")?.value as Theme | undefined;
 
   return (
-    <html lang="en">
+    <html lang="en" className={inter.className}>
       <body className={inter.className}>
         <ThemeProvider defaultTheme={theme}>
           <IconContextProvider>
