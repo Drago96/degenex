@@ -16,7 +16,7 @@ export class TradingPairsPriceCacheService implements OnApplicationBootstrap {
     private readonly prisma: PrismaService,
     private readonly twelveDataService: TwelveDataService,
     @InjectRedis()
-    private readonly redis: Redis,
+    private readonly redis: Redis
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
@@ -31,15 +31,21 @@ export class TradingPairsPriceCacheService implements OnApplicationBootstrap {
     await Promise.all(
       tradingPairs.map(
         async (tradingPair) =>
-          await this.fetchAndCacheTradingPairPrice(tradingPair),
-      ),
+          await this.fetchAndCacheTradingPairPrice(tradingPair)
+      )
     );
   }
 
   async getCachedTradingPairPrice(tradingPair: TradingPairWithAssociations) {
-    return Number(
-      await this.redis.get(this.buildTradingPairPriceCacheKey(tradingPair)),
+    const cachedTradingPairPrice = await this.redis.get(
+      this.buildTradingPairPriceCacheKey(tradingPair)
     );
+
+    if (cachedTradingPairPrice === null) {
+      return null;
+    }
+
+    return Number(cachedTradingPairPrice);
   }
 
   async onApplicationBootstrap() {
@@ -53,18 +59,18 @@ export class TradingPairsPriceCacheService implements OnApplicationBootstrap {
     await Promise.all(
       tradingPairs.map(async (tradingPair) => {
         const cachedTradingPairPrice = await this.getCachedTradingPairPrice(
-          tradingPair,
+          tradingPair
         );
 
         if (cachedTradingPairPrice === null) {
           await this.fetchAndCacheTradingPairPrice(tradingPair);
         }
-      }),
+      })
     );
   }
 
   private async fetchAndCacheTradingPairPrice(
-    tradingPair: TradingPairWithAssociations,
+    tradingPair: TradingPairWithAssociations
   ) {
     const price = await this.twelveDataService.fetchPrice(tradingPair);
 
@@ -72,12 +78,12 @@ export class TradingPairsPriceCacheService implements OnApplicationBootstrap {
       this.buildTradingPairPriceCacheKey(tradingPair),
       price,
       'EX',
-      60 * 60,
+      60 * 60
     );
   }
 
   private buildTradingPairPriceCacheKey(
-    tradingPair: TradingPairWithAssociations,
+    tradingPair: TradingPairWithAssociations
   ) {
     return `trading-pair-price-cached:${buildTradingPairSymbol(tradingPair)}`;
   }
