@@ -1,10 +1,16 @@
-import { ReactNode } from 'react';
+import classNames from "classnames";
+import { ReactNode } from "react";
 
-type PaperProps = { children: ReactNode };
+type PaperProps = { children: ReactNode; className: string };
 
-export default function Paper({ children }: PaperProps) {
+export default function Paper({ children, className }: PaperProps) {
   return (
-    <div className="inline-block min-w-[50%] rounded bg-primary p-20 dark:bg-primary-dark">
+    <div
+      className={classNames(
+        "inline-block min-w-[50%] rounded bg-primary p-20 dark:bg-primary-dark",
+        className
+      )}
+    >
       {children}
     </div>
   );

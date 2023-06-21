@@ -18,8 +18,7 @@ export default function Typography({
     variant,
     {
       className: classNames(
-        "text-primary-contrastText",
-        "dark:text-primary-contrastText-dark",
+        "text-primary-contrastText dark:text-primary-contrastText-dark",
         className
       ),
     },
