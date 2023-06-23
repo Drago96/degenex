@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { ReactNode } from "react";
 
-type PaperProps = { children: ReactNode; className: string };
+type PaperProps = { children: ReactNode; className?: string };
 
 export default function Paper({ children, className }: PaperProps) {
   return (

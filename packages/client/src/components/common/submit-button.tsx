@@ -3,7 +3,7 @@ import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
 import Button from "./button";
 
-type SubmitButtonProps = { children: ReactNode; className: string };
+type SubmitButtonProps = { children: ReactNode; className?: string };
 
 export default function SubmitButton({
   children,

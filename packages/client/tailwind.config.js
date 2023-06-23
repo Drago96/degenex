@@ -32,6 +32,9 @@ module.exports = {
           DEFAULT: colors.red[600],
           dark: colors.red[300],
         },
+        loading: {
+          DEFAULT: colors.slate[200]
+        },
         transparent: {
           DEFAULT: colors.gray[100],
           dark: colors.gray[700],

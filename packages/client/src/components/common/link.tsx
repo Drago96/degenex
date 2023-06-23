@@ -2,7 +2,7 @@ import classNames from "classnames";
 import NextLink, { LinkProps } from "next/link";
 import { ReactNode } from "react";
 
-type AppLinkProps = { children: ReactNode; className: string } & LinkProps;
+type AppLinkProps = { children: ReactNode; className?: string } & LinkProps;
 
 export default function Link({ children, className, ...props }: AppLinkProps) {
   return (

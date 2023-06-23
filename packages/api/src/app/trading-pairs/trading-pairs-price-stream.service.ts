@@ -5,6 +5,7 @@ import Redis from 'ioredis';
 import { pick } from 'lodash';
 import { map, Observable, scan, Subject } from 'rxjs';
 
+import { TradingPairsPricesDto } from '@degenex/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { TradingPairPriceUpdateDto } from './trading-pair-price-update.dto';
 import { TradingPairsPriceCacheService } from './trading-pairs-price-cache.service';
@@ -23,17 +24,16 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
   ) {}
 
   private tradingPairPriceUpdate$ = new Subject<TradingPairPriceUpdateDto>();
-  private latestTradingPairsPrice$: Observable<{
-    [tradingPairSymbol: string]: number;
-  }> = this.tradingPairPriceUpdate$.pipe(
-    scan(
-      (accumulatedTradingPairsPrice, tradingPairPriceUpdate) => ({
-        ...accumulatedTradingPairsPrice,
-        [tradingPairPriceUpdate.symbol]: tradingPairPriceUpdate.price,
-      }),
-      {}
-    )
-  );
+  private latestTradingPairsPrice$: Observable<TradingPairsPricesDto> =
+    this.tradingPairPriceUpdate$.pipe(
+      scan(
+        (accumulatedTradingPairsPrice, tradingPairPriceUpdate) => ({
+          ...accumulatedTradingPairsPrice,
+          [tradingPairPriceUpdate.symbol]: tradingPairPriceUpdate.price,
+        }),
+        {}
+      )
+    );
 
   @Interval(1000)
   async setLatexaddstTradingPairsPrice() {
