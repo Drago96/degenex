@@ -11,7 +11,6 @@ import {
 } from "./services/auth.service";
 import { appFetch } from "./lib/app-fetch";
 
-
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt).*)"],
 };
@@ -58,7 +57,7 @@ async function refreshAuth(request: NextRequest, response: NextResponse) {
     response.cookies,
     response.headers
   );
-  
+
   if (!refreshAuthResponse.isSuccess) {
     clearAuth(response.cookies);
 
