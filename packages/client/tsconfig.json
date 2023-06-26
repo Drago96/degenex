@@ -22,8 +22,12 @@
       "node"
     ],
     "paths": {
-      "@degenex/common": ["packages/common/src/index.ts"],
-      "@/*": ["packages/client/src/*"]
+      "@degenex/common": [
+        "packages/common/src/index.ts"
+      ],
+      "@/*": [
+        "packages/client/src/*"
+      ]
     }
   },
   "include": [
@@ -32,7 +36,9 @@
     "**/*.js",
     "**/*.jsx",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../packages/client/.next/types/**/*.ts",
+    "../../dist/packages/client/.next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
