@@ -7,7 +7,7 @@
     "start": "nx run-many -t serve"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.358.0",
+    "@aws-sdk/client-ses": "^3.359.0",
     "@casl/ability": "^6.5.0",
     "@casl/prisma": "^1.4.0",
     "@headlessui/react": "^1.7.15",
