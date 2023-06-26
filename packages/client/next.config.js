@@ -3,6 +3,7 @@ const nextConfig = {
   experimental: {
     serverActions: true,
   },
+  transpilePackages: ["@degenex/common"],
   async rewrites() {
     return [
       {
