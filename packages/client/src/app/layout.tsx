@@ -20,11 +20,11 @@ export const metadata: Metadata = {
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default async function RootLayout({
-  children,
-}: {
+type RootLayoutProps = {
   children: ReactNode;
-}) {
+};
+
+export default async function RootLayout({ children }: RootLayoutProps) {
   const cookiesStore = cookies();
 
   const theme = cookiesStore.get("theme")?.value as Theme | undefined;

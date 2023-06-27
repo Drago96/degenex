@@ -9,7 +9,7 @@ export default function IconContextProvider({
   children,
 }: IconContextProviderProps) {
   return (
-    <IconContext.Provider value={{ size: "21" }}>
+    <IconContext.Provider value={{ size: "24" }}>
       {children}
     </IconContext.Provider>
   );

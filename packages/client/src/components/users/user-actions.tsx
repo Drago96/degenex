@@ -2,7 +2,7 @@
 
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { MdAccountCircle } from "react-icons/md";
+import { MdAccountCircle, MdLogout, MdWallet } from "react-icons/md";
 
 import LogoutLink from "../auth/logout-link";
 import Link from "../common/link";
@@ -12,7 +12,7 @@ export default function UserActions() {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="mr-2 px-4 py-2 text-primary-contrastText focus:outline-none dark:text-primary-contrastText-dark">
-          <MdAccountCircle size={30} />
+          <MdAccountCircle />
         </Menu.Button>
       </div>
       <Transition
@@ -30,12 +30,24 @@ export default function UserActions() {
             href="/wallet"
             className="mr-0 block ui-active:bg-highlight ui-active:dark:bg-highlight-dark"
           >
-            Wallet
+            <span className="flex flex-row items-center gap-3">
+              <span>
+                <MdWallet />
+              </span>
+              <span>Wallet</span>
+            </span>
           </Menu.Item>
           <Menu.Item
             as={LogoutLink}
             className="mr-0 block ui-active:bg-highlight ui-active:dark:bg-highlight-dark"
-          />
+          >
+            <span className="flex flex-row items-center gap-3">
+              <span>
+                <MdLogout />
+              </span>
+              <span>Logout</span>
+            </span>
+          </Menu.Item>
         </Menu.Items>
       </Transition>
     </Menu>
