@@ -6,6 +6,7 @@ import { MdAccountCircle, MdLogout, MdWallet } from "react-icons/md";
 
 import LogoutLink from "../auth/logout-link";
 import Link from "../common/link";
+import UserAction from "./user-action";
 
 export default function UserActions() {
   return (
@@ -30,23 +31,13 @@ export default function UserActions() {
             href="/wallet"
             className="mr-0 block ui-active:bg-highlight ui-active:dark:bg-highlight-dark"
           >
-            <span className="flex flex-row items-center gap-3">
-              <span>
-                <MdWallet />
-              </span>
-              <span>Wallet</span>
-            </span>
+            <UserAction icon={MdWallet}>Wallet</UserAction>
           </Menu.Item>
           <Menu.Item
             as={LogoutLink}
             className="mr-0 block ui-active:bg-highlight ui-active:dark:bg-highlight-dark"
           >
-            <span className="flex flex-row items-center gap-3">
-              <span>
-                <MdLogout />
-              </span>
-              <span>Logout</span>
-            </span>
+            <UserAction icon={MdLogout}>Logout</UserAction>
           </Menu.Item>
         </Menu.Items>
       </Transition>

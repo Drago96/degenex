@@ -10,9 +10,7 @@ export const useEventSourceQuery = <DataT = unknown>(
 
   useEffect(() => {
     return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
+      eventSourceRef.current?.close();
     };
   }, []);
 
