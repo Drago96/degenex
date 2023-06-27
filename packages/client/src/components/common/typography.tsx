@@ -1,5 +1,5 @@
-import classNames from "classnames";
 import { createElement, ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
 type Variant = "p" | "div" | "span" | "h1" | "h2" | "h3" | "h4";
 
@@ -17,7 +17,7 @@ export default function Typography({
   return createElement(
     variant,
     {
-      className: classNames(
+      className: twMerge(
         "text-primary-contrastText dark:text-primary-contrastText-dark",
         className
       ),

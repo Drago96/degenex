@@ -1,19 +1,28 @@
 "use client";
 
-import { forwardRef, Ref, useTransition } from "react";
+import { ButtonHTMLAttributes, forwardRef, Ref, useTransition } from "react";
+import { twMerge } from "tailwind-merge";
 
 import { logoutUser } from "@/app/actions";
 import LinkButton from "../common/link-button";
 
-function LogoutLink(_props: object, ref: Ref<HTMLButtonElement>) {
+type LogoutLinkProps = {
+  className?: string;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
+
+function LogoutLink(
+  { className, ...props }: LogoutLinkProps,
+  ref: Ref<HTMLButtonElement>
+) {
   const [isLogoutPending, startLogoutTransition] = useTransition();
 
   return (
     <LinkButton
-      className="w-full text-left"
+      {...props}
+      className={twMerge("w-full text-left", className)}
       disabled={isLogoutPending}
-      ref={ref}
       onClick={() => startLogoutTransition(async () => await logoutUser())}
+      ref={ref}
     >
       Logout
     </LinkButton>

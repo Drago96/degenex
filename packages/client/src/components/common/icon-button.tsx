@@ -1,5 +1,5 @@
-import classNames from "classnames";
 import { ButtonHTMLAttributes, ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
 type IconButtonProps = {
   children: ReactNode;
@@ -13,7 +13,7 @@ export default function IconButton({
   return (
     <button
       {...props}
-      className={classNames(
+      className={twMerge(
         "bg-none px-4 py-2 text-primary-contrastText dark:text-primary-contrastText-dark",
         className
       )}

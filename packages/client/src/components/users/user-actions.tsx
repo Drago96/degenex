@@ -5,6 +5,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { MdAccountCircle } from "react-icons/md";
 
 import LogoutLink from "../auth/logout-link";
+import Link from "../common/link";
 
 export default function UserActions() {
   return (
@@ -24,9 +25,17 @@ export default function UserActions() {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-primary-dark">
-          <div className="py-1">
-            <Menu.Item>{() => <LogoutLink />}</Menu.Item>
-          </div>
+          <Menu.Item
+            as={Link}
+            href="/wallet"
+            className="mr-0 block ui-active:bg-highlight ui-active:dark:bg-highlight-dark"
+          >
+            Wallet
+          </Menu.Item>
+          <Menu.Item
+            as={LogoutLink}
+            className="mr-0 block ui-active:bg-highlight ui-active:dark:bg-highlight-dark"
+          />
         </Menu.Items>
       </Transition>
     </Menu>

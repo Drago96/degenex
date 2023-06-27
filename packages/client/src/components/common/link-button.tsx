@@ -1,5 +1,5 @@
-import classNames from "classnames";
 import { ButtonHTMLAttributes, forwardRef, ReactNode, Ref } from "react";
+import { twMerge } from "tailwind-merge";
 
 type LinkButtonProps = {
   children: ReactNode;
@@ -12,7 +12,7 @@ function LinkButton(
   return (
     <button
       {...props}
-      className={classNames(
+      className={twMerge(
         "mr-2 px-4 py-2 text-primary-contrastText focus:outline-none dark:text-primary-contrastText-dark",
         className
       )}

@@ -30,6 +30,10 @@ module.exports = {
             DEFAULT: colors.white,
           },
         },
+        highlight: {
+          DEFAULT: colors.gray[200],
+          dark: colors.gray[700]
+        },
         error: {
           DEFAULT: colors.red[600],
           dark: colors.red[300],
@@ -51,5 +55,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require("@headlessui/tailwindcss")
+  ],
 };

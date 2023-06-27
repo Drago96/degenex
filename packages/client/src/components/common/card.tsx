@@ -1,12 +1,12 @@
-import classNames from "classnames";
 import { ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
 type CardProps = { children: ReactNode; className?: string };
 
 export default function Card({ children, className }: CardProps) {
   return (
     <div
-      className={classNames(
+      className={twMerge(
         "inline-block rounded bg-primary p-2 dark:bg-primary-dark",
         className
       )}
