@@ -7,7 +7,7 @@ export default function Paper({ children, className }: PaperProps) {
   return (
     <div
       className={twMerge(
-        "inline-block min-w-[50%] rounded bg-primary p-20 dark:bg-primary-dark",
+        "inline-block w-full max-w-[600px] rounded bg-primary p-[calc(30px+1.5625vw)] dark:bg-primary-dark",
         className
       )}
     >
