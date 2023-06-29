@@ -20,6 +20,7 @@ export const EnvironmentVariablesSchema = z.object({
   MAILER_SOURCE_EMAIL: z.string().email(),
   ENCRYPTION_PASSWORD: z.string(),
   RAPID_API_KEY: z.string(),
+  STRIPE_SECRET_KEY: z.string(),
 });
 
 export class EnvironmentVariables extends createZodDto(

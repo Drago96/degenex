@@ -30,7 +30,7 @@ export default function TradingPairsList({
   );
 
   return (
-    <ul className="flex flex-row gap-5">
+    <ul className="flex flex-wrap flex-row gap-5">
       {tradingPairSymbols.map((tradingPairSymbol) => {
         const tradingPairPrice = get(data, tradingPairSymbol);
 
