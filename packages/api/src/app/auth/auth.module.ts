@@ -8,18 +8,20 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AccessTokenStrategy } from './access-token.strategy';
 import {
-  QUEUE_NAME,
+  SEND_VERIFICATION_CODE_QUEUE_NAME,
   SendVerificationCodeConsumer,
 } from './send-verification-code.consumer';
+import { StripeModule } from '@/stripe/stripe.module';
 
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({}),
     BullModule.registerQueue({
-      name: QUEUE_NAME,
+      name: SEND_VERIFICATION_CODE_QUEUE_NAME,
     }),
     MailerModule,
+    StripeModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, AccessTokenStrategy, SendVerificationCodeConsumer],

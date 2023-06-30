@@ -15,6 +15,8 @@ import { EncryptionModule } from './encryption/encryption.module';
 import { TradingPairsModule } from './trading-pairs/trading-pairs.module';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.filter';
+import { StripeModule } from './stripe/stripe.module';
+import { DepositsModule } from './deposits/deposits.module';
 
 @Module({
   imports: [
@@ -64,6 +66,8 @@ import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.fi
     MailerModule,
     EncryptionModule,
     TradingPairsModule,
+    StripeModule,
+    DepositsModule,
   ],
   providers: [
     {

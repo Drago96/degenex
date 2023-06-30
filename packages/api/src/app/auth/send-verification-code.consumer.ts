@@ -8,9 +8,9 @@ import { MailerService } from '../mailer/mailer.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
 
-export const QUEUE_NAME = 'send-verification-code';
+export const SEND_VERIFICATION_CODE_QUEUE_NAME = 'send-verification-code';
 
-@Processor(QUEUE_NAME)
+@Processor(SEND_VERIFICATION_CODE_QUEUE_NAME)
 export class SendVerificationCodeConsumer {
   constructor(
     private readonly mailerService: MailerService,

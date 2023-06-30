@@ -17,11 +17,13 @@ import {
   RegisterDto,
   SendVerificationCodeDto,
 } from '@degenex/common';
+import { CREATE_STRIPE_CUSTOMER_QUEUE_NAME } from '@/stripe/create-stripe-customer.consumer';
+import { CreateStripeCustomerDto } from '@/stripe/create-stripe-customer.dto';
 import { EnvironmentVariables } from '../configuration';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthResultDto } from './auth-result.dto';
 import { AuthException } from './auth.exception';
-import { QUEUE_NAME } from './send-verification-code.consumer';
+import { SEND_VERIFICATION_CODE_QUEUE_NAME } from './send-verification-code.consumer';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
 import { RefreshTokenPayloadDto } from './refresh-token-payload.dto';
 
@@ -31,8 +33,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService<EnvironmentVariables>,
-    @InjectQueue(QUEUE_NAME)
+    @InjectQueue(SEND_VERIFICATION_CODE_QUEUE_NAME)
     private readonly sendVerificationCodeQueue: Queue<SendVerificationCodeDto>,
+    @InjectQueue(CREATE_STRIPE_CUSTOMER_QUEUE_NAME)
+    private readonly createStripeCustomerQueue: Queue<CreateStripeCustomerDto>,
     @InjectRedis()
     private readonly redis: Redis
   ) {}
@@ -77,6 +81,8 @@ export class AuthService {
         password: passwordHash,
       },
     });
+
+    await this.createStripeCustomerQueue.add({ email: user.email });
 
     return this.generateAuthTokens(user);
   }
