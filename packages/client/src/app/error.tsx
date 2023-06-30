@@ -2,7 +2,7 @@
 
 import { MdTrendingDown } from "react-icons/md";
 
-import Typography from "@/components/common/typography";
+import Typography from "@/components/ui/typography";
 
 export default function Error() {
   return (

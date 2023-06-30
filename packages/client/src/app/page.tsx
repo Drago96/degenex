@@ -1,5 +1,5 @@
 import { TradingPairResponseDto } from "@degenex/common";
-import Typography from "@/components/common/typography";
+import Typography from "@/components/ui/typography";
 import TradingPairsList from "@/components/trading-pairs/trading-pairs-list";
 import { appFetch } from "@/lib/app-fetch";
 

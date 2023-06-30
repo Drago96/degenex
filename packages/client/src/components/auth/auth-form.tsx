@@ -5,12 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 import { AuthDto, AuthSchema } from "@degenex/common";
-import Input from "@/components/common/input";
-import Paper from "@/components/common/paper";
-import Typography from "@/components/common/typography";
-import IconButton from "@/components/common/icon-button";
-import SubmitButton from "@/components/common/submit-button";
-import ErrorMessage from "@/components/common/error-message";
+import Input from "@/components/ui/input";
+import Paper from "@/components/ui/paper";
+import Typography from "@/components/ui/typography";
+import SubmitButton from "@/components/ui/submit-button";
+import ErrorMessage from "@/components/ui/error-message";
+import Button from "@/components/ui/button";
 import { createFormServerAction } from "@/lib/create-form-server-action";
 import { useToggle } from "@/hooks/use-toggle";
 import { FetchResponse } from "@/lib/app-fetch";
@@ -71,13 +71,14 @@ export default function AuthForm({
             label="Password"
             errors={errors}
             endAdornment={
-              <IconButton
+              <Button
                 type="button"
+                variant="icon"
                 tabIndex={-1}
                 onClick={togglePasswordVisibility}
               >
                 {isPasswordVisible ? <MdVisibilityOff /> : <MdVisibility />}
-              </IconButton>
+              </Button>
             }
             {...register("password")}
           />

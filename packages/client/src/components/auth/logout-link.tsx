@@ -10,7 +10,7 @@ import {
 import { twMerge } from "tailwind-merge";
 
 import { logoutUser } from "@/app/actions";
-import LinkButton from "../common/link-button";
+import Button from "@/components/ui/button";
 
 type LogoutLinkProps = {
   className?: string;
@@ -24,8 +24,9 @@ function LogoutLink(
   const [isLogoutPending, startLogoutTransition] = useTransition();
 
   return (
-    <LinkButton
+    <Button
       {...props}
+      variant="link"
       className={twMerge("w-full text-left", className)}
       disabled={isLogoutPending || disabled}
       onClick={(event) => {
@@ -38,7 +39,7 @@ function LogoutLink(
       ref={ref}
     >
       {children}
-    </LinkButton>
+    </Button>
   );
 }
 

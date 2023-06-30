@@ -5,7 +5,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { MdAccountCircle, MdLogout, MdWallet } from "react-icons/md";
 
 import LogoutLink from "../auth/logout-link";
-import Link from "../common/link";
+import Link from "../ui/link";
 import UserAction from "./user-action";
 
 export default function UserActions() {

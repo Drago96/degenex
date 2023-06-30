@@ -1,4 +1,4 @@
-import { SkeletonContainer, SkeletonElement } from "../common/skeleton";
+import { SkeletonContainer, SkeletonElement } from "../ui/skeleton";
 
 export default function TradingPairPriceSkeleton() {
   return (

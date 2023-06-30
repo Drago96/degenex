@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { getCurrentUser } from "@/services/users.service";
 import ThemeSwitcher from "./theme-switcher";
-import Link from "./common/link";
+import Link from "./ui/link";
 import UserActions from "./users/user-actions";
 
 export default async function Header() {

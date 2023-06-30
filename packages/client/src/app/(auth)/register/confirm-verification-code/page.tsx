@@ -7,9 +7,9 @@ import { Controller, useForm } from "react-hook-form";
 import { find } from "lodash";
 
 import { VERIFICATION_CODE_LENGTH } from "@degenex/common";
-import Paper from "@/components/common/paper";
-import Typography from "@/components/common/typography";
-import Input from "@/components/common/input";
+import Paper from "@/components/ui/paper";
+import Typography from "@/components/ui/typography";
+import Input from "@/components/ui/input";
 import { useRegisterCredentials } from "@/components/auth/register-credentials-provider";
 import ClientRenderedRoute from "@/components/client-rendered-route";
 import { createFormServerAction } from "@/lib/create-form-server-action";

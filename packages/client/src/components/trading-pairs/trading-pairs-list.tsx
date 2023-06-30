@@ -5,8 +5,8 @@ import { get } from "lodash";
 import { TradingPairsPricesDto, TradingPairResponseDto } from "@degenex/common";
 import { useEventSourceQuery } from "@/hooks/use-event-source-query";
 import { buildTradingPairPricesQuery } from "@/lib/trading-pairs/build-trading-pair-prices-query";
-import Typography from "../common/typography";
-import Card from "../common/card";
+import Typography from "../ui/typography";
+import Card from "../ui/card";
 import TradingPairPriceSkeleton from "./trading-pair-price-skeleton";
 
 type TradingPairsListProps = {

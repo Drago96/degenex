@@ -1,4 +1,4 @@
-import Typography from "@/components/common/typography";
+import Typography from "@/components/ui/typography";
 
 export default function Wallet() {
   return (
