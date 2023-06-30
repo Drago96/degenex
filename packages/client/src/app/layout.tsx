@@ -37,7 +37,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             <QueryClientProvider>
               <div className="flex min-h-screen flex-col bg-background dark:bg-background-dark">
                 <Header />
-                <main className="mx-auto w-full max-w-screen-xl grow px-2.5 py-20">
+                <main className="container mx-auto grow px-4 py-10 lg:py-20">
                   {children}
                 </main>
                 <Footer />

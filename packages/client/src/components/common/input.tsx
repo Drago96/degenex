@@ -35,15 +35,13 @@ export default forwardRef(function Input(
         <input
           id={name}
           name={name}
-          className="inline-block w-full rounded-lg border border-gray-300 p-2.5
+          className="inline-block w-full rounded-lg border border-gray-300 p-2
           text-sm placeholder-transparent-contrastText disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none dark:bg-transparent-dark dark:text-primary-contrastText-dark"
           ref={ref}
           {...props}
         />
         {endAdornment && (
-          <span className="absolute right-0">
-            <div>{endAdornment}</div>
-          </span>
+          <span className="absolute right-2 flex">{endAdornment}</span>
         )}
       </div>
       {errors && (

@@ -13,7 +13,7 @@ function LinkButton(
     <button
       {...props}
       className={twMerge(
-        "mr-2 px-4 py-2 text-primary-contrastText focus:outline-none dark:text-primary-contrastText-dark",
+        "text-primary-contrastText focus:outline-none dark:text-primary-contrastText-dark",
         className
       )}
       ref={ref}

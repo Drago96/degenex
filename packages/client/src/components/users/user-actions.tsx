@@ -10,12 +10,10 @@ import UserAction from "./user-action";
 
 export default function UserActions() {
   return (
-    <Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button className="mr-2 px-4 py-2 text-primary-contrastText focus:outline-none dark:text-primary-contrastText-dark">
-          <MdAccountCircle />
-        </Menu.Button>
-      </div>
+    <Menu as="div" className="flex">
+      <Menu.Button className=" text-primary-contrastText focus:outline-none dark:text-primary-contrastText-dark">
+        <MdAccountCircle />
+      </Menu.Button>
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"

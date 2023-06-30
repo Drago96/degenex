@@ -14,7 +14,7 @@ export default function IconButton({
     <button
       {...props}
       className={twMerge(
-        "bg-none px-4 py-2 text-primary-contrastText dark:text-primary-contrastText-dark",
+        "bg-none text-primary-contrastText dark:text-primary-contrastText-dark",
         className
       )}
     >
