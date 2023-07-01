@@ -1,5 +1,13 @@
-import { Controller, Post, HttpCode, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  HttpCode,
+  UseGuards,
+  Req,
+  Body,
+} from '@nestjs/common';
 
+import { StripePaymentDto } from '@/stripe/stripe-payment.dto';
 import { AccessTokenAuthGuard } from '../auth/access-token-auth.guard';
 import { StripeService } from '../stripe/stripe.service';
 
@@ -10,5 +18,11 @@ export class DepositsController {
 
   @Post()
   @HttpCode(204)
-  async createDeposit() {}
+  async createDeposit(@Req() req, @Body() stripePaymentDto: StripePaymentDto) {
+    await this.stripeService.createPaymentIntent(
+      req.user.id,
+      'deposit',
+      stripePaymentDto
+    );
+  }
 }
