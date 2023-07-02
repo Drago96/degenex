@@ -3,8 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 
 import { EnvironmentVariables } from '@/configuration';
-import { StripePaymentDto } from './stripe-payment.dto';
 import { PrismaService } from '@/prisma/prisma.service';
+import { StripePaymentDto } from './stripe-payment.dto';
+import { upperCase } from 'lodash';
 
 type ChargeType = 'deposit';
 
@@ -14,7 +15,7 @@ export class StripeService {
 
   constructor(
     private readonly prisma: PrismaService,
-    configService: ConfigService<EnvironmentVariables>
+    private readonly configService: ConfigService<EnvironmentVariables>
   ) {
     this.stripe = new Stripe(configService.get('STRIPE_SECRET_KEY'), {
       apiVersion: null,
@@ -27,10 +28,10 @@ export class StripeService {
     });
   }
 
-  async createPaymentIntent(
+  async createCheckoutSession(
     userId: number,
     chargeType: ChargeType,
-    stripePaymentDto: StripePaymentDto,
+    stripePaymentDto: StripePaymentDto
   ) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -47,14 +48,27 @@ export class StripeService {
       );
     }
 
-    return this.stripe.paymentIntents.create({
+    return this.stripe.checkout.sessions.create({
       customer: user.paymentsCustomerId,
-      payment_method: stripePaymentDto.paymentMethod,
-      amount: stripePaymentDto.amount,
-      currency: stripePaymentDto.currency,
+      payment_method_types: ['card'],
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: stripePaymentDto.currency,
+            unit_amount: Number(stripePaymentDto.amount.toFixed(2)) * 100,
+            product_data: {
+              name: upperCase(chargeType),
+            },
+          },
+          quantity: 1,
+        },
+      ],
       metadata: {
         chargeType,
       },
+      success_url: `${this.configService.get('CLIENT_URL')}/wallet`,
+      cancel_url: `${this.configService.get('CLIENT_URL')}/wallet`,
     });
   }
 }

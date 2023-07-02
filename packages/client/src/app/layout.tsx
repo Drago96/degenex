@@ -30,7 +30,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const theme = cookiesStore.get("theme")?.value as Theme | undefined;
 
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en">
       <body className={inter.className}>
         <ThemeProvider defaultTheme={theme}>
           <IconContextProvider>

@@ -15,7 +15,7 @@ export const setAccessToken = (
   cookiesStore.set(ACCESS_TOKEN_COOKIE_KEY, accessToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
+    sameSite: "lax",
     expires: moment().add(7, "days").toDate(),
   });
 };

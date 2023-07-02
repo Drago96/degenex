@@ -21,6 +21,7 @@ export const EnvironmentVariablesSchema = z.object({
   ENCRYPTION_PASSWORD: z.string(),
   RAPID_API_KEY: z.string(),
   STRIPE_SECRET_KEY: z.string(),
+  CLIENT_URL: z.string(),
 });
 
 export class EnvironmentVariables extends createZodDto(

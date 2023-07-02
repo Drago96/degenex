@@ -17,9 +17,9 @@ export class DepositsController {
   constructor(private readonly stripeService: StripeService) {}
 
   @Post()
-  @HttpCode(204)
+  @HttpCode(201)
   async createDeposit(@Req() req, @Body() stripePaymentDto: StripePaymentDto) {
-    await this.stripeService.createPaymentIntent(
+    return await this.stripeService.createCheckoutSession(
       req.user.id,
       'deposit',
       stripePaymentDto
