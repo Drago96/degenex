@@ -7,7 +7,7 @@ import {
   Body,
 } from '@nestjs/common';
 
-import { StripePaymentDto } from '@/stripe/stripe-payment.dto';
+import { StripePaymentDto } from '@degenex/common';
 import { AccessTokenAuthGuard } from '../auth/access-token-auth.guard';
 import { StripeService } from '../stripe/stripe.service';
 

@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
+import { upperCase } from 'lodash';
 
+import { StripePaymentDto } from '@degenex/common';
 import { EnvironmentVariables } from '@/configuration';
 import { PrismaService } from '@/prisma/prisma.service';
-import { StripePaymentDto } from './stripe-payment.dto';
-import { upperCase } from 'lodash';
 
 type ChargeType = 'deposit';
 

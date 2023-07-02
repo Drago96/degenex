@@ -1,16 +1,12 @@
 "use client";
 
 import { useTransition } from "react";
-import { loadStripe } from "@stripe/stripe-js";
 import { toast } from "react-toastify";
 
 import Button from "@/components/ui/button";
 import Typography from "@/components/ui/typography";
+import { stripePromise } from "@/lib/stripe-promise";
 import { createCheckoutSession } from "./actions";
-
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
-);
 
 const showDepositError = () =>
   toast.error("There was an issue with your deposit");
