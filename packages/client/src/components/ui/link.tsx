@@ -10,7 +10,6 @@ function Link(
 ) {
   return (
     <NextLink
-      prefetch={false}
       {...props}
       className={twMerge(
         "text-primary-contrastText focus:outline-none dark:text-primary-contrastText-dark",
