@@ -42,6 +42,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 </main>
                 <Footer />
               </div>
+              <div id="headlessui-portal-root">
+                <div />
+              </div>
               <ToastContainer theme={theme} />
             </QueryClientProvider>
           </IconContextProvider>

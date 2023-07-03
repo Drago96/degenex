@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { Fragment } from "react";
 
 import DepositForm from "@/components/wallet/deposit-form";
+import { useInteractiveModal } from "@/hooks/use-interactive-modal";
 
 export default function DepositModal() {
   const router = useRouter();
+  useInteractiveModal();
 
   return (
     <Transition appear show={true} as={Fragment}>
@@ -22,7 +24,7 @@ export default function DepositModal() {
           leaveTo="opacity-0"
         >
           <Dialog.Backdrop>
-            <div className="fixed inset-0 bg-black bg-opacity-25 dark:bg-gray-50" />
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
           </Dialog.Backdrop>
         </Transition.Child>
 
