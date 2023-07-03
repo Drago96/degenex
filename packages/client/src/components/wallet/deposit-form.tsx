@@ -56,6 +56,7 @@ export default function DepositForm() {
         type="number"
         label="Amount"
         errors={errors}
+        placeholder="Enter 10-100000"
         autoFocus
         {...register("amount", { valueAsNumber: true })}
       />
