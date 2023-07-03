@@ -79,6 +79,13 @@
         "cwd": "packages/api",
         "command": "dotenv -e .env.local ts-node prisma/seeds/main.ts"
       }
+    },
+    "stripe:webhooks": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/api",
+        "command": "stripe listen --forward-to http://localhost:3000/api/stripe/webhooks"
+      }
     }
   },
   "tags": []
