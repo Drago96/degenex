@@ -1,5 +1,8 @@
+"use client";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import classNames from "classnames";
 
 import { ALLOWED_CURRENCIES, StripePaymentSchema } from "@degenex/common";
 import { createFormServerAction } from "@/lib/create-form-server-action";
@@ -9,8 +12,15 @@ import Input from "../ui/input";
 import SubmitButton from "../ui/submit-button";
 import ErrorMessage from "../ui/error-message";
 import Select from "../ui/select";
+import Typography from "../ui/typography";
 
-export default function DepositForm() {
+type Variant = "page" | "modal";
+
+type DepositFormProps = {
+  variant?: Variant;
+};
+
+export default function DepositForm({ variant = "page" }: DepositFormProps) {
   const {
     register,
     trigger,
@@ -47,7 +57,22 @@ export default function DepositForm() {
   });
 
   return (
-    <form className="flex flex-col gap-3" action={formAction}>
+    <form
+      className={classNames("flex flex-col", {
+        "gap-5": variant === "page",
+        "gap-3": variant === "modal",
+      })}
+      action={formAction}
+    >
+      <Typography
+        className={classNames("text-center", {
+          "text-5xl": variant === "page",
+          "text-3xl": variant === "modal",
+        })}
+        variant="h1"
+      >
+        Deposit
+      </Typography>
       {errors.root && (
         <ErrorMessage className="text-center">
           {errors.root.message}

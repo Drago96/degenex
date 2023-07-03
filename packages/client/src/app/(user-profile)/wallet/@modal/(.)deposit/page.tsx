@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Fragment } from "react";
 
 import DepositForm from "@/components/wallet/deposit-form";
-import Typography from "@/components/ui/typography";
 
 export default function DepositModal() {
   const router = useRouter();
@@ -38,11 +37,8 @@ export default function DepositModal() {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="flex w-full max-w-md transform flex-col gap-3 overflow-hidden rounded-2xl bg-primary p-6 text-left align-middle shadow-xl transition-all dark:bg-primary-dark">
-                <Dialog.Title className="text-lg font-medium leading-6">
-                  <Typography>Deposit</Typography>
-                </Dialog.Title>
-                <DepositForm />
+              <Dialog.Panel className="flex w-full max-w-md transform flex-col gap-3 overflow-hidden rounded bg-primary p-6 text-left align-middle shadow-xl transition-all dark:bg-primary-dark">
+                <DepositForm variant="modal" />
               </Dialog.Panel>
             </Transition.Child>
           </div>
