@@ -1,56 +1,51 @@
-import { ErrorMessage as FormErrorMessage } from "@hookform/error-message";
-import {
-  forwardRef,
-  HTMLInputTypeAttribute,
-  HTMLProps,
-  LegacyRef,
-  ReactNode,
-} from "react";
-import { FieldErrors, FieldValues } from "react-hook-form";
+import { forwardRef, HTMLProps, Ref, ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
-import AppErrorMessage from "./error-message";
+import FormField, { FormFieldProps } from "./form-field";
 
 type InputProps = {
-  name: string;
-  type?: HTMLInputTypeAttribute;
-  errors?: FieldErrors<FieldValues>;
   endAdornment?: ReactNode;
-} & HTMLProps<HTMLInputElement>;
+} & HTMLProps<HTMLInputElement> &
+  Omit<FormFieldProps, "renderField" | "children">;
 
-export default forwardRef(function Input(
-  { name, label, errors, endAdornment, ...props }: InputProps,
-  ref: LegacyRef<HTMLInputElement>
+function Input(
+  {
+    name,
+    label,
+    errors,
+    endAdornment,
+    className,
+    containerProps = {},
+    labelProps = {},
+    errorProps = {},
+    ...props
+  }: InputProps,
+  ref: Ref<HTMLInputElement>
 ) {
   return (
-    <div>
-      {label && (
-        <label
-          htmlFor={name}
-          className="mb-2 block text-sm font-medium text-primary-contrastText dark:text-primary-contrastText-dark"
-        >
-          {label}
-        </label>
-      )}
-      <div className="relative flex items-center">
-        <input
-          id={name}
-          name={name}
-          className="inline-block w-full rounded-lg border border-gray-300 p-2
-          text-sm placeholder-transparent-contrastText disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none dark:bg-transparent-dark dark:text-primary-contrastText-dark"
-          ref={ref}
-          {...props}
-        />
-        {endAdornment && (
-          <span className="absolute right-2 flex">{endAdornment}</span>
+    <FormField
+      name={name}
+      label={label}
+      errors={errors}
+      containerProps={containerProps}
+      labelProps={labelProps}
+      errorProps={errorProps}
+    >
+      <input
+        id={name}
+        name={name}
+        className={twMerge(
+          "inline-block w-full rounded-lg border border-gray-300 p-2 text-sm placeholder-transparent-contrastText disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none dark:bg-transparent-dark dark:text-primary-contrastText-dark",
+          className
         )}
-      </div>
-      {errors && (
-        <FormErrorMessage
-          errors={errors}
-          name={name}
-          render={({ message }) => <AppErrorMessage>{message}</AppErrorMessage>}
-        />
+        ref={ref}
+        {...props}
+      />
+      {endAdornment && (
+        <span className="absolute right-2 flex">{endAdornment}</span>
       )}
-    </div>
+    </FormField>
   );
-});
+}
+
+export default forwardRef(Input);

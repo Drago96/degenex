@@ -52,15 +52,26 @@ export default function DepositForm() {
           {errors.root.message}
         </ErrorMessage>
       )}
-      <Input
-        type="number"
-        label="Amount"
-        errors={errors}
-        placeholder="Enter 10-100000"
-        autoFocus
-        {...register("amount", { valueAsNumber: true })}
-      />
-      <Input label="Currency" errors={errors} {...register("currency")} />
+      <div className="flex flex-row gap-3">
+        <Input
+          type="number"
+          label="Amount"
+          errors={errors}
+          placeholder="Enter 10-100000"
+          autoFocus
+          containerProps={{
+            className: "grow",
+          }}
+          {...register("amount", { valueAsNumber: true })}
+        />
+        <Input
+          errors={errors}
+          {...register("currency")}
+          containerProps={{
+            className: "w-1/4",
+          }}
+        />
+      </div>
       <SubmitButton>Deposit</SubmitButton>
     </form>
   );

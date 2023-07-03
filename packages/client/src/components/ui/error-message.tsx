@@ -1,17 +1,20 @@
-import { ReactNode } from "react";
+import { HTMLProps, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 type ErrorMessageProps = {
   children: ReactNode;
-  className?: string;
-};
+} & HTMLProps<HTMLDivElement>;
 
 export default function ErrorMessage({
   children,
   className,
+  ...props
 }: ErrorMessageProps) {
   return (
-    <div className={twMerge("text-error dark:text-error-dark", className)}>
+    <div
+      className={twMerge("text-error dark:text-error-dark", className)}
+      {...props}
+    >
       {children}
     </div>
   );
