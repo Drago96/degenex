@@ -8,6 +8,7 @@ export const seedAssets = async (prisma: PrismaClient) => {
       tickerSymbol: 'AAPL',
       fullName: 'Apple',
       type: AssetType.Stock,
+      logoUrl: 'https://d1zd1ouamy16t4.cloudfront.net/logos/apple-logo.svg',
     },
   });
 
@@ -18,6 +19,7 @@ export const seedAssets = async (prisma: PrismaClient) => {
       tickerSymbol: 'MSFT',
       fullName: 'Microsoft',
       type: AssetType.Stock,
+      logoUrl: 'https://d1zd1ouamy16t4.cloudfront.net/logos/microsoft-logo.svg',
     },
   });
 
@@ -28,6 +30,7 @@ export const seedAssets = async (prisma: PrismaClient) => {
       tickerSymbol: 'BTC',
       fullName: 'Bitcoin',
       type: AssetType.Crypto,
+      logoUrl: 'https://d1zd1ouamy16t4.cloudfront.net/logos/bitcoin-logo.svg',
     },
   });
 

@@ -15,7 +15,9 @@ export default function Error({ reset }: ErrorProps) {
       <div className="text-error dark:text-error-dark">
         <MdTrendingDown size={300} />
       </div>
-      <Typography className="text-3xl">Oops, something went wrong!</Typography>
+      <Typography className="text-center text-3xl">
+        Oops, something went wrong!
+      </Typography>
       <Button onClick={reset}>Try again</Button>
     </div>
   );

@@ -4,6 +4,16 @@ const nextConfig = {
     serverActions: true,
   },
   transpilePackages: ["@degenex/common"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: process.env.CLOUDFRONT_URL,
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
   async rewrites() {
     return [
       {

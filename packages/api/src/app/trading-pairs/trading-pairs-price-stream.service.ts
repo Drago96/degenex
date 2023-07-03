@@ -5,14 +5,11 @@ import Redis from 'ioredis';
 import { pick } from 'lodash';
 import { map, Observable, scan, Subject } from 'rxjs';
 
-import { TradingPairsPricesDto } from '@degenex/common';
+import { buildTradingPairSymbol, TradingPairsPricesDto } from '@degenex/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { TradingPairPriceUpdateDto } from './trading-pair-price-update.dto';
 import { TradingPairsPriceCacheService } from './trading-pairs-price-cache.service';
-import {
-  buildTradingPairSymbol,
-  TradingPairWithAssociations,
-} from './trading-pairs.utils';
+import { TradingPairWithAssociations } from './trading-pair-with-associations';
 
 @Injectable()
 export class TradingPairsPriceStreamService implements OnModuleDestroy {

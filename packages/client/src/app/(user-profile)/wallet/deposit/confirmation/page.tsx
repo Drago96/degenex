@@ -9,7 +9,9 @@ export default function DepositSuccess() {
       <div className="text-success dark:text-success-dark">
         <MdCheck size={300} />
       </div>
-      <Typography className="text-3xl">Deposit successful!</Typography>
+      <Typography className="text-center text-3xl">
+        Deposit successful!
+      </Typography>
       <Link variant="button" href="/wallet">
         Back to Wallet
       </Link>

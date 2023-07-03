@@ -2,10 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AssetType } from '@prisma/client';
 
-import {
-  buildTradingPairSymbol,
-  TradingPairWithAssociations,
-} from './trading-pairs.utils';
+import { buildTradingPairSymbol } from '@degenex/common';
+import { TradingPairWithAssociations } from './trading-pair-with-associations';
 
 @Injectable()
 export class TwelveDataService {
@@ -21,7 +19,7 @@ export class TwelveDataService {
       '/price',
       {
         params: { symbol },
-      },
+      }
     );
 
     return response.data.price;

@@ -15,6 +15,7 @@ export class TradingPairsService {
             id: true,
             tickerSymbol: true,
             type: true,
+            logoUrl: true,
           },
         },
         currency: {

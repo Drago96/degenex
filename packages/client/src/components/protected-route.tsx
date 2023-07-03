@@ -10,7 +10,7 @@ export default function ProtectedRoute<PropsT extends PropsWithChildren>(
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
-      redirect("/");
+      redirect("/login");
     }
 
     return <WrappedComponent {...props} />;
