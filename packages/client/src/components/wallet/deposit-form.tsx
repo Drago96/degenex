@@ -59,7 +59,7 @@ export default function DepositForm({ variant = "page" }: DepositFormProps) {
   return (
     <form
       className={classNames("flex flex-col", {
-        "gap-5": variant === "page",
+        "gap-7": variant === "page",
         "gap-3": variant === "modal",
       })}
       action={formAction}

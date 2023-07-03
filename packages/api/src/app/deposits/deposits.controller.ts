@@ -22,7 +22,11 @@ export class DepositsController {
     return await this.stripeService.createCheckoutSession(
       req.user.id,
       'deposit',
-      stripePaymentDto
+      {
+        ...stripePaymentDto,
+        successPath: 'wallet/deposit/confirmation',
+        cancelPath: 'wallet',
+      }
     );
   }
 }

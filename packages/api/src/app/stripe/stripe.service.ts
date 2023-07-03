@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { upperCase } from 'lodash';
 
-import { StripePaymentDto } from '@degenex/common';
 import { EnvironmentVariables } from '@/configuration';
 import { PrismaService } from '@/prisma/prisma.service';
+import { StripeCheckoutDto } from './stripe-checkout.dto';
 
 type ChargeType = 'deposit';
 
@@ -31,7 +31,7 @@ export class StripeService {
   async createCheckoutSession(
     userId: number,
     chargeType: ChargeType,
-    stripePaymentDto: StripePaymentDto
+    stripeCheckoutDto: StripeCheckoutDto
   ) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -55,8 +55,8 @@ export class StripeService {
       line_items: [
         {
           price_data: {
-            currency: stripePaymentDto.currency,
-            unit_amount: Number(stripePaymentDto.amount.toFixed(2)) * 100,
+            currency: stripeCheckoutDto.currency,
+            unit_amount: Number(stripeCheckoutDto.amount.toFixed(2)) * 100,
             product_data: {
               name: upperCase(chargeType),
             },
@@ -67,8 +67,12 @@ export class StripeService {
       metadata: {
         chargeType,
       },
-      success_url: `${this.configService.get('CLIENT_URL')}/wallet`,
-      cancel_url: `${this.configService.get('CLIENT_URL')}/wallet`,
+      success_url: `${this.configService.get('CLIENT_URL')}/${
+        stripeCheckoutDto.successPath
+      }`,
+      cancel_url: `${this.configService.get('CLIENT_URL')}/${
+        stripeCheckoutDto.cancelPath
+      }`,
     });
   }
 }

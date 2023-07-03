@@ -7,8 +7,8 @@ module.exports = {
   content: [
     join(
       __dirname,
-      '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'
-    )
+      "{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}"
+    ),
   ],
   theme: {
     extend: {
@@ -32,14 +32,18 @@ module.exports = {
         },
         highlight: {
           DEFAULT: colors.gray[200],
-          dark: colors.gray[700]
+          dark: colors.gray[700],
         },
         error: {
           DEFAULT: colors.red[600],
           dark: colors.red[300],
         },
+        success: {
+          DEFAULT: colors.green[600],
+          dark: colors.green[300],
+        },
         loading: {
-          DEFAULT: colors.slate[200]
+          DEFAULT: colors.slate[200],
         },
         transparent: {
           DEFAULT: colors.gray[100],
@@ -55,7 +59,5 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require("@headlessui/tailwindcss")
-  ],
+  plugins: [require("@headlessui/tailwindcss")],
 };
