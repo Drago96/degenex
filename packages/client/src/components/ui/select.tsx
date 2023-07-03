@@ -1,26 +1,26 @@
-import { forwardRef, HTMLProps, Ref, ReactNode } from "react";
+import { forwardRef, HTMLProps, Ref } from "react";
 import { twMerge } from "tailwind-merge";
 
 import FormField, { FormFieldProps } from "./form-field";
 
-type InputProps = {
-  endAdornment?: ReactNode;
-} & HTMLProps<HTMLInputElement> &
+type SelectProps = {
+  options: readonly string[];
+} & HTMLProps<HTMLSelectElement> &
   Omit<FormFieldProps, "renderField" | "children">;
 
 function Input(
   {
+    options,
     name,
     label,
     errors,
-    endAdornment,
     className,
     containerProps = {},
     labelProps = {},
     errorProps = {},
     ...props
-  }: InputProps,
-  ref: Ref<HTMLInputElement>
+  }: SelectProps,
+  ref: Ref<HTMLSelectElement>
 ) {
   return (
     <FormField
@@ -31,7 +31,7 @@ function Input(
       labelProps={labelProps}
       errorProps={errorProps}
     >
-      <input
+      <select
         id={name}
         name={name}
         className={twMerge(
@@ -40,10 +40,13 @@ function Input(
         )}
         ref={ref}
         {...props}
-      />
-      {endAdornment && (
-        <span className="absolute right-2 flex">{endAdornment}</span>
-      )}
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
     </FormField>
   );
 }

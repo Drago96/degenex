@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { StripePaymentSchema } from "@degenex/common";
+import { ALLOWED_CURRENCIES, StripePaymentSchema } from "@degenex/common";
 import { createFormServerAction } from "@/lib/create-form-server-action";
 import { stripePromise } from "@/lib/stripe-promise";
 import { createCheckoutSession } from "@/app/(user-profile)/wallet/@modal/(.)deposit/actions";
 import Input from "../ui/input";
 import SubmitButton from "../ui/submit-button";
 import ErrorMessage from "../ui/error-message";
+import Select from "../ui/select";
 
 export default function DepositForm() {
   const {
@@ -64,12 +65,13 @@ export default function DepositForm() {
           }}
           {...register("amount", { valueAsNumber: true })}
         />
-        <Input
+        <Select
+          options={ALLOWED_CURRENCIES}
           errors={errors}
-          {...register("currency")}
           containerProps={{
             className: "w-1/4",
           }}
+          {...register("currency")}
         />
       </div>
       <SubmitButton>Deposit</SubmitButton>
