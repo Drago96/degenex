@@ -24,7 +24,7 @@ export class DepositsController {
       'deposit',
       {
         ...stripePaymentDto,
-        successPath: 'wallet/deposit/confirmation',
+        successPath: 'wallet/deposit/success',
         cancelPath: 'wallet',
       }
     );
