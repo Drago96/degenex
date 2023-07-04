@@ -73,6 +73,7 @@ function ConfirmVerificationCode() {
                       type="tel"
                       value={value || ""}
                       disabled={isVerificationPending}
+                      className="max-w-[40px] text-center"
                       onChange={async (event) => {
                         const newValue =
                           find(
