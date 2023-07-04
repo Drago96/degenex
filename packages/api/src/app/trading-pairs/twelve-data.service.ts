@@ -11,8 +11,8 @@ export class TwelveDataService {
 
   async fetchPrice(tradingPair: TradingPairWithAssociations) {
     const symbol =
-      tradingPair.asset.type === AssetType.Stock
-        ? tradingPair.asset.tickerSymbol
+      tradingPair.baseAsset.type === AssetType.Stock
+        ? tradingPair.baseAsset.tickerSymbol
         : buildTradingPairSymbol(tradingPair);
 
     const response = await this.httpService.axiosRef.get<{ price: number }>(

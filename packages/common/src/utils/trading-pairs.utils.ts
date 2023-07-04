@@ -1,4 +1,5 @@
 export const buildTradingPairSymbol = (tradingPair: {
-  asset: { tickerSymbol: string };
-  currency: { code: string };
-}) => `${tradingPair.asset.tickerSymbol}/${tradingPair.currency.code}`;
+  baseAsset: { tickerSymbol: string };
+  quoteAsset: { tickerSymbol: string };
+}) =>
+  `${tradingPair.baseAsset.tickerSymbol}/${tradingPair.quoteAsset.tickerSymbol}`;

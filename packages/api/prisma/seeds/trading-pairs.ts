@@ -1,19 +1,29 @@
-import { PrismaClient } from '@prisma/client';
+import { AssetType, PrismaClient } from '@prisma/client';
 
 export const seedTradingPairs = async (prisma: PrismaClient) => {
-  const assets = await prisma.asset.findMany({ select: { id: true } });
-  const currencies = await prisma.currency.findMany({ select: { id: true } });
+  const tradeableAssets = await prisma.asset.findMany({
+    select: { id: true },
+    where: { type: { in: [AssetType.Crypto, AssetType.Stock] } },
+  });
 
-  assets.forEach((asset) => {
-    currencies.forEach(async (currency) => {
+  const fiatCurrencies = await prisma.asset.findMany({
+    select: { id: true },
+    where: { type: AssetType.FiatMoney },
+  });
+
+  tradeableAssets.forEach((tradeableAsset) => {
+    fiatCurrencies.forEach(async (fiatCurrency) => {
       await prisma.tradingPair.upsert({
         where: {
-          assetId_currencyId: { assetId: asset.id, currencyId: currency.id },
+          baseAssetId_quoteAssetId: {
+            baseAssetId: tradeableAsset.id,
+            quoteAssetId: fiatCurrency.id,
+          },
         },
         update: {},
         create: {
-          assetId: asset.id,
-          currencyId: currency.id,
+          baseAssetId: tradeableAsset.id,
+          quoteAssetId: fiatCurrency.id,
         },
       });
     });

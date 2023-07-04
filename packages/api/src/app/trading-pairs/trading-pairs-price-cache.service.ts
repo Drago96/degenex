@@ -21,8 +21,8 @@ export class TradingPairsPriceCacheService implements OnApplicationBootstrap {
   async fetchAndCacheTradingPairsPrice() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
-        asset: true,
-        currency: true,
+        baseAsset: true,
+        quoteAsset: true,
       },
     });
 
@@ -49,8 +49,8 @@ export class TradingPairsPriceCacheService implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
-        asset: true,
-        currency: true,
+        baseAsset: true,
+        quoteAsset: true,
       },
     });
 

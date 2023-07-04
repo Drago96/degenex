@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
 import { seedAssets } from './assets';
-import { seedCurrencies } from './currencies';
 import { seedTradingPairs } from './trading-pairs';
 import { seedUsers } from './users';
 
@@ -9,7 +8,6 @@ const prisma = new PrismaClient();
 
 async function main() {
   await seedUsers(prisma);
-  await seedCurrencies(prisma);
   await seedAssets(prisma);
   await seedTradingPairs(prisma);
 

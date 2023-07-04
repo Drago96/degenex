@@ -8,6 +8,7 @@ export const buildTradingPairPricesQuery = (
   }
 
   const tradingPairPricesSearchParams = new URLSearchParams();
+
   flattenDeep([tradingPairSymbols]).forEach((tradingPairSymbol) =>
     tradingPairPricesSearchParams.append(
       "tradingPairSymbols",

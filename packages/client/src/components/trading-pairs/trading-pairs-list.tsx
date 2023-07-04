@@ -44,10 +44,10 @@ export default function TradingPairsList({
         return (
           <li key={tradingPairSymbol}>
             <Card className="flex min-w-[150px] flex-row gap-3">
-              {tradingPair.asset.logoUrl ? (
+              {tradingPair.baseAsset.logoUrl ? (
                 <Image
-                  src={tradingPair.asset.logoUrl}
-                  alt={tradingPair.asset.tickerSymbol}
+                  src={tradingPair.baseAsset.logoUrl}
+                  alt={tradingPair.baseAsset.tickerSymbol}
                   width={40}
                   height={40}
                 />
@@ -60,7 +60,7 @@ export default function TradingPairsList({
                   <TradingPairPriceSkeleton />
                 ) : (
                   <Typography variant="div">
-                    {tradingPair.currency.symbol}
+                    {tradingPair.quoteAsset.currencySymbol}
                     {tradingPairPrice.toFixed(2)}
                   </Typography>
                 )}

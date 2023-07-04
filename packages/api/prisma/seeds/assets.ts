@@ -34,5 +34,16 @@ export const seedAssets = async (prisma: PrismaClient) => {
     },
   });
 
+  await prisma.asset.upsert({
+    where: { tickerSymbol: 'USD' },
+    update: {},
+    create: {
+      tickerSymbol: 'USD',
+      fullName: 'United States Dollar',
+      type: AssetType.FiatMoney,
+      currencySymbol: '$',
+    },
+  });
+
   console.log('Seeded assets...');
 };

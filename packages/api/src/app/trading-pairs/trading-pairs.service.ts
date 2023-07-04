@@ -10,7 +10,7 @@ export class TradingPairsService {
   async getAll(): Promise<TradingPairResponseDto[]> {
     return this.prisma.tradingPair.findMany({
       select: {
-        asset: {
+        baseAsset: {
           select: {
             id: true,
             tickerSymbol: true,
@@ -18,11 +18,11 @@ export class TradingPairsService {
             logoUrl: true,
           },
         },
-        currency: {
+        quoteAsset: {
           select: {
             id: true,
-            code: true,
-            symbol: true,
+            tickerSymbol: true,
+            currencySymbol: true,
           },
         },
       },

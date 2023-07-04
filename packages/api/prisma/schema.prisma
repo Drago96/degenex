@@ -36,13 +36,16 @@ model RefreshToken {
 }
 
 model Asset {
-  id           Int           @id @default(autoincrement())
-  tickerSymbol String        @unique
-  type         AssetType
-  fullName     String
-  description  String?
-  logoUrl      String?
-  tradingPairs TradingPair[]
+  id                   Int           @id @default(autoincrement())
+  tickerSymbol         String        @unique
+  type                 AssetType
+  fullName             String
+  currencySymbol       String?       @unique @db.Char(1)
+  description          String?
+  logoUrl              String?
+  tradeableBaseAssets  TradingPair[] @relation("tradeableBaseAssets")
+  tradeableQuoteAssets TradingPair[] @relation("tradeableQuoteAssets")
+  deposits             Deposit[]
 
   @@index([type], type: Hash)
   @@index([tickerSymbol, fullName])
@@ -51,40 +54,32 @@ model Asset {
 enum AssetType {
   Stock
   Crypto
-}
-
-model Currency {
-  id           Int           @id @default(autoincrement())
-  code         String        @unique
-  symbol       String        @unique @db.Char(1)
-  fullName     String
-  tradingPairs TradingPair[]
-  Deposit      Deposit[]
-
-  @@index([code, fullName])
+  FiatMoney
 }
 
 model TradingPair {
-  id         Int      @id @default(autoincrement())
-  assetId    Int
-  asset      Asset    @relation(fields: [assetId], references: [id])
-  currencyId Int
-  currency   Currency @relation(fields: [currencyId], references: [id])
+  id           Int    @id @default(autoincrement())
+  baseAssetId  Int
+  baseAsset    Asset  @relation("tradeableBaseAssets", fields: [baseAssetId], references: [id])
+  quoteAssetId Int
+  quoteAsset   Asset  @relation("tradeableQuoteAssets", fields: [quoteAssetId], references: [id])
 
-  @@unique([assetId, currencyId])
+  @@unique([baseAssetId, quoteAssetId])
 }
 
 model Deposit {
   id                Int           @id @default(autoincrement())
   amount            Decimal
   status            DepositStatus @default(Pending)
-  currencyCode      String
-  currency          Currency      @relation(fields: [currencyCode], references: [code])
+  assetTickerSymbol String
+  asset             Asset         @relation(fields: [assetTickerSymbol], references: [tickerSymbol])
   userId            Int
   user              User          @relation(fields: [userId], references: [id])
-  checkoutSessionId String?
+  transactionId     String?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
+
+  @@index([userId, createdAt])
 }
 
 enum DepositStatus {

@@ -36,8 +36,8 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
   async setLatexaddstTradingPairsPrice() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
-        asset: true,
-        currency: true,
+        baseAsset: true,
+        quoteAsset: true,
       },
     });
 
@@ -60,8 +60,8 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
   async getLatestTradingPairsPrice() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
-        asset: true,
-        currency: true,
+        baseAsset: true,
+        quoteAsset: true,
       },
     });
 
