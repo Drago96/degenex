@@ -22,6 +22,7 @@ export class TradingPairsService {
           select: {
             id: true,
             code: true,
+            symbol: true,
           },
         },
       },

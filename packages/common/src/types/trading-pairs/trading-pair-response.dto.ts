@@ -13,6 +13,7 @@ export const TradingPairResponseSchema = z.object({
   currency: z.object({
     id: z.number(),
     code: z.string(),
+    symbol: z.string(),
   }),
 });
 

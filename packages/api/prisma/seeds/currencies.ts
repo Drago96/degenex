@@ -7,6 +7,7 @@ export const seedCurrencies = async (prisma: PrismaClient) => {
     create: {
       code: 'USD',
       fullName: 'United States Dollar',
+      symbol: '$',
     },
   });
 

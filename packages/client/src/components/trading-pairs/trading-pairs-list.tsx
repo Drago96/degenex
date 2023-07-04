@@ -60,6 +60,7 @@ export default function TradingPairsList({
                   <TradingPairPriceSkeleton />
                 ) : (
                   <Typography variant="div">
+                    {tradingPair.currency.symbol}
                     {tradingPairPrice.toFixed(2)}
                   </Typography>
                 )}

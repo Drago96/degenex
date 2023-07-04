@@ -46,7 +46,7 @@ export class AuthService {
     await this.prisma.refreshToken.deleteMany({
       where: {
         expiresAt: {
-          gt: moment().toDate(),
+          lt: moment().toDate(),
         },
       },
     });
