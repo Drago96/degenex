@@ -12,6 +12,7 @@ import Footer from "@/components/footer";
 import ToastContainer from "@/components/toast-container";
 import IconContextProvider from "@/components/icon-context-provider";
 import QueryClientProvider from "@/components/query-client-provider";
+import ModalRoot from "@/components/ui/modal-root";
 
 export const metadata: Metadata = {
   title: "Degenex",
@@ -42,9 +43,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 </main>
                 <Footer />
               </div>
-              <div id="headlessui-portal-root">
-                <div />
-              </div>
+              <ModalRoot />
               <ToastContainer theme={theme} />
             </QueryClientProvider>
           </IconContextProvider>

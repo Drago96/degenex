@@ -2,9 +2,19 @@
 
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/navigation";
-import { Fragment, ReactNode } from "react";
+import { Fragment, ReactNode, useEffect } from "react";
 
-import { useInteractiveModal } from "@/hooks/ui/use-interactive-modal";
+import { MODAL_ROOT_ELEMENT_ID } from "./modal-root";
+
+const useInteractiveModal = () => {
+  useEffect(() => {
+    const element = document.getElementById(MODAL_ROOT_ELEMENT_ID);
+
+    if (element?.parentElement) {
+      element.parentElement.inert = false;
+    }
+  }, []);
+};
 
 type ModalProps = {
   children: ReactNode;
