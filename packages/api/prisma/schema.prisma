@@ -60,9 +60,9 @@ enum AssetType {
 model TradingPair {
   id           Int    @id @default(autoincrement())
   baseAssetId  Int
-  baseAsset    Asset  @relation("tradeableBaseAssets", fields: [baseAssetId], references: [id])
+  baseAsset    Asset  @relation("tradeableQuoteAssets", fields: [baseAssetId], references: [id])
   quoteAssetId Int
-  quoteAsset   Asset  @relation("tradeableQuoteAssets", fields: [quoteAssetId], references: [id])
+  quoteAsset   Asset  @relation("tradeableBaseAssets", fields: [quoteAssetId], references: [id])
 
   @@unique([baseAssetId, quoteAssetId])
 }
