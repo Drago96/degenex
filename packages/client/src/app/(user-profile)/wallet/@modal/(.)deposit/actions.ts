@@ -1,15 +1,14 @@
 "use server";
 
-import Stripe from "stripe";
-
 import { StripePaymentDto } from "@degenex/common";
 import { appFetch } from "@/lib/app-fetch";
+import { Deposit } from "@prisma/client";
 
-export async function createCheckoutSession({
+export async function createDeposit({
   currency,
   amount,
 }: StripePaymentDto) {
-  return appFetch<Stripe.Checkout.Session, StripePaymentDto>("deposits", {
+  return appFetch<Deposit, StripePaymentDto>("deposits", {
     method: "POST",
     body: { currency, amount: Number(amount) },
   });

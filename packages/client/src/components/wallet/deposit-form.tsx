@@ -7,7 +7,7 @@ import classNames from "classnames";
 import { ALLOWED_CURRENCIES, StripePaymentSchema } from "@degenex/common";
 import { createFormServerAction } from "@/lib/create-form-server-action";
 import { stripePromise } from "@/lib/stripe-promise";
-import { createCheckoutSession } from "@/app/(user-profile)/wallet/@modal/(.)deposit/actions";
+import { createDeposit } from "@/app/(user-profile)/wallet/@modal/(.)deposit/actions";
 import Input from "../ui/input";
 import SubmitButton from "../ui/submit-button";
 import ErrorMessage from "../ui/error-message";
@@ -32,7 +32,7 @@ export default function DepositForm({ variant = "page" }: DepositFormProps) {
   });
 
   const formAction = createFormServerAction({
-    serverAction: createCheckoutSession,
+    serverAction: createDeposit,
     validateForm: trigger,
     setFormError: setError,
     onSuccess: async (checkoutSession) => {
@@ -44,10 +44,8 @@ export default function DepositForm({ variant = "page" }: DepositFormProps) {
         return;
       }
 
-      console.log(checkoutSession);
-
       const { error } = await stripe.redirectToCheckout({
-        sessionId: checkoutSession.id,
+        sessionId: checkoutSession.transactionId,
       });
 
       if (error) {

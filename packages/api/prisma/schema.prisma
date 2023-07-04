@@ -58,11 +58,11 @@ enum AssetType {
 }
 
 model TradingPair {
-  id           Int    @id @default(autoincrement())
+  id           Int   @id @default(autoincrement())
   baseAssetId  Int
-  baseAsset    Asset  @relation("tradeableQuoteAssets", fields: [baseAssetId], references: [id])
+  baseAsset    Asset @relation("tradeableQuoteAssets", fields: [baseAssetId], references: [id])
   quoteAssetId Int
-  quoteAsset   Asset  @relation("tradeableBaseAssets", fields: [quoteAssetId], references: [id])
+  quoteAsset   Asset @relation("tradeableBaseAssets", fields: [quoteAssetId], references: [id])
 
   @@unique([baseAssetId, quoteAssetId])
 }
@@ -75,10 +75,11 @@ model Deposit {
   asset             Asset         @relation(fields: [assetTickerSymbol], references: [tickerSymbol])
   userId            Int
   user              User          @relation(fields: [userId], references: [id])
-  transactionId     String?
+  transactionId     String
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 
+  @@index([transactionId])
   @@index([userId, createdAt])
 }
 
