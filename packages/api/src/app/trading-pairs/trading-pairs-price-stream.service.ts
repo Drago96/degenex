@@ -33,7 +33,7 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
     );
 
   @Interval(1000)
-  async setLatexaddstTradingPairsPrice() {
+  async setLatestTradingPairsPrice() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
       include: {
         baseAsset: true,
