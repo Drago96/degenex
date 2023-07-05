@@ -1,12 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import Stripe from 'stripe';
+import { Controller, Headers, Post, RawBodyRequest, Req } from '@nestjs/common';
+
+import { StripeService } from './stripe.service';
 
 @Controller('stripe')
 export class StripeController {
-  @Post('webhooks')
-  async processWebhook(@Body() stripePayload: Stripe.Event) {
-    console.log(stripePayload);
+  constructor(private readonly stripeService: StripeService) {}
 
-    return 'Ok';
+  @Post('webhooks')
+  async processWebhook(
+    @Req() request: RawBodyRequest<Request>,
+    @Headers('stripe-signature') stripeSignature
+  ) {
+    await this.stripeService.prepareEvent(request.rawBody, stripeSignature);
   }
 }

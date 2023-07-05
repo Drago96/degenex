@@ -5,6 +5,10 @@ import {
   CreateStripeCustomerConsumer,
   CREATE_STRIPE_CUSTOMER_QUEUE_NAME,
 } from './create-stripe-customer.consumer';
+import {
+  ProcessStripeEventConsumer,
+  PROCESS_STRIPE_EVENT_QUEUE_NAME,
+} from './process-stripe-event.consumer';
 import { StripeController } from './stripe.controller';
 import { StripeService } from './stripe.service';
 
@@ -13,8 +17,15 @@ import { StripeService } from './stripe.service';
     BullModule.registerQueue({
       name: CREATE_STRIPE_CUSTOMER_QUEUE_NAME,
     }),
+    BullModule.registerQueue({
+      name: PROCESS_STRIPE_EVENT_QUEUE_NAME,
+    }),
   ],
-  providers: [StripeService, CreateStripeCustomerConsumer],
+  providers: [
+    StripeService,
+    CreateStripeCustomerConsumer,
+    ProcessStripeEventConsumer,
+  ],
   controllers: [StripeController],
   exports: [StripeService, BullModule],
 })

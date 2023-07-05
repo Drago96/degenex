@@ -9,7 +9,9 @@ import { AppModule } from './app/app.module';
 import { EnvironmentVariables } from './app/configuration';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
+  });
 
   app.setGlobalPrefix('/api');
 

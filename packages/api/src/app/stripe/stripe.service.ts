@@ -2,10 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { upperCase } from 'lodash';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 
 import { EnvironmentVariables } from '@/configuration';
 import { PrismaService } from '@/prisma/prisma.service';
 import { StripeCheckoutDto } from './stripe-checkout.dto';
+import { PROCESS_STRIPE_EVENT_QUEUE_NAME } from './process-stripe-event.consumer';
 
 @Injectable()
 export class StripeService {
@@ -13,6 +16,8 @@ export class StripeService {
 
   constructor(
     private readonly prisma: PrismaService,
+    @InjectQueue(PROCESS_STRIPE_EVENT_QUEUE_NAME)
+    private readonly processStripeEventQueue: Queue<Stripe.Event>,
     private readonly configService: ConfigService<EnvironmentVariables>
   ) {
     this.stripe = new Stripe(configService.get('STRIPE_SECRET_KEY'), {
@@ -71,5 +76,21 @@ export class StripeService {
         stripeCheckoutDto.cancelPath
       }`,
     });
+  }
+
+  async prepareEvent(stripePayload: Buffer, stripeSignature: string) {
+    let event: Stripe.Event;
+
+    try {
+      event = await this.stripe.webhooks.constructEventAsync(
+        stripePayload,
+        stripeSignature,
+        this.configService.get('STRIPE_WEBHOOK_SIGNING_SECRET')
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+
+    await this.processStripeEventQueue.add(event);
   }
 }
