@@ -25,7 +25,7 @@ export class DepositsService {
         userId,
         amount: stripePaymentDto.amount,
         assetTickerSymbol: stripePaymentDto.currency,
-        sessionId: stripeCheckoutSession.id,
+        transactionId: stripeCheckoutSession.id,
       },
     });
   }

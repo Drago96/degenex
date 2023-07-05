@@ -45,7 +45,7 @@ export default function DepositForm({ variant = "page" }: DepositFormProps) {
       }
 
       const { error } = await stripe.redirectToCheckout({
-        sessionId: deposit.sessionId,
+        sessionId: deposit.transactionId,
       });
 
       if (error) {
