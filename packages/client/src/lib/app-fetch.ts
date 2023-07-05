@@ -25,7 +25,10 @@ type RequestOptions<BodyT = unknown> = Omit<RequestInit, "body"> & {
   body?: BodyT;
 };
 
-export const getAppFetchHeaders = (cookiesStore?: CookiesStore, headersStore?: HeadersStore) => {
+export const getAppFetchHeaders = (
+  cookiesStore?: CookiesStore,
+  headersStore?: HeadersStore
+) => {
   cookiesStore = cookiesStore ?? cookies();
   headersStore = headersStore ?? headers();
   const nextResponseCookies = new ResponseCookies(headersStore as Headers);
@@ -38,9 +41,9 @@ export const getAppFetchHeaders = (cookiesStore?: CookiesStore, headersStore?: H
     Authorization: `Bearer ${
       refreshedAccessToken?.value ?? accessToken?.value
     }`,
-    "X-Forwarded-For": forwardedFor
-  }
-}
+    "X-Forwarded-For": forwardedFor,
+  };
+};
 
 export async function appFetch<ResponseT = unknown, BodyT = unknown>(
   input: RequestInput,
@@ -51,9 +54,10 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
   cookiesStore = cookiesStore ?? cookies();
   headersStore = headersStore ?? headers();
 
-  const fetchResponse = await fetch(
-    `${process.env.API_BASE_URL}/api/${input}`,
-    {
+  let fetchResponse: Response;
+
+  try {
+    fetchResponse = await fetch(`${process.env.API_BASE_URL}/api/${input}`, {
       ...options,
       body: JSON.stringify(options?.body),
       credentials: "include",
@@ -63,8 +67,14 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
         ...getAppFetchHeaders(cookiesStore, headersStore),
         ...options?.headers,
       },
-    }
-  );
+    });
+  } catch {
+    return {
+      isSuccess: false,
+      data: null,
+      error: "Internal server error",
+    };
+  }
 
   const fetchResponseCookiesHeader = fetchResponse.headers.get("Set-Cookie");
 
