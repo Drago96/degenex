@@ -7,8 +7,6 @@ import { EnvironmentVariables } from '@/configuration';
 import { PrismaService } from '@/prisma/prisma.service';
 import { StripeCheckoutDto } from './stripe-checkout.dto';
 
-type ChargeType = 'deposit';
-
 @Injectable()
 export class StripeService {
   private readonly stripe: Stripe;
@@ -18,7 +16,7 @@ export class StripeService {
     private readonly configService: ConfigService<EnvironmentVariables>
   ) {
     this.stripe = new Stripe(configService.get('STRIPE_SECRET_KEY'), {
-      apiVersion: null,
+      apiVersion: configService.get('STRIPE_API_VERSION'),
     });
   }
 
@@ -30,7 +28,6 @@ export class StripeService {
 
   async createCheckoutSession(
     userId: number,
-    chargeType: ChargeType,
     stripeCheckoutDto: StripeCheckoutDto
   ) {
     const user = await this.prisma.user.findUnique({
@@ -58,14 +55,14 @@ export class StripeService {
             currency: stripeCheckoutDto.currency,
             unit_amount: Number(stripeCheckoutDto.amount.toFixed(2)) * 100,
             product_data: {
-              name: upperCase(chargeType),
+              name: upperCase(stripeCheckoutDto.chargeType),
             },
           },
           quantity: 1,
         },
       ],
       metadata: {
-        chargeType,
+        chargeType: stripeCheckoutDto.chargeType,
       },
       success_url: `${this.configService.get('CLIENT_URL')}/${
         stripeCheckoutDto.successPath

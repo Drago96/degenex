@@ -35,7 +35,7 @@ export default function DepositForm({ variant = "page" }: DepositFormProps) {
     serverAction: createDeposit,
     validateForm: trigger,
     setFormError: setError,
-    onSuccess: async (checkoutSession) => {
+    onSuccess: async (deposit) => {
       const stripe = await stripePromise;
 
       if (!stripe) {
@@ -45,7 +45,7 @@ export default function DepositForm({ variant = "page" }: DepositFormProps) {
       }
 
       const { error } = await stripe.redirectToCheckout({
-        sessionId: checkoutSession.transactionId,
+        sessionId: deposit.sessionId,
       });
 
       if (error) {

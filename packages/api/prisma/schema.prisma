@@ -75,11 +75,12 @@ model Deposit {
   asset             Asset         @relation(fields: [assetTickerSymbol], references: [tickerSymbol])
   userId            Int
   user              User          @relation(fields: [userId], references: [id])
-  transactionId     String
+  transactionId     String?
+  sessionId         String
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 
-  @@index([transactionId])
+  @@index([sessionId])
   @@index([userId, createdAt])
 }
 

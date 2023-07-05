@@ -1,15 +1,32 @@
 import { Injectable } from '@nestjs/common';
 
+import { StripePaymentDto } from '@degenex/common';
 import { PrismaService } from '@/prisma/prisma.service';
-import { DepositCreateDto } from './deposit-create.dto';
+import { StripeService } from '@/stripe/stripe.service';
 
 @Injectable()
 export class DepositsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly stripeService: StripeService
+  ) {}
 
-  async createDeposit(depositCreateDto: DepositCreateDto) {
+  async createDeposit(userId: number, stripePaymentDto: StripePaymentDto) {
+    const stripeCheckoutSession =
+      await this.stripeService.createCheckoutSession(userId, {
+        ...stripePaymentDto,
+        chargeType: 'deposit',
+        successPath: 'wallet/deposit/success',
+        cancelPath: 'wallet',
+      });
+
     return this.prisma.deposit.create({
-      data: depositCreateDto,
+      data: {
+        userId,
+        amount: stripePaymentDto.amount,
+        assetTickerSymbol: stripePaymentDto.currency,
+        sessionId: stripeCheckoutSession.id,
+      },
     });
   }
 }
