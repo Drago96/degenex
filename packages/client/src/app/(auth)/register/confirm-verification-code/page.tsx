@@ -16,6 +16,9 @@ import { createFormServerAction } from "@/lib/create-form-server-action";
 import { useClientAction } from "@/hooks/use-client-action";
 import { registerUser } from "./actions";
 
+const ERROR_TOAST_ID = "confirm-verification-code/error";
+const REDIRECT_TOAST_ID = "confirm-verification-code/redirect";
+
 function ConfirmVerificationCode() {
   const { registerCredentials } = useRegisterCredentials();
   const { control, setFocus, reset, getValues } = useForm();
@@ -25,19 +28,27 @@ function ConfirmVerificationCode() {
 
   if (!registerCredentials) {
     toast.warn("Please input your account credentials first.", {
-      toastId: "confirm-verification-code/redirect",
+      toastId: REDIRECT_TOAST_ID,
     });
 
-    redirect("register");
+    redirect("/register");
   }
 
   const registerUserAction = createFormServerAction({
     serverAction: registerUser,
     onSuccess: async () => {
+      toast.dismiss(ERROR_TOAST_ID);
+
+      toast.success("Verification successful");
+
       redirectToHome();
     },
     onError: async (error) => {
-      toast.error(error);
+      if (toast.isActive(ERROR_TOAST_ID)) {
+        toast.update(ERROR_TOAST_ID);
+      } else {
+        toast.error(error, { toastId: ERROR_TOAST_ID });
+      }
 
       reset();
     },

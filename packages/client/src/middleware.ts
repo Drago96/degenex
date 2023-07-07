@@ -9,7 +9,7 @@ import {
   REFRESH_TOKEN_COOKIE_KEY,
   setAccessToken,
 } from "./services/auth.service";
-import { appFetch } from "./lib/app-fetch";
+import { appFetch, getAppFetchHeaders } from "./lib/app-fetch";
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt).*)"],
@@ -19,6 +19,15 @@ export const middleware: NextMiddleware = async (request: NextRequest) => {
   const response = NextResponse.next();
 
   await refreshAuth(request, response);
+
+  if (request.nextUrl.pathname.startsWith("/api")) {
+    return NextResponse.rewrite(
+      `${process.env.API_BASE_URL}/${request.nextUrl.pathname}${request.nextUrl.search}`,
+      {
+        headers: getAppFetchHeaders(request.cookies, response.headers),
+      }
+    );
+  }
 
   return response;
 };

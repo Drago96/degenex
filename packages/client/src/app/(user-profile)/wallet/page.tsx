@@ -1,5 +1,6 @@
 import Link from "@/components/ui/link";
 import Typography from "@/components/ui/typography";
+import AssetBalanceTabs from "@/components/wallet/asset-balance-tabs";
 
 export default function Wallet() {
   return (
@@ -14,6 +15,7 @@ export default function Wallet() {
           </Link>
         </div>
       </div>
+      <AssetBalanceTabs />
     </div>
   );
 }

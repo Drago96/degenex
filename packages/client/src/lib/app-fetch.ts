@@ -34,14 +34,16 @@ export const getAppFetchHeaders = (
   const nextResponseCookies = new ResponseCookies(headersStore as Headers);
 
   const refreshedAccessToken = nextResponseCookies.get(ACCESS_TOKEN_COOKIE_KEY);
-  const accessToken = cookiesStore.get(ACCESS_TOKEN_COOKIE_KEY);
+  const requestAccessToken = cookiesStore.get(ACCESS_TOKEN_COOKIE_KEY);
   const forwardedFor = headersStore.get(FORWARDED_FOR_HEADER_KEY) as string;
 
+  const accessToken = refreshedAccessToken?.value ?? requestAccessToken?.value;
+
   return {
-    Authorization: `Bearer ${
-      refreshedAccessToken?.value ?? accessToken?.value
-    }`,
-    "X-Forwarded-For": forwardedFor,
+    ...(accessToken && {
+      Authorization: `Bearer ${accessToken}`,
+    }),
+    ...(forwardedFor && { "X-Forwarded-For": forwardedFor }),
   };
 };
 

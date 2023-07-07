@@ -16,6 +16,7 @@ model User {
   roles              UserRole[]     @default([])
   refreshTokens      RefreshToken[]
   deposits           Deposit[]
+  assetBalances      AssetBalance[]
 
   @@index([roles(ops: ArrayOps)], type: Gin)
 }
@@ -36,16 +37,17 @@ model RefreshToken {
 }
 
 model Asset {
-  id                   Int           @id @default(autoincrement())
-  tickerSymbol         String        @unique
+  id                   Int            @id @default(autoincrement())
+  tickerSymbol         String         @unique
   type                 AssetType
   fullName             String
-  currencySymbol       String?       @unique @db.Char(1)
+  currencySymbol       String?        @unique @db.Char(1)
   description          String?
   logoUrl              String?
-  tradeableBaseAssets  TradingPair[] @relation("tradeableBaseAssets")
-  tradeableQuoteAssets TradingPair[] @relation("tradeableQuoteAssets")
+  tradeableBaseAssets  TradingPair[]  @relation("tradeableBaseAssets")
+  tradeableQuoteAssets TradingPair[]  @relation("tradeableQuoteAssets")
   deposits             Deposit[]
+  userBalances         AssetBalance[]
 
   @@index([type], type: Hash)
   @@index([tickerSymbol, fullName])
@@ -86,4 +88,15 @@ enum DepositStatus {
   Pending
   Successful
   Failed
+}
+
+model AssetBalance {
+  id                Int     @id @default(autoincrement())
+  amount            Decimal
+  userId            Int
+  user              User    @relation(fields: [userId], references: [id])
+  assetTickerSymbol String
+  asset             Asset   @relation(fields: [assetTickerSymbol], references: [tickerSymbol])
+
+  @@unique([userId, assetTickerSymbol])
 }

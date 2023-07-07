@@ -44,7 +44,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                 <Footer />
               </div>
               <ModalRoot />
-              <ToastContainer theme={theme} />
+              <ToastContainer position="top-center" theme={theme} />
             </QueryClientProvider>
           </IconContextProvider>
         </ThemeProvider>
