@@ -16,7 +16,7 @@ export class DepositsService {
       await this.stripeService.createCheckoutSession(userId, {
         ...stripePaymentDto,
         chargeType: 'deposit',
-        successPath: 'wallet/deposit/success',
+        successPath: 'deposit/success',
         cancelPath: 'wallet',
       });
 

@@ -1,74 +1,42 @@
-"use client";
-
 import { get } from "lodash";
-import Image from "next/image";
 
 import {
-  TradingPairsPricesDto,
-  TradingPairResponseDto,
   buildTradingPairSymbol,
+  TradingPairResponseDto,
+  TradingPairsPricesDto,
 } from "@degenex/common";
-import { useEventSourceQuery } from "@/hooks/use-event-source-query";
-import { buildTradingPairPricesQuery } from "@/lib/trading-pairs/build-trading-pair-prices-query";
-import Typography from "../ui/typography";
-import Card from "../ui/card";
-import TradingPairPriceSkeleton from "./trading-pair-price-skeleton";
-import { MdIndeterminateCheckBox } from "react-icons/md";
+import { PendingFetch } from "@/types/pending-fetch";
+import TradingPairListItem from "./trading-pairs-list-item";
 
-type TradingPairsListProps = {
+type TradingPairsListProps = PendingFetch<{
   tradingPairs: TradingPairResponseDto[];
-};
+  tradingPairsPrices?: TradingPairsPricesDto | null;
+}>;
 
-export default function TradingPairsList({
-  tradingPairs,
-}: TradingPairsListProps) {
-  const tradingPairSymbols = tradingPairs.map((tradingPair) =>
-    buildTradingPairSymbol(tradingPair)
-  );
-
-  const tradingPairPricesQuery =
-    buildTradingPairPricesQuery(tradingPairSymbols);
-
-  const { data } = useEventSourceQuery<TradingPairsPricesDto>(
-    ["trading-pair-prices"],
-    `api/trading-pairs/track-prices?${tradingPairPricesQuery}`
-  );
-
+export default function TradingPairsList(props: TradingPairsListProps) {
   return (
     <ul className="flex flex-row flex-wrap gap-5">
-      {tradingPairs.map((tradingPair) => {
-        const tradingPairSymbol = buildTradingPairSymbol(tradingPair);
+      {props.loading &&
+        Array.from({ length: 3 }).map((_, index) => (
+          <TradingPairListItem key={index} loading />
+        ))}
+      {!props.loading &&
+        props.tradingPairs.map((tradingPair) => {
+          const tradingPairSymbol = buildTradingPairSymbol(tradingPair);
 
-        const tradingPairPrice = get(data, tradingPairSymbol);
+          const tradingPairPrice = get(
+            props.tradingPairsPrices,
+            tradingPairSymbol
+          );
 
-        return (
-          <li key={tradingPairSymbol}>
-            <Card className="flex min-w-[150px] flex-row gap-3">
-              {tradingPair.baseAsset.logoUrl ? (
-                <Image
-                  src={tradingPair.baseAsset.logoUrl}
-                  alt={tradingPair.baseAsset.tickerSymbol}
-                  width={40}
-                  height={40}
-                />
-              ) : (
-                <MdIndeterminateCheckBox size={40} />
-              )}
-              <div>
-                <Typography variant="div">{tradingPairSymbol}</Typography>
-                {tradingPairPrice === undefined ? (
-                  <TradingPairPriceSkeleton />
-                ) : (
-                  <Typography variant="div">
-                    {tradingPair.quoteAsset.currencySymbol}
-                    {tradingPairPrice.toFixed(2)}
-                  </Typography>
-                )}
-              </div>
-            </Card>
-          </li>
-        );
-      })}
+          return (
+            <TradingPairListItem
+              key={tradingPairSymbol}
+              tradingPairPrice={tradingPairPrice}
+              {...tradingPair}
+            />
+          );
+        })}
     </ul>
   );
 }

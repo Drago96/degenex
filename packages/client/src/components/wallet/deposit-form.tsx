@@ -7,7 +7,7 @@ import classNames from "classnames";
 import { ALLOWED_CURRENCIES, StripePaymentSchema } from "@degenex/common";
 import { createFormServerAction } from "@/lib/create-form-server-action";
 import { stripePromise } from "@/lib/stripe-promise";
-import { createDeposit } from "@/app/(user-profile)/wallet/@modal/(.)deposit/actions";
+import { createDeposit } from "@/app/(protected)/wallet/@modal/(..)deposit/actions";
 import Input from "../ui/input";
 import SubmitButton from "../ui/submit-button";
 import ErrorMessage from "../ui/error-message";

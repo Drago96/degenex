@@ -2,12 +2,12 @@ import { ReactNode } from "react";
 
 import ProtectedRoute from "@/components/protected-route";
 
-type UserProfileLayoutProps = {
+type ProtectedLayoutProps = {
   children: ReactNode;
 };
 
-function UserProfileLayout({ children }: UserProfileLayoutProps) {
+function ProtectedLayout({ children }: ProtectedLayoutProps) {
   return <>{children}</>;
 }
 
-export default ProtectedRoute(UserProfileLayout);
+export default ProtectedRoute(ProtectedLayout);

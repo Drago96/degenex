@@ -10,7 +10,7 @@ export default function Wallet() {
           Wallet
         </Typography>
         <div className="flex flex-row gap-5">
-          <Link variant="button" href="/wallet/deposit">
+          <Link variant="button" href="/deposit">
             Deposit
           </Link>
         </div>
