@@ -2,19 +2,19 @@ import { ReactNode } from "react";
 
 type WalletLayoutProps = {
   children: ReactNode;
-  assetBalance: ReactNode;
+  assetBalances: ReactNode;
   modal: ReactNode;
 };
 
 export default function WalletLayout({
   children,
   modal,
-  assetBalance,
+  assetBalances,
 }: WalletLayoutProps) {
   return (
     <div className="flex flex-col gap-10 lg:gap-20">
       {children}
-      {assetBalance}
+      {assetBalances}
       {modal}
     </div>
   );

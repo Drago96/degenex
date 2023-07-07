@@ -4,17 +4,17 @@ import { AssetType } from "@prisma/client";
 import Link from "../ui/link";
 import classNames from "classnames";
 
-type AssetBalanceTabProps = {
+type AssetBalancesTabProps = {
   active: boolean;
   assetType: AssetType;
   children: ReactNode;
 };
 
-export default function AssetBalanceTabLink({
+export default function AssetBalancesTabLink({
   active,
   assetType,
   children,
-}: AssetBalanceTabProps) {
+}: AssetBalancesTabProps) {
   return (
     <li className="mr-2 min-w-[100px]">
       <Link
