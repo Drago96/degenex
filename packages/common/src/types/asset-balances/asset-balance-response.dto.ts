@@ -3,7 +3,7 @@ import { z } from 'nestjs-zod/z';
 
 export const AssetBalanceResponseSchema = z.object({
   id: z.number(),
-  logoUrl: z.string().nullable(),
+  logoUrl: z.string(),
   tickerSymbol: z.string(),
   fullName: z.string(),
   userBalance: z.number(),

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { MdIndeterminateCheckBox } from "react-icons/md";
 
 import {
   buildTradingPairSymbol,
@@ -20,7 +19,7 @@ export default function TradingPairListItem(props: TradingPairListItemProps) {
       <Card className="flex min-w-[160px] flex-row gap-3 align-middle">
         {props.loading ? (
           <Skeleton variant="circle" className="h-[40px] w-[40px]" />
-        ) : props.baseAsset.logoUrl ? (
+        ) : (
           <div className="relative h-[40px] w-[40px]">
             <Image
               src={props.baseAsset.logoUrl}
@@ -28,8 +27,6 @@ export default function TradingPairListItem(props: TradingPairListItemProps) {
               fill
             />
           </div>
-        ) : (
-          <MdIndeterminateCheckBox size={40} />
         )}
         <div className="flex grow flex-col justify-center gap-2">
           {props.loading ? (

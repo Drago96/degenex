@@ -8,7 +8,7 @@ export const TradingPairResponseSchema = z.object({
     id: z.number(),
     tickerSymbol: z.string(),
     type: z.nativeEnum(AssetType),
-    logoUrl: z.string().nullable(),
+    logoUrl: z.string(),
   }),
   quoteAsset: z.object({
     id: z.number(),

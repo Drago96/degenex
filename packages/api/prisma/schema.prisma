@@ -43,7 +43,7 @@ model Asset {
   fullName             String
   currencySymbol       String?        @unique @db.Char(1)
   description          String?
-  logoUrl              String?
+  logoUrl              String
   tradeableBaseAssets  TradingPair[]  @relation("tradeableBaseAssets")
   tradeableQuoteAssets TradingPair[]  @relation("tradeableQuoteAssets")
   deposits             Deposit[]
