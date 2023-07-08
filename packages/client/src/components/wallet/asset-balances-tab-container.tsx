@@ -11,6 +11,8 @@ type AssetBalancesTabContainerProps = {
 export default async function AssetBalancesTabContainer({
   assetType,
 }: AssetBalancesTabContainerProps) {
+  await new Promise((res) => setTimeout(() => res(null), 1000));
+
   const assetBalancesResponse = await appFetch<AssetBalanceResponseDto[]>(
     `asset-balances?assetType=${assetType}`
   );
