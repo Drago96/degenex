@@ -6,7 +6,12 @@ import ServerErrorToast from "@/components/server-error-toast";
 
 export default async function TradingPairs() {
   const tradingPairsResponse = await appFetch<TradingPairResponseDto[]>(
-    "trading-pairs"
+    "trading-pairs",
+    {
+      next: {
+        revalidate: 300,
+      },
+    }
   );
 
   if (!tradingPairsResponse.isSuccess) {
