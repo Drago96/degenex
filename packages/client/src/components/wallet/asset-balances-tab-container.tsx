@@ -2,7 +2,7 @@ import { AssetBalanceResponseDto } from "@degenex/common";
 import { appFetch } from "@/lib/app-fetch";
 import { AssetType } from "@prisma/client";
 import AssetBalancesTab from "./asset-balances-tab";
-import ServerErrorNotification from "../server-error-notification";
+import ServerErrorToast from "../server-error-toast";
 
 type AssetBalancesTabContainerProps = {
   assetType: AssetType;
@@ -17,9 +17,9 @@ export default async function AssetBalancesTabContainer({
 
   if (!assetBalancesResponse.isSuccess) {
     return (
-      <ServerErrorNotification error={assetBalancesResponse.error}>
+      <ServerErrorToast error={assetBalancesResponse.error}>
         <AssetBalancesTab loading />
-      </ServerErrorNotification>
+      </ServerErrorToast>
     );
   }
 
