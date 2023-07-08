@@ -2,8 +2,8 @@ import { Suspense } from "react";
 
 import { AssetType } from "@prisma/client";
 import AssetBalancesTabLink from "@/components/wallet/asset-balances-tab-link";
+import AssetBalancesTabContainer from "@/components/wallet/asset-balances-tab-container";
 import AssetBalancesTab from "@/components/wallet/asset-balances-tab";
-import Typography from "@/components/ui/typography";
 
 type AssetBalancesProps = {
   searchParams: {
@@ -39,8 +39,10 @@ export default function AssetBalances({
             Crypto
           </AssetBalancesTabLink>
         </ul>
-        <Suspense fallback={<Typography>Loading...</Typography>}>
-          <AssetBalancesTab assetType={assetType || AssetType.FiatMoney} />
+        <Suspense fallback={<AssetBalancesTab loading />}>
+          <AssetBalancesTabContainer
+            assetType={assetType || AssetType.FiatMoney}
+          />
         </Suspense>
       </div>
     </>

@@ -8,7 +8,7 @@ import { HeadersStore } from "@/types/headers-store";
 
 export const FORWARDED_FOR_HEADER_KEY = "x-forwarded-for";
 
-export type FetchResponse<DataT = unknown> =
+export type FetchResponse<DataT = unknown> = { statusCode: number } & (
   | {
       isSuccess: true;
       data: DataT;
@@ -18,7 +18,8 @@ export type FetchResponse<DataT = unknown> =
       isSuccess: false;
       data: null;
       error: string;
-    };
+    }
+);
 
 type RequestInput = RequestInfo | URL;
 type RequestOptions<BodyT = unknown> = Omit<RequestInit, "body"> & {
@@ -75,6 +76,7 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
       isSuccess: false,
       data: null,
       error: "Internal server error",
+      statusCode: 500,
     };
   }
 
@@ -101,6 +103,7 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
       isSuccess: false,
       data: null,
       error: fetchResponseBody?.message || fetchResponseBody,
+      statusCode: fetchResponse.status,
     };
   }
 
@@ -108,5 +111,6 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
     isSuccess: true,
     data: fetchResponseBody,
     error: null,
+    statusCode: fetchResponse.status,
   };
 }

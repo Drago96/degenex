@@ -67,7 +67,7 @@ async function refreshAuth(request: NextRequest, response: NextResponse) {
     response.headers
   );
 
-  if (!refreshAuthResponse.isSuccess) {
+  if (!refreshAuthResponse.isSuccess && refreshAuthResponse.statusCode < 500) {
     clearAuth(response.cookies);
 
     return;

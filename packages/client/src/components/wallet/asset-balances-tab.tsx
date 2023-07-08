@@ -1,14 +1,15 @@
-import { appFetch } from "@/lib/app-fetch";
-import { AssetType } from "@prisma/client";
+import { PendingFetch } from "@/types/pending-fetch";
+import { AssetBalanceResponseDto } from "@degenex/common";
+import Typography from "../ui/typography";
 
-type AssetBalancesTabProps = {
-  assetType: AssetType;
-};
+type AssetBalancesTabProps = PendingFetch<{
+  assetBalances: AssetBalanceResponseDto[];
+}>;
 
-export default async function AssetBalancesTab({
-  assetType,
-}: AssetBalancesTabProps) {
-  const assetBalances = await appFetch(`asset-balances?assetType=${assetType}`);
+export default function AssetBalancesTab(props: AssetBalancesTabProps) {
+  if (props.loading) {
+    return <Typography>Loading...</Typography>;
+  }
 
-  return JSON.stringify(assetBalances);
+  return <Typography>{JSON.stringify(props.assetBalances)}</Typography>;
 }

@@ -1,1 +1,1 @@
-export * from './asset-balances-response.dto';
+export * from './asset-balance-response.dto';

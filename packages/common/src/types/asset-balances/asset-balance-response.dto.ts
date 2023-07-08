@@ -1,7 +1,7 @@
 import { createZodDto } from 'nestjs-zod/dto';
 import { z } from 'nestjs-zod/z';
 
-export const AssetBalancesResponseSchema = z.object({
+export const AssetBalanceResponseSchema = z.object({
   id: z.number(),
   logoUrl: z.string().nullable(),
   tickerSymbol: z.string(),
@@ -9,6 +9,6 @@ export const AssetBalancesResponseSchema = z.object({
   userBalance: z.number(),
 });
 
-export class AssetBalancesResponseDto extends createZodDto(
-  AssetBalancesResponseSchema
+export class AssetBalanceResponseDto extends createZodDto(
+  AssetBalanceResponseSchema
 ) {}
