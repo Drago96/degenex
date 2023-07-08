@@ -16,29 +16,29 @@ export default function AssetBalances({
 }: AssetBalancesProps) {
   return (
     <>
-      <ul className="flex flex-wrap border-b border-primary text-center dark:border-primary-dark">
-        <AssetBalancesTabLink
-          active={
-            assetType !== AssetType.Stock && assetType !== AssetType.Crypto
-          }
-          assetType={AssetType.FiatMoney}
-        >
-          Fiat Money
-        </AssetBalancesTabLink>
-        <AssetBalancesTabLink
-          active={assetType === AssetType.Stock}
-          assetType={AssetType.Stock}
-        >
-          Stocks
-        </AssetBalancesTabLink>
-        <AssetBalancesTabLink
-          active={assetType === AssetType.Crypto}
-          assetType={AssetType.Crypto}
-        >
-          Crypto
-        </AssetBalancesTabLink>
-      </ul>
-      <div>
+      <div className="flex flex-col gap-5">
+        <ul className="flex flex-wrap border-b border-primary text-center dark:border-primary-dark">
+          <AssetBalancesTabLink
+            active={
+              assetType !== AssetType.Stock && assetType !== AssetType.Crypto
+            }
+            assetType={AssetType.FiatMoney}
+          >
+            Fiat Money
+          </AssetBalancesTabLink>
+          <AssetBalancesTabLink
+            active={assetType === AssetType.Stock}
+            assetType={AssetType.Stock}
+          >
+            Stocks
+          </AssetBalancesTabLink>
+          <AssetBalancesTabLink
+            active={assetType === AssetType.Crypto}
+            assetType={AssetType.Crypto}
+          >
+            Crypto
+          </AssetBalancesTabLink>
+        </ul>
         <Suspense fallback={<Typography>Loading...</Typography>}>
           <AssetBalancesTab assetType={assetType || AssetType.FiatMoney} />
         </Suspense>

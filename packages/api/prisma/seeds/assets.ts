@@ -42,6 +42,7 @@ export const seedAssets = async (prisma: PrismaClient) => {
       fullName: 'United States Dollar',
       type: AssetType.FiatMoney,
       currencySymbol: '$',
+      logoUrl: 'https://d1zd1ouamy16t4.cloudfront.net/logos/dollar-logo.svg',
     },
   });
 
