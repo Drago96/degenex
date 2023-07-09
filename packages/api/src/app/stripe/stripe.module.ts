@@ -14,12 +14,14 @@ import { StripeService } from './stripe.service';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: CREATE_STRIPE_CUSTOMER_QUEUE_NAME,
-    }),
-    BullModule.registerQueue({
-      name: PROCESS_STRIPE_EVENT_QUEUE_NAME,
-    }),
+    BullModule.registerQueue(
+      {
+        name: CREATE_STRIPE_CUSTOMER_QUEUE_NAME,
+      },
+      {
+        name: PROCESS_STRIPE_EVENT_QUEUE_NAME,
+      }
+    ),
   ],
   providers: [
     StripeService,
