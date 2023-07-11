@@ -73,5 +73,7 @@ async function refreshAuth(request: NextRequest, response: NextResponse) {
     return;
   }
 
-  setAccessToken(refreshAuthResponse.data.accessToken, response.cookies);
+  if (refreshAuthResponse.isSuccess) {
+    setAccessToken(refreshAuthResponse.data.accessToken, response.cookies);
+  }
 }
