@@ -31,11 +31,12 @@ ADD COLUMN     "quoteAssetTickerSymbol" TEXT NOT NULL;
 
 -- CreateTable
 CREATE TABLE "Order" (
-    "id" TEXT NOT NULL DEFAULT uuid7(),
+    "id" SERIAL NOT NULL,
     "side" "OrderSide" NOT NULL,
     "quantity" DECIMAL(65,30) NOT NULL,
     "price" DECIMAL(65,30) NOT NULL,
     "status" "OrderStatus" NOT NULL,
+    "orderBookId" TEXT NOT NULL DEFAULT uuid7(),
     "userId" INTEGER NOT NULL,
     "tradingPairId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

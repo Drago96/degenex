@@ -1,6 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
+  relationMode    = "foreignKeys"
 }
 
 datasource db {
@@ -34,6 +35,7 @@ model RefreshToken {
   sessionId String
   expiresAt DateTime
 
+  @@index([userId], type: Hash)
   @@index([expiresAt])
 }
 
@@ -83,7 +85,8 @@ model Deposit {
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 
-  @@index([userId, createdAt])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([assetTickerSymbol], type: Hash)
 }
 
 enum DepositStatus {
@@ -104,19 +107,24 @@ model AssetBalance {
 }
 
 model Order {
-  id            String      @id @default(dbgenerated("uuid7()"))
+  id            Int         @id @default(autoincrement())
   side          OrderSide
   quantity      Decimal
   price         Decimal
   status        OrderStatus
+  orderBookId   String      @default(dbgenerated("uuid7()"))
   userId        Int
   user          User        @relation(fields: [userId], references: [id])
   tradingPairId Int
   tradingPair   TradingPair @relation(fields: [tradingPairId], references: [id])
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt()
+  buyTrades     Trade[]     @relation("buyTrades")
+  sellTrades    Trade[]     @relation("sellTrades")
 
-  @@index([userId, createdAt])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([tradingPairId], type: Hash)
+  @@index([orderBookId], type: Hash)
 }
 
 enum OrderSide {
@@ -129,4 +137,19 @@ enum OrderStatus {
   Canceled
   PartiallyFilled
   Filled
+}
+
+model Trade {
+  id          Int      @id @default(autoincrement())
+  price       Decimal
+  quantity    Decimal
+  buyOrderId  Int
+  buyOrder    Order    @relation("buyTrades", fields: [buyOrderId], references: [id])
+  sellOrderId Int
+  sellOrder   Order    @relation("sellTrades", fields: [sellOrderId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([buyOrderId], type: Hash)
+  @@index([sellOrderId], type: Hash)
+  @@index([createdAt(sort: Desc)])
 }
