@@ -17,6 +17,7 @@ model User {
   refreshTokens      RefreshToken[]
   deposits           Deposit[]
   assetBalances      AssetBalance[]
+  Order              Order[]
 
   @@index([roles(ops: ArrayOps)], type: Gin)
 }
@@ -60,13 +61,14 @@ enum AssetType {
 }
 
 model TradingPair {
-  id           Int   @id @default(autoincrement())
-  baseAssetId  Int
-  baseAsset    Asset @relation("tradeableQuoteAssets", fields: [baseAssetId], references: [id])
-  quoteAssetId Int
-  quoteAsset   Asset @relation("tradeableBaseAssets", fields: [quoteAssetId], references: [id])
+  id                     Int     @id @default(autoincrement())
+  baseAssetTickerSymbol  String
+  baseAsset              Asset   @relation("tradeableQuoteAssets", fields: [baseAssetTickerSymbol], references: [tickerSymbol])
+  quoteAssetTickerSymbol String
+  quoteAsset             Asset   @relation("tradeableBaseAssets", fields: [quoteAssetTickerSymbol], references: [tickerSymbol])
+  Order                  Order[]
 
-  @@unique([baseAssetId, quoteAssetId])
+  @@unique([baseAssetTickerSymbol, quoteAssetTickerSymbol])
 }
 
 model Deposit {
@@ -99,4 +101,32 @@ model AssetBalance {
   asset             Asset   @relation(fields: [assetTickerSymbol], references: [tickerSymbol])
 
   @@unique([userId, assetTickerSymbol])
+}
+
+model Order {
+  id            String      @id @default(dbgenerated("uuid7()"))
+  side          OrderSide
+  quantity      Decimal
+  price         Decimal
+  status        OrderStatus
+  userId        Int
+  user          User        @relation(fields: [userId], references: [id])
+  tradingPairId Int
+  tradingPair   TradingPair @relation(fields: [tradingPairId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt()
+
+  @@index([userId, createdAt])
+}
+
+enum OrderSide {
+  Buy
+  Sell
+}
+
+enum OrderStatus {
+  Pending
+  Canceled
+  PartiallyFilled
+  Filled
 }
