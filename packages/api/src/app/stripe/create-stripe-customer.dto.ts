@@ -1,3 +1,3 @@
 export class CreateStripeCustomerDto {
-  email: string;
+  email!: string;
 }

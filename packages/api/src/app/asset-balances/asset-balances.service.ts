@@ -8,7 +8,7 @@ import { AssetType } from '@prisma/client';
 export class AssetBalancesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getMany(userId: number, assetType?: AssetType) {
+  async getMany(userId: number, assetType: AssetType | null) {
     const assets = await this.prisma.asset.findMany({
       where: {
         ...(assetType && { type: assetType }),

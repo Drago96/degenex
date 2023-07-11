@@ -111,7 +111,7 @@ model Order {
   side          OrderSide
   quantity      Decimal
   price         Decimal
-  status        OrderStatus
+  status        OrderStatus @default(Pending)
   orderBookId   String      @default(dbgenerated("uuid7()"))
   userId        Int
   user          User        @relation(fields: [userId], references: [id])

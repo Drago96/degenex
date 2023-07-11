@@ -21,7 +21,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService<EnvironmentVariables>);
 
-  await app.listen(configService.get('PORT'));
+  await app.listen(configService.getOrThrow('PORT'));
 }
 
 function setupSwagger(app: INestApplication) {

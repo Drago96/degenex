@@ -1,4 +1,4 @@
 export class RefreshTokenPayloadDto {
-  sub: number;
-  sessionId: string;
+  sub!: number;
+  sessionId!: string;
 }

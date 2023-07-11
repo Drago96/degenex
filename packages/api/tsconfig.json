@@ -11,6 +11,7 @@
     }
   ],
   "compilerOptions": {
+    "strict": true,
     "esModuleInterop": true,
     "paths": {
       "@degenex/common": ["packages/common/src/index.ts"],

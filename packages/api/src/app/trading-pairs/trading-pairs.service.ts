@@ -10,6 +10,7 @@ export class TradingPairsService {
   async getAll(): Promise<TradingPairResponseDto[]> {
     return this.prisma.tradingPair.findMany({
       select: {
+        id: true,
         baseAsset: {
           select: {
             id: true,

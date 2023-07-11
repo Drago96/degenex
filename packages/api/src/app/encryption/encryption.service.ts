@@ -59,7 +59,7 @@ export class EncryptionService {
 
   async getEncryptionKey() {
     return scryptAsync(
-      this.configService.get('ENCRYPTION_PASSWORD'),
+      this.configService.getOrThrow('ENCRYPTION_PASSWORD'),
       'GfG',
       32,
     );

@@ -26,6 +26,7 @@ import { AuthException } from './auth.exception';
 import { SEND_VERIFICATION_CODE_QUEUE_NAME } from './send-verification-code.consumer';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
 import { RefreshTokenPayloadDto } from './refresh-token-payload.dto';
+import { NotFoundException } from '@/lib/exceptions/not-found.exception';
 
 @Injectable()
 export class AuthService {
@@ -144,6 +145,10 @@ export class AuthService {
       where: { id: refreshTokenPayload.sub },
     });
 
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     return this.generateAuthTokens(user, refreshTokenPayload.sessionId);
   }
 
@@ -162,7 +167,7 @@ export class AuthService {
       return await this.jwtService.verifyAsync<RefreshTokenPayloadDto>(
         refreshToken,
         {
-          secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+          secret: this.configService.getOrThrow('REFRESH_TOKEN_SECRET'),
         }
       );
     } catch (error) {
@@ -172,7 +177,7 @@ export class AuthService {
 
   private async generateAuthTokens(
     user: User,
-    sessionId: string = null
+    sessionId: string | null = null
   ): Promise<AuthResultDto> {
     const accessTokenPayload: AccessTokenPayloadDto = {
       sub: user.id,
@@ -181,7 +186,7 @@ export class AuthService {
     };
 
     const accessToken = await this.jwtService.signAsync(accessTokenPayload, {
-      secret: this.configService.get('ACCESS_TOKEN_SECRET'),
+      secret: this.configService.getOrThrow('ACCESS_TOKEN_SECRET'),
       expiresIn: '15m',
     });
 
@@ -191,7 +196,7 @@ export class AuthService {
     };
 
     const refreshToken = await this.jwtService.signAsync(refreshTokenPayload, {
-      secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+      secret: this.configService.getOrThrow('REFRESH_TOKEN_SECRET'),
       expiresIn: '7d',
     });
 

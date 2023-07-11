@@ -1,4 +1,4 @@
 export class EncryptionDto {
-  data: string;
-  iv: string;
+  data!: string;
+  iv!: string;
 }

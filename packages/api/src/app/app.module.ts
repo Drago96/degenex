@@ -18,6 +18,7 @@ import { PrismaClientExceptionFilter } from './prisma/prisma-client-exception.fi
 import { StripeModule } from './stripe/stripe.module';
 import { DepositsModule } from './deposits/deposits.module';
 import { AssetBalancesModule } from './asset-balances/asset-balances.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -35,8 +36,8 @@ import { AssetBalancesModule } from './asset-balances/asset-balances.module';
         configService: ConfigService<EnvironmentVariables>
       ) => ({
         redis: {
-          host: configService.get('REDIS_HOST'),
-          port: configService.get('REDIS_PORT'),
+          host: configService.getOrThrow('REDIS_HOST'),
+          port: configService.getOrThrow('REDIS_PORT'),
         },
         defaultJobOptions: {
           attempts: 3,
@@ -54,8 +55,8 @@ import { AssetBalancesModule } from './asset-balances/asset-balances.module';
         configService: ConfigService<EnvironmentVariables>
       ) => ({
         config: {
-          host: configService.get('REDIS_HOST'),
-          port: configService.get('REDIS_PORT'),
+          host: configService.getOrThrow('REDIS_HOST'),
+          port: configService.getOrThrow('REDIS_PORT'),
         },
       }),
     }),
@@ -70,6 +71,7 @@ import { AssetBalancesModule } from './asset-balances/asset-balances.module';
     StripeModule,
     DepositsModule,
     AssetBalancesModule,
+    OrdersModule,
   ],
   providers: [
     {

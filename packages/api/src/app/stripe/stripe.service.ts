@@ -9,6 +9,7 @@ import { EnvironmentVariables } from '@/configuration';
 import { PrismaService } from '@/prisma/prisma.service';
 import { StripeCheckoutDto } from './stripe-checkout.dto';
 import { PROCESS_STRIPE_EVENT_QUEUE_NAME } from './process-stripe-event.consumer';
+import { NotFoundException } from '@/lib/exceptions/not-found.exception';
 
 @Injectable()
 export class StripeService {
@@ -20,8 +21,8 @@ export class StripeService {
     private readonly processStripeEventQueue: Queue<Stripe.Event>,
     private readonly configService: ConfigService<EnvironmentVariables>
   ) {
-    this.stripe = new Stripe(configService.get('STRIPE_SECRET_KEY'), {
-      apiVersion: configService.get('STRIPE_API_VERSION'),
+    this.stripe = new Stripe(configService.getOrThrow('STRIPE_SECRET_KEY'), {
+      apiVersion: configService.getOrThrow('STRIPE_API_VERSION'),
     });
   }
 
@@ -43,6 +44,10 @@ export class StripeService {
         paymentsCustomerId: true,
       },
     });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     if (!user.paymentsCustomerId) {
       throw new BadRequestException(
@@ -69,10 +74,10 @@ export class StripeService {
       metadata: {
         chargeType: stripeCheckoutDto.chargeType,
       },
-      success_url: `${this.configService.get('CLIENT_URL')}/${
+      success_url: `${this.configService.getOrThrow('CLIENT_URL')}/${
         stripeCheckoutDto.successPath
       }`,
-      cancel_url: `${this.configService.get('CLIENT_URL')}/${
+      cancel_url: `${this.configService.getOrThrow('CLIENT_URL')}/${
         stripeCheckoutDto.cancelPath
       }`,
     });
@@ -85,10 +90,10 @@ export class StripeService {
       event = await this.stripe.webhooks.constructEventAsync(
         stripePayload,
         stripeSignature,
-        this.configService.get('STRIPE_WEBHOOK_SIGNING_SECRET')
+        this.configService.getOrThrow('STRIPE_WEBHOOK_SIGNING_SECRET')
       );
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new BadRequestException((error as Error).message);
     }
 
     await this.processStripeEventQueue.add(event);

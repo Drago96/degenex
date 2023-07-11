@@ -50,7 +50,7 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
 
         await this.setLatestTradingPairPrice(
           tradingPair,
-          this.generateApproximateTradingPairPrice(cachedTradingPairPrice)
+          this.generateApproximateTradingPairPrice(cachedTradingPairPrice ?? 0)
         );
       })
     );
@@ -74,7 +74,7 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
         this.tradingPairPriceUpdate$.next({
           id: tradingPair.id,
           symbol: buildTradingPairSymbol(tradingPair),
-          price: latestTradingPairPrice,
+          price: latestTradingPairPrice ?? 0,
         });
       })
     );
@@ -119,7 +119,7 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
       return null;
     }
 
-    return Number(latestTradingPairPriceEntry.at(0).at(1).at(1));
+    return Number(latestTradingPairPriceEntry.at(0)!.at(1)!.at(1));
   }
 
   private generateApproximateTradingPairPrice(cachedTradingPairPrice: number) {

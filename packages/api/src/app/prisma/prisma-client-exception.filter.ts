@@ -11,7 +11,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
 
-    if (exception.code === UNIQUE_CONSTRAINT_VIOLATION_CODE) {
+    if (exception.code === UNIQUE_CONSTRAINT_VIOLATION_CODE && exception.meta) {
       const status = HttpStatus.CONFLICT;
 
       return response.status(status).json({

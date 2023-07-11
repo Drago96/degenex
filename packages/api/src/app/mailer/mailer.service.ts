@@ -13,7 +13,7 @@ export class MailerService {
   constructor(
     private readonly configService: ConfigService<EnvironmentVariables>,
   ) {
-    this.ses = new aws.SES({ region: this.configService.get('AWS_REGION') });
+    this.ses = new aws.SES({ region: this.configService.getOrThrow('AWS_REGION') });
   }
 
   async sendEmail(emailDto: EmailDto) {
@@ -25,7 +25,7 @@ export class MailerService {
     });
 
     return sesTransport.sendMail({
-      from: this.configService.get('MAILER_SOURCE_EMAIL'),
+      from: this.configService.getOrThrow('MAILER_SOURCE_EMAIL'),
       to: emailDto.receiver,
       subject: emailDto.subject,
       html: emailDto.body,
