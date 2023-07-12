@@ -4,6 +4,7 @@ import { AssetType } from '@prisma/client';
 import { createZodDto } from 'nestjs-zod/dto';
 
 export const TradingPairResponseSchema = z.object({
+  id: z.number(),
   baseAsset: z.object({
     id: z.number(),
     tickerSymbol: z.string(),
@@ -13,7 +14,7 @@ export const TradingPairResponseSchema = z.object({
   quoteAsset: z.object({
     id: z.number(),
     tickerSymbol: z.string(),
-    currencySymbol: z.string(),
+    currencySymbol: z.string().nullable(),
   }),
 });
 

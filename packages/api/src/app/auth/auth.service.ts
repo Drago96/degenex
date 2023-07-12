@@ -125,21 +125,15 @@ export class AuthService {
 
     const isRefreshTokenReusedOrExpired = storedRefreshToken === null;
 
-    if (isRefreshTokenReusedOrExpired) {
-      await this.prisma.refreshToken.deleteMany({
-        where: {
-          sessionId: refreshTokenPayload.sessionId,
-        },
-      });
-
-      throw new AuthException('Refresh token integrity compromised');
-    }
-
     await this.prisma.refreshToken.deleteMany({
       where: {
         sessionId: refreshTokenPayload.sessionId,
       },
     });
+
+    if (isRefreshTokenReusedOrExpired) {
+      throw new AuthException('Refresh token integrity compromised');
+    }
 
     const user = await this.prisma.user.findUnique({
       where: { id: refreshTokenPayload.sub },

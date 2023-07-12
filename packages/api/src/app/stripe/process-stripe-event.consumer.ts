@@ -53,12 +53,12 @@ export class ProcessStripeEventConsumer {
             },
           },
           update: {
-            amount: {
+            available: {
               increment: deposit.amount,
             },
           },
           create: {
-            amount: deposit.amount,
+            available: deposit.amount,
             userId: deposit.userId,
             assetTickerSymbol: deposit.assetTickerSymbol,
           },

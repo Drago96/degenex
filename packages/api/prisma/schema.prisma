@@ -97,7 +97,8 @@ enum DepositStatus {
 
 model AssetBalance {
   id                Int     @id @default(autoincrement())
-  amount            Decimal
+  available         Decimal
+  locked            Decimal @default(0)
   userId            Int
   user              User    @relation(fields: [userId], references: [id])
   assetTickerSymbol String
