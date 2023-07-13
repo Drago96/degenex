@@ -64,6 +64,7 @@ export class OrdersService {
         const order = await tx.order.create({
           data: {
             side: orderCreateDto.side,
+            type: orderCreateDto.type,
             quantity: orderCreateDto.quantity,
             price: orderCreateDto.price,
             tradingPairId: orderCreateDto.tradingPairId,

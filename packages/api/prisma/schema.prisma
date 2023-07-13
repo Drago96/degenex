@@ -110,6 +110,7 @@ model AssetBalance {
 model Order {
   id            Int         @id @default(autoincrement())
   side          OrderSide
+  type          OrderType
   quantity      Decimal
   price         Decimal
   status        OrderStatus @default(Pending)
@@ -120,8 +121,8 @@ model Order {
   tradingPair   TradingPair @relation(fields: [tradingPairId], references: [id])
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt()
-  buyTrades     Trade[]     @relation("buyTrades")
-  sellTrades    Trade[]     @relation("sellTrades")
+  makerTrades   Trade[]     @relation("makerTrades")
+  takerTrades   Trade[]     @relation("takerTrades")
 
   @@index([userId, createdAt(sort: Desc)])
   @@index([tradingPairId], type: Hash)
@@ -133,6 +134,11 @@ enum OrderSide {
   Sell
 }
 
+enum OrderType {
+  Market
+  Limit
+}
+
 enum OrderStatus {
   Pending
   Canceled
@@ -141,16 +147,16 @@ enum OrderStatus {
 }
 
 model Trade {
-  id          Int      @id @default(autoincrement())
-  price       Decimal
-  quantity    Decimal
-  buyOrderId  Int
-  buyOrder    Order    @relation("buyTrades", fields: [buyOrderId], references: [id])
-  sellOrderId Int
-  sellOrder   Order    @relation("sellTrades", fields: [sellOrderId], references: [id])
-  createdAt   DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  price        Decimal
+  quantity     Decimal
+  makerOrderId Int
+  makerOrder   Order    @relation("makerTrades", fields: [makerOrderId], references: [id])
+  takerOrderId Int
+  takerOrder   Order    @relation("takerTrades", fields: [takerOrderId], references: [id])
+  createdAt    DateTime @default(now())
 
-  @@index([buyOrderId], type: Hash)
-  @@index([sellOrderId], type: Hash)
+  @@index([takerOrderId], type: Hash)
+  @@index([makerOrderId], type: Hash)
   @@index([createdAt(sort: Desc)])
 }
