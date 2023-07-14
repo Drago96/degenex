@@ -31,7 +31,7 @@ model RefreshToken {
   id        Int      @id @default(autoincrement())
   token     String
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   sessionId String
   expiresAt DateTime
 
@@ -65,9 +65,9 @@ enum AssetType {
 model TradingPair {
   id                     Int     @id @default(autoincrement())
   baseAssetTickerSymbol  String
-  baseAsset              Asset   @relation("tradeableQuoteAssets", fields: [baseAssetTickerSymbol], references: [tickerSymbol])
+  baseAsset              Asset   @relation("tradeableQuoteAssets", fields: [baseAssetTickerSymbol], references: [tickerSymbol], onDelete: Cascade)
   quoteAssetTickerSymbol String
-  quoteAsset             Asset   @relation("tradeableBaseAssets", fields: [quoteAssetTickerSymbol], references: [tickerSymbol])
+  quoteAsset             Asset   @relation("tradeableBaseAssets", fields: [quoteAssetTickerSymbol], references: [tickerSymbol], onDelete: Cascade)
   orders                 Order[]
 
   @@unique([baseAssetTickerSymbol, quoteAssetTickerSymbol])
@@ -78,9 +78,9 @@ model Deposit {
   amount            Decimal
   status            DepositStatus @default(Pending)
   assetTickerSymbol String
-  asset             Asset         @relation(fields: [assetTickerSymbol], references: [tickerSymbol])
+  asset             Asset         @relation(fields: [assetTickerSymbol], references: [tickerSymbol], onDelete: Cascade)
   userId            Int
-  user              User          @relation(fields: [userId], references: [id])
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactionId     String        @unique
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
@@ -100,9 +100,9 @@ model AssetBalance {
   available         Decimal
   locked            Decimal @default(0)
   userId            Int
-  user              User    @relation(fields: [userId], references: [id])
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   assetTickerSymbol String
-  asset             Asset   @relation(fields: [assetTickerSymbol], references: [tickerSymbol])
+  asset             Asset   @relation(fields: [assetTickerSymbol], references: [tickerSymbol], onDelete: Cascade)
 
   @@unique([userId, assetTickerSymbol])
 }
@@ -116,9 +116,9 @@ model Order {
   status        OrderStatus @default(Pending)
   orderBookId   String      @default(dbgenerated("uuid7()"))
   userId        Int
-  user          User        @relation(fields: [userId], references: [id])
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   tradingPairId Int
-  tradingPair   TradingPair @relation(fields: [tradingPairId], references: [id])
+  tradingPair   TradingPair @relation(fields: [tradingPairId], references: [id], onDelete: Cascade)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt()
   makerTrades   Trade[]     @relation("makerTrades")
@@ -151,9 +151,9 @@ model Trade {
   price        Decimal
   quantity     Decimal
   makerOrderId Int
-  makerOrder   Order    @relation("makerTrades", fields: [makerOrderId], references: [id])
+  makerOrder   Order    @relation("makerTrades", fields: [makerOrderId], references: [id], onDelete: Cascade)
   takerOrderId Int
-  takerOrder   Order    @relation("takerTrades", fields: [takerOrderId], references: [id])
+  takerOrder   Order    @relation("takerTrades", fields: [takerOrderId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
 
   @@index([takerOrderId], type: Hash)
