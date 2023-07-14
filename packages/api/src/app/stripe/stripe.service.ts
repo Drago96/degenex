@@ -83,7 +83,7 @@ export class StripeService {
     });
   }
 
-  async prepareEvent(stripePayload: Buffer, stripeSignature: string) {
+  async enqueueEvent(stripePayload: Buffer, stripeSignature: string) {
     let event: Stripe.Event;
 
     try {

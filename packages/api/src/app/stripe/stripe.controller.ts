@@ -11,7 +11,7 @@ export class StripeController {
     @Req() request: RawBodyRequest<Request>,
     @Headers('stripe-signature') stripeSignature: string
   ) {
-    await this.stripeService.prepareEvent(
+    await this.stripeService.enqueueEvent(
       request.rawBody as Buffer,
       stripeSignature
     );
