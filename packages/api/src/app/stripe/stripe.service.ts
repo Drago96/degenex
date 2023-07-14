@@ -84,18 +84,16 @@ export class StripeService {
   }
 
   async enqueueEvent(stripePayload: Buffer, stripeSignature: string) {
-    let event: Stripe.Event;
-
     try {
-      event = await this.stripe.webhooks.constructEventAsync(
+      const event = await this.stripe.webhooks.constructEventAsync(
         stripePayload,
         stripeSignature,
         this.configService.getOrThrow('STRIPE_WEBHOOK_SIGNING_SECRET')
       );
+
+      await this.processStripeEventQueue.add(event);
     } catch (error) {
       throw new BadRequestException((error as Error).message);
     }
-
-    await this.processStripeEventQueue.add(event);
   }
 }
