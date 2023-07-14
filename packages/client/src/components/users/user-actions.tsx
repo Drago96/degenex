@@ -27,13 +27,13 @@ export default function UserActions() {
           <Menu.Item
             as={Link}
             href="/wallet"
-            className="mr-0 block ui-active:bg-highlight ui-active:dark:bg-highlight-dark"
+            className="mr-0 block ui-active:bg-accent ui-active:dark:bg-accent-dark"
           >
             <UserAction icon={MdWallet}>Wallet</UserAction>
           </Menu.Item>
           <Menu.Item
             as={LogoutLink}
-            className="mr-0 block ui-active:bg-highlight ui-active:dark:bg-highlight-dark"
+            className="mr-0 block ui-active:bg-accent ui-active:dark:bg-accent-dark"
           >
             <UserAction icon={MdLogout}>Logout</UserAction>
           </Menu.Item>

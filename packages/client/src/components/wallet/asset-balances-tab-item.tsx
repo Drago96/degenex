@@ -9,7 +9,7 @@ type AssetBalanceTabItemProps = PendingFetch<AssetBalanceResponseDto>;
 
 export default function AssetBalanceTabItem(props: AssetBalanceTabItemProps) {
   return (
-    <tr className="border-b border-primary hover:bg-primary dark:border-background-dark dark:bg-primary-dark dark:hover:bg-highlight-dark">
+    <tr className="border-b border-primary hover:bg-primary dark:border-background-dark dark:bg-primary-dark dark:hover:bg-accent-dark">
       <td className="px-6 py-4" width={100}>
         {props.loading ? (
           <Skeleton variant="circle" className="h-[40px] w-[40px]" />

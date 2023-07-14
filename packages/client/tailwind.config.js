@@ -30,7 +30,7 @@ module.exports = {
             DEFAULT: colors.white,
           },
         },
-        highlight: {
+        accent: {
           DEFAULT: colors.gray[200],
           dark: colors.gray[700],
         },
@@ -45,7 +45,7 @@ module.exports = {
         loading: {
           DEFAULT: colors.slate[200],
         },
-        transparent: {
+        muted: {
           DEFAULT: colors.gray[100],
           dark: colors.gray[700],
           contrastText: {
