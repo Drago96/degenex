@@ -1,5 +1,9 @@
 import { InjectQueue } from '@nestjs/bull';
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { User } from '@prisma/client';
@@ -26,7 +30,6 @@ import { AuthException } from './auth.exception';
 import { SEND_VERIFICATION_CODE_QUEUE_NAME } from './send-verification-code.consumer';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
 import { RefreshTokenPayloadDto } from './refresh-token-payload.dto';
-import { NotFoundException } from '@/lib/exceptions/not-found.exception';
 
 @Injectable()
 export class AuthService {

@@ -1,13 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
-import { BadRequestException } from '@/lib/exceptions/bad-request.exception';
-import { NotFoundException } from '@/lib/exceptions/not-found.exception';
+import { OrderBookService } from '@/order-book/order-book.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderCreateDto } from './order-create.dto';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly orderBookService: OrderBookService
+  ) {}
 
   async createOrder(userId: number, orderCreateDto: OrderCreateDto) {
     const tradingPair = await this.prisma.tradingPair.findUnique({
@@ -71,6 +77,8 @@ export class OrdersService {
             userId,
           },
         });
+
+        await this.orderBookService.placeOrder(order);
 
         return order;
       },

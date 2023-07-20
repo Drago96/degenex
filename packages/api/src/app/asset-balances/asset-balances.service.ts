@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { omit, sum } from 'lodash';
+import { omit } from 'lodash';
 
 import { PrismaService } from '@/prisma/prisma.service';
 import { AssetType } from '@prisma/client';
@@ -38,10 +38,8 @@ export class AssetBalancesService {
 
       return {
         ...omit(asset, 'userBalances'),
-        userBalance: sum([
-          userBalance?.available.toNumber() ?? 0,
-          userBalance?.locked.toNumber() ?? 0,
-        ]),
+        userBalance:
+          userBalance?.available.plus(userBalance?.locked).toNumber() ?? 0,
       };
     });
   }

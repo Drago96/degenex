@@ -19,6 +19,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { DepositsModule } from './deposits/deposits.module';
 import { AssetBalancesModule } from './asset-balances/asset-balances.module';
 import { OrdersModule } from './orders/orders.module';
+import { OrderBookModule } from './order-book/order-book.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { OrdersModule } from './orders/orders.module';
     DepositsModule,
     AssetBalancesModule,
     OrdersModule,
+    OrderBookModule,
   ],
   providers: [
     {

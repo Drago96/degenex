@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { upperCase } from 'lodash';
@@ -9,7 +13,6 @@ import { EnvironmentVariables } from '@/configuration';
 import { PrismaService } from '@/prisma/prisma.service';
 import { StripeCheckoutDto } from './stripe-checkout.dto';
 import { PROCESS_STRIPE_EVENT_QUEUE_NAME } from './process-stripe-event.consumer';
-import { NotFoundException } from '@/lib/exceptions/not-found.exception';
 
 @Injectable()
 export class StripeService {

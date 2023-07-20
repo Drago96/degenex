@@ -112,7 +112,7 @@ model Order {
   side          OrderSide
   type          OrderType
   quantity      Decimal
-  price         Decimal
+  price         Decimal     @default(0)
   status        OrderStatus @default(Pending)
   orderBookId   String      @default(dbgenerated("uuid7()"))
   userId        Int

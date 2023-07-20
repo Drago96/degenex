@@ -1,7 +1,7 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
-export class AuthException extends HttpException {
+export class AuthException extends BadRequestException {
   constructor(message = 'Authentication failed') {
-    super(message, HttpStatus.BAD_REQUEST);
+    super(message);
   }
 }
