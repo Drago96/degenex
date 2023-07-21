@@ -37,8 +37,6 @@ export class OrderBookService {
       await this.enqueueOrder(order, order.side, remainingQuantity);
     }
 
-    console.log(orderBookTrades);
-
     const filledOrderBookIds = orderBookTrades
       .filter((trade) => trade.makerOrder.remainingQuantity.equals(0))
       .map((trade) => trade.makerOrder.orderBookId);
