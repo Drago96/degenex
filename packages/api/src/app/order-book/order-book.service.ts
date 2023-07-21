@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
+import { flatten } from 'lodash';
 
 import { Order, OrderSide } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
@@ -36,7 +37,32 @@ export class OrderBookService {
       await this.enqueueOrder(order, order.side, remainingQuantity);
     }
 
-    throw new BadRequestException('Temp exception');
+    console.log(orderBookTrades);
+
+    const filledOrderBookIds = orderBookTrades
+      .filter((trade) => trade.makerOrder.remainingQuantity.equals(0))
+      .map((trade) => trade.makerOrder.orderBookId);
+
+    if (filledOrderBookIds.length > 0) {
+      await this.removeOrders(
+        filledOrderBookIds,
+        order.tradingPairId,
+        order.side === 'Buy' ? 'Sell' : 'Buy'
+      );
+    }
+
+    const partiallyFilledOrders = orderBookTrades
+      .filter((trade) => !trade.makerOrder.remainingQuantity.equals(0))
+      .map((trade) => trade.makerOrder);
+
+    if (partiallyFilledOrders.length > 0) {
+      await this.updateOrderQuantities(
+        partiallyFilledOrders,
+        order.tradingPairId
+      );
+    }
+
+    return orderBookTrades;
   }
 
   private async attemptOrderFill(takerOrder: Order) {
@@ -194,12 +220,14 @@ export class OrderBookService {
     );
 
     return {
-      makerOrderId: makerOrder.orderId,
-      makerOrderBookId,
       quantity: quantityToExecute,
-      isMakerOrderFilled: quantityToExecute.equals(
-        makerOrder.remainingQuantity
-      ),
+      makerOrder: {
+        id: makerOrder.orderId,
+        orderBookId: makerOrderBookId,
+        remainingQuantity: new Decimal(makerOrder.remainingQuantity).sub(
+          quantityToExecute
+        ),
+      },
     };
   }
 
@@ -231,6 +259,40 @@ export class OrderBookService {
         JSON.stringify(orderBookDto)
       )
       .exec();
+  }
+
+  private async removeOrders(
+    orderBookIds: string[],
+    tradingPairId: number,
+    orderSide: OrderSide
+  ) {
+    await this.redis
+      .multi()
+      .zrem(
+        this.buildTradingPairOrderBookKey(tradingPairId, orderSide),
+        ...orderBookIds
+      )
+      .hdel(this.buildTradingPairOrdersKey(tradingPairId), ...orderBookIds)
+      .exec();
+  }
+
+  private async updateOrderQuantities(
+    orders: OrderBookTradeDto['makerOrder'][],
+    tradingPairId: number
+  ) {
+    const orderEntries = orders.map((order) => {
+      const orderBookDto: OrderBookEntryDto = {
+        orderId: order.id,
+        remainingQuantity: order.remainingQuantity,
+      };
+
+      return [order.orderBookId, JSON.stringify(orderBookDto)];
+    });
+
+    await this.redis.hset(
+      this.buildTradingPairOrdersKey(tradingPairId),
+      ...flatten(orderEntries)
+    );
   }
 
   private buildTradingPairOrdersKey(tradingPairId: number) {
