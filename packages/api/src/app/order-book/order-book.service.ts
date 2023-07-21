@@ -6,6 +6,7 @@ import {
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 import { flatten } from 'lodash';
+import Redlock from 'redlock';
 
 import { Order, OrderSide } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
@@ -14,53 +15,66 @@ import { OrderBookTradeDto } from './order-book-trade.dto';
 
 @Injectable()
 export class OrderBookService {
+  private redlock: Redlock;
+
   constructor(
     @InjectRedis()
     private readonly redis: Redis
-  ) {}
+  ) {
+    this.redlock = new Redlock([redis]);
+  }
 
   async placeOrder(order: Order) {
-    const orderBookTrades = await this.attemptOrderFill(order);
+    const orderBookLock = await this.redlock.acquire(
+      [`order-book:${order.tradingPairId}`],
+      3000
+    );
 
-    const totalTradedQuantity =
-      orderBookTrades.length === 0
-        ? new Decimal(0)
-        : Decimal.sum(...orderBookTrades.map((trade) => trade.quantity));
+    try {
+      const orderBookTrades = await this.attemptOrderFill(order);
 
-    if (!totalTradedQuantity.equals(order.quantity)) {
-      if (order.type === 'Market') {
-        throw new BadRequestException('Insufficient liquidity');
+      const totalTradedQuantity =
+        orderBookTrades.length === 0
+          ? new Decimal(0)
+          : Decimal.sum(...orderBookTrades.map((trade) => trade.quantity));
+
+      if (!totalTradedQuantity.equals(order.quantity)) {
+        if (order.type === 'Market') {
+          throw new BadRequestException('Insufficient liquidity');
+        }
+
+        const remainingQuantity = order.quantity.minus(totalTradedQuantity);
+
+        await this.enqueueOrder(order, order.side, remainingQuantity);
       }
 
-      const remainingQuantity = order.quantity.minus(totalTradedQuantity);
+      const filledOrderBookIds = orderBookTrades
+        .filter((trade) => trade.makerOrder.remainingQuantity.equals(0))
+        .map((trade) => trade.makerOrder.orderBookId);
 
-      await this.enqueueOrder(order, order.side, remainingQuantity);
+      if (filledOrderBookIds.length > 0) {
+        await this.removeOrders(
+          filledOrderBookIds,
+          order.tradingPairId,
+          order.side === 'Buy' ? 'Sell' : 'Buy'
+        );
+      }
+
+      const partiallyFilledOrders = orderBookTrades
+        .filter((trade) => !trade.makerOrder.remainingQuantity.equals(0))
+        .map((trade) => trade.makerOrder);
+
+      if (partiallyFilledOrders.length > 0) {
+        await this.updateOrderQuantities(
+          partiallyFilledOrders,
+          order.tradingPairId
+        );
+      }
+
+      return orderBookTrades;
+    } finally {
+      await orderBookLock.release();
     }
-
-    const filledOrderBookIds = orderBookTrades
-      .filter((trade) => trade.makerOrder.remainingQuantity.equals(0))
-      .map((trade) => trade.makerOrder.orderBookId);
-
-    if (filledOrderBookIds.length > 0) {
-      await this.removeOrders(
-        filledOrderBookIds,
-        order.tradingPairId,
-        order.side === 'Buy' ? 'Sell' : 'Buy'
-      );
-    }
-
-    const partiallyFilledOrders = orderBookTrades
-      .filter((trade) => !trade.makerOrder.remainingQuantity.equals(0))
-      .map((trade) => trade.makerOrder);
-
-    if (partiallyFilledOrders.length > 0) {
-      await this.updateOrderQuantities(
-        partiallyFilledOrders,
-        order.tradingPairId
-      );
-    }
-
-    return orderBookTrades;
   }
 
   private async attemptOrderFill(takerOrder: Order) {
