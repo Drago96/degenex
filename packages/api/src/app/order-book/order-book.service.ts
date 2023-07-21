@@ -25,10 +25,7 @@ export class OrderBookService {
   }
 
   async placeOrder(order: Order) {
-    const orderBookLock = await this.redlock.acquire(
-      [`order-book:${order.tradingPairId}`],
-      3000
-    );
+    const orderBookLock = await this.acquireOrderBookLock(order.tradingPairId);
 
     try {
       const orderBookTrades = await this.attemptOrderFill(order);
@@ -75,6 +72,10 @@ export class OrderBookService {
     } finally {
       await orderBookLock.release();
     }
+  }
+
+  private async acquireOrderBookLock(tradingPairId: number) {
+    return await this.redlock.acquire([`order-book:${tradingPairId}`], 3000);
   }
 
   private async attemptOrderFill(takerOrder: Order) {
