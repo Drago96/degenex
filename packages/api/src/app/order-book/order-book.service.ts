@@ -26,7 +26,7 @@ export class OrderBookService {
         ? new Decimal(0)
         : Decimal.sum(...orderBookTrades.map((trade) => trade.quantity));
 
-    if (totalTradedQuantity !== order.quantity) {
+    if (!totalTradedQuantity.equals(order.quantity)) {
       if (order.type === 'Market') {
         throw new BadRequestException('Insufficient liquidity');
       }
@@ -90,7 +90,10 @@ export class OrderBookService {
 
     const [makerSellOrderBookId, sellPrice] = makerSellOrder;
 
-    if (buyOrder.type === 'Limit' && buyOrder.price < new Decimal(sellPrice)) {
+    if (
+      buyOrder.type === 'Limit' &&
+      buyOrder.price.lessThan(new Decimal(sellPrice))
+    ) {
       return null;
     }
 
@@ -119,7 +122,10 @@ export class OrderBookService {
 
     const [makerBuyOrderBookId, buyPrice] = makerBuyOrder;
 
-    if (sellOrder.type === 'Limit' && sellOrder.price > new Decimal(buyPrice)) {
+    if (
+      sellOrder.type === 'Limit' &&
+      sellOrder.price.greaterThan(new Decimal(buyPrice))
+    ) {
       return null;
     }
 

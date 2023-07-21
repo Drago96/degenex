@@ -1,4 +1,4 @@
-import { z, ZodType } from 'nestjs-zod/z';
+import { z } from 'nestjs-zod/z';
 
 export const withFallback = <T>(schema: z.ZodType<T>, fallback: T) =>
   z.preprocess(

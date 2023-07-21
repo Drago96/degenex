@@ -60,7 +60,7 @@ export class OrdersService {
             },
           });
 
-          if (assetBalance.available.toNumber() < 0) {
+          if (assetBalance.available.lessThan(0)) {
             throw new BadRequestException('Insufficient balance');
           }
         } catch (error) {
