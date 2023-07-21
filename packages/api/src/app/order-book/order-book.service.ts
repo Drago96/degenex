@@ -90,10 +90,7 @@ export class OrderBookService {
 
     const [makerSellOrderBookId, sellPrice] = makerSellOrder;
 
-    if (
-      buyOrder.type === 'Limit' &&
-      buyOrder.price.lessThan(sellPrice)
-    ) {
+    if (buyOrder.type === 'Limit' && buyOrder.price.lessThan(sellPrice)) {
       return null;
     }
 
@@ -122,10 +119,7 @@ export class OrderBookService {
 
     const [makerBuyOrderBookId, buyPrice] = makerBuyOrder;
 
-    if (
-      sellOrder.type === 'Limit' &&
-      sellOrder.price.greaterThan(buyPrice)
-    ) {
+    if (sellOrder.type === 'Limit' && sellOrder.price.greaterThan(buyPrice)) {
       return null;
     }
 
@@ -162,7 +156,7 @@ export class OrderBookService {
     tradingPairId: number,
     orderBookIndex: number
   ): Promise<[orderBookId: string, price: Decimal] | null> {
-    const buyOrder = await this.redis.zrevrange(
+    const buyOrder = await this.redis.zrange(
       this.buildTradingPairOrderBookKey(tradingPairId, 'Buy'),
       orderBookIndex,
       orderBookIndex,
@@ -175,7 +169,7 @@ export class OrderBookService {
 
     const [buyOrderBookId, buyPrice] = buyOrder;
 
-    return [buyOrderBookId, new Decimal(buyPrice)];
+    return [buyOrderBookId, new Decimal(buyPrice).absoluteValue()];
   }
 
   private async buildTrade(
@@ -219,11 +213,16 @@ export class OrderBookService {
       remainingQuantity,
     };
 
+    const orderPriceKey =
+      orderSide === 'Buy'
+        ? order.price.negated().toString()
+        : order.price.toString();
+
     await this.redis
       .multi()
       .zadd(
         this.buildTradingPairOrderBookKey(order.tradingPairId, orderSide),
-        order.price.toString(),
+        orderPriceKey,
         order.orderBookId
       )
       .hset(
