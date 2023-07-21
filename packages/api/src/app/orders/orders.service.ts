@@ -67,7 +67,7 @@ export class OrdersService {
           throw new BadRequestException('Insufficient balance');
         }
 
-        const order = await tx.order.create({
+        const createdOrder = await tx.order.create({
           data: {
             side: orderCreateDto.side,
             type: orderCreateDto.type,
@@ -78,9 +78,72 @@ export class OrdersService {
           },
         });
 
-        await this.orderBookService.placeOrder(order);
+        const { isOrderFilled, orderBookTrades } =
+          await this.orderBookService.placeOrder(createdOrder);
 
-        return order;
+        if (orderBookTrades.length === 0) {
+          return createdOrder;
+        }
+
+        await tx.trade.createMany({
+          data: orderBookTrades.map((trade) => ({
+            takerOrderId: createdOrder.id,
+            makerOrderId: trade.makerOrder.id,
+            price: trade.price,
+            quantity: trade.quantity,
+          })),
+        });
+
+        const filledOrderIds = orderBookTrades
+          .filter((trade) => trade.makerOrder.remainingQuantity.equals(0))
+          .map((trade) => trade.makerOrder.id);
+
+        const partiallyFilledOrderIds = orderBookTrades
+          .filter((trade) => !trade.makerOrder.remainingQuantity.equals(0))
+          .map((trade) => trade.makerOrder.id);
+
+        if (filledOrderIds.length > 0) {
+          await tx.order.updateMany({
+            where: {
+              id: {
+                in: filledOrderIds,
+              },
+              status: {
+                not: 'Canceled',
+              },
+            },
+            data: {
+              status: 'Filled',
+            },
+          });
+        }
+
+        if (partiallyFilledOrderIds.length > 0) {
+          await tx.order.updateMany({
+            where: {
+              id: {
+                in: partiallyFilledOrderIds,
+              },
+              status: {
+                not: 'Canceled',
+              },
+            },
+            data: {
+              status: 'PartiallyFilled',
+            },
+          });
+        }
+
+        const updatedOrder = await tx.order.update({
+          where: {
+            id: createdOrder.id,
+          },
+          data: {
+            status: isOrderFilled ? 'Filled' : 'PartiallyFilled',
+          },
+        });
+
+        return updatedOrder;
       },
       {
         isolationLevel: 'RepeatableRead',

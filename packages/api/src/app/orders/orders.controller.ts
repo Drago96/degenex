@@ -16,6 +16,6 @@ export class OrdersController {
     @Req() req: RequestWithUser,
     @Body() orderCreateDto: OrderCreateDto
   ): Promise<Order> {
-    return this.ordersService.createOrder(req.user.id, orderCreateDto);
+    return await this.ordersService.createOrder(req.user.id, orderCreateDto);
   }
 }

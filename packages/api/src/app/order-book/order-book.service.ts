@@ -35,7 +35,9 @@ export class OrderBookService {
           ? new Decimal(0)
           : Decimal.sum(...orderBookTrades.map((trade) => trade.quantity));
 
-      if (!totalTradedQuantity.equals(order.quantity)) {
+      const isOrderFilled = totalTradedQuantity.equals(order.quantity);
+
+      if (!isOrderFilled) {
         if (order.type === 'Market') {
           throw new BadRequestException('Insufficient liquidity');
         }
@@ -68,7 +70,10 @@ export class OrderBookService {
         );
       }
 
-      return orderBookTrades;
+      return {
+        isOrderFilled,
+        orderBookTrades,
+      };
     } finally {
       await orderBookLock.release();
     }
@@ -136,6 +141,7 @@ export class OrderBookService {
     const orderBookTrade = await this.buildTrade(
       buyOrder.tradingPairId,
       remainingQuantity,
+      sellPrice,
       makerSellOrderBookId
     );
 
@@ -165,6 +171,7 @@ export class OrderBookService {
     const orderBookTrade = await this.buildTrade(
       sellOrder.tradingPairId,
       remainingQuantity,
+      buyPrice,
       makerBuyOrderBookId
     );
 
@@ -214,6 +221,7 @@ export class OrderBookService {
   private async buildTrade(
     tradingPairId: number,
     takerOrderQuantity: Decimal,
+    price: Decimal,
     makerOrderBookId: string
   ): Promise<OrderBookTradeDto> {
     const makerOrderJson = await this.redis.hget(
@@ -233,6 +241,7 @@ export class OrderBookService {
     );
 
     return {
+      price,
       quantity: quantityToExecute,
       makerOrder: {
         id: makerOrder.orderId,
