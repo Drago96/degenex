@@ -92,7 +92,7 @@ export class OrderBookService {
 
     if (
       buyOrder.type === 'Limit' &&
-      buyOrder.price.lessThan(new Decimal(sellPrice))
+      buyOrder.price.lessThan(sellPrice)
     ) {
       return null;
     }
@@ -124,7 +124,7 @@ export class OrderBookService {
 
     if (
       sellOrder.type === 'Limit' &&
-      sellOrder.price.greaterThan(new Decimal(buyPrice))
+      sellOrder.price.greaterThan(buyPrice)
     ) {
       return null;
     }
@@ -141,7 +141,7 @@ export class OrderBookService {
   private async getSellOrder(
     tradingPairId: number,
     orderBookIndex: number
-  ): Promise<[orderBookId: string, price: string] | null> {
+  ): Promise<[orderBookId: string, price: Decimal] | null> {
     const sellOrder = await this.redis.zrange(
       this.buildTradingPairOrderBookKey(tradingPairId, 'Sell'),
       orderBookIndex,
@@ -155,13 +155,13 @@ export class OrderBookService {
 
     const [sellOrderBookId, sellPrice] = sellOrder;
 
-    return [sellOrderBookId, sellPrice];
+    return [sellOrderBookId, new Decimal(sellPrice)];
   }
 
   private async getBuyOrder(
     tradingPairId: number,
     orderBookIndex: number
-  ): Promise<[orderBookId: string, price: string] | null> {
+  ): Promise<[orderBookId: string, price: Decimal] | null> {
     const buyOrder = await this.redis.zrevrange(
       this.buildTradingPairOrderBookKey(tradingPairId, 'Buy'),
       orderBookIndex,
@@ -175,7 +175,7 @@ export class OrderBookService {
 
     const [buyOrderBookId, buyPrice] = buyOrder;
 
-    return [buyOrderBookId, buyPrice];
+    return [buyOrderBookId, new Decimal(buyPrice)];
   }
 
   private async buildTrade(
