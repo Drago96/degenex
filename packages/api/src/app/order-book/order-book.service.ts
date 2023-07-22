@@ -59,13 +59,13 @@ export class OrderBookService {
         );
       }
 
-      const partiallyFilledOrders = orderBookTrades
+      const partiallyFilledMakerOrders = orderBookTrades
         .filter((trade) => !trade.makerOrder.remainingQuantity.equals(0))
         .map((trade) => trade.makerOrder);
 
-      if (partiallyFilledOrders.length > 0) {
+      if (partiallyFilledMakerOrders.length > 0) {
         await this.updateOrderQuantities(
-          partiallyFilledOrders,
+          partiallyFilledMakerOrders,
           order.tradingPairId
         );
       }
@@ -80,7 +80,10 @@ export class OrderBookService {
   }
 
   private async acquireOrderBookLock(tradingPairId: number) {
-    return await this.redlock.acquire([`order-book:${tradingPairId}`], 3000);
+    return await this.redlock.acquire(
+      [`trading-pair-order-book:${tradingPairId}`],
+      3000
+    );
   }
 
   private async attemptOrderFill(takerOrder: Order) {

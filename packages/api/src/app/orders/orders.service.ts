@@ -94,19 +94,19 @@ export class OrdersService {
           })),
         });
 
-        const filledOrderIds = orderBookTrades
+        const filledMakerOrderIds = orderBookTrades
           .filter((trade) => trade.makerOrder.remainingQuantity.equals(0))
           .map((trade) => trade.makerOrder.id);
 
-        const partiallyFilledOrderIds = orderBookTrades
+        const partiallyFilledMakerOrderIds = orderBookTrades
           .filter((trade) => !trade.makerOrder.remainingQuantity.equals(0))
           .map((trade) => trade.makerOrder.id);
 
-        if (filledOrderIds.length > 0) {
+        if (filledMakerOrderIds.length > 0) {
           await tx.order.updateMany({
             where: {
               id: {
-                in: filledOrderIds,
+                in: filledMakerOrderIds,
               },
               status: {
                 not: 'Canceled',
@@ -118,11 +118,11 @@ export class OrdersService {
           });
         }
 
-        if (partiallyFilledOrderIds.length > 0) {
+        if (partiallyFilledMakerOrderIds.length > 0) {
           await tx.order.updateMany({
             where: {
               id: {
-                in: partiallyFilledOrderIds,
+                in: partiallyFilledMakerOrderIds,
               },
               status: {
                 not: 'Canceled',
