@@ -1,4 +1,4 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const UNIQUE_CONSTRAINT_VIOLATION_CODE = 'P2002';
 const RECORD_NOT_FOUND_CODE = 'P2025';

@@ -9,7 +9,7 @@ import { chunk, flatten, groupBy, zip } from 'lodash';
 import Redlock from 'redlock';
 
 import { Order, OrderSide } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
+import { Decimal } from '@prisma/client/runtime/library';
 import { OrderBookEntryDto } from './order-book-entry.dto';
 import { OrderBookTradeDto } from './order-book-trade.dto';
 import { OrderBookDepthDto } from './order-book-depth.dto';

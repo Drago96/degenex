@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Decimal } from '@prisma/client/runtime';
 
+import { Decimal } from '@prisma/client/runtime/library';
 import { TradingPairResponseDto } from '@degenex/common';
 import { PrismaService } from '../prisma/prisma.service';
 

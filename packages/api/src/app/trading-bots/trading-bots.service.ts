@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
-import { Decimal } from '@prisma/client/runtime';
 
+import { Decimal } from '@prisma/client/runtime/library';
 import { TradingPairsPriceCacheService } from '@/trading-pairs/trading-pairs-price-cache.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { TradingPairsService } from '@/trading-pairs/trading-pairs.service';
