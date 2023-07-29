@@ -26,27 +26,30 @@ export class OrderBookService {
     this.redlock = new Redlock([redis]);
   }
 
-  async placeOrder(order: Order) {
-    const orderBookLock = await this.acquireOrderBookLock(order.tradingPairId);
+  async placeOrder(takerOrder: Order) {
+    const orderBookLock = await this.acquireOrderBookLock(
+      takerOrder.tradingPairId
+    );
 
     try {
-      const orderBookTrades = await this.attemptOrderFill(order);
+      const orderBookTrades = await this.attemptOrderFill(takerOrder);
 
       const totalTradedQuantity =
         orderBookTrades.length === 0
           ? new Decimal(0)
           : Decimal.sum(...orderBookTrades.map((trade) => trade.quantity));
 
-      const isOrderFilled = totalTradedQuantity.equals(order.quantity);
+      const isOrderFilled = totalTradedQuantity.equals(takerOrder.quantity);
 
       if (!isOrderFilled) {
-        if (order.type === 'Market') {
+        if (takerOrder.type === 'Market') {
           throw new BadRequestException('Insufficient liquidity');
         }
 
-        const remainingQuantity = order.quantity.minus(totalTradedQuantity);
+        const remainingQuantity =
+          takerOrder.quantity.minus(totalTradedQuantity);
 
-        await this.enqueueOrder(order, remainingQuantity);
+        await this.enqueueOrder(takerOrder, remainingQuantity);
       }
 
       const filledOrderBookIds = orderBookTrades
@@ -56,8 +59,8 @@ export class OrderBookService {
       if (filledOrderBookIds.length > 0) {
         await this.removeOrders(
           filledOrderBookIds,
-          order.tradingPairId,
-          order.side === 'Buy' ? 'Sell' : 'Buy'
+          takerOrder.tradingPairId,
+          takerOrder.side === 'Buy' ? 'Sell' : 'Buy'
         );
       }
 
@@ -68,7 +71,7 @@ export class OrderBookService {
       if (partiallyFilledMakerOrders.length > 0) {
         await this.updateOrderQuantities(
           partiallyFilledMakerOrders,
-          order.tradingPairId
+          takerOrder.tradingPairId
         );
       }
 

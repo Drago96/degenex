@@ -11,6 +11,8 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { isRecordNotFoundError } from '@/prisma/prisma-error.utils';
 import { PrismaTransaction } from '@/types/prisma-transaction';
 import { OrderBalanceTransferDto } from './order-balance-transfer.dto';
+import { OrderBookTradeDto } from '@/order-book/order-book-trade.dto';
+import { OrderSide } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
@@ -36,46 +38,7 @@ export class OrdersService {
 
     return this.prisma.$transaction(
       async (tx) => {
-        try {
-          const assetBalanceTickerSymbol =
-            orderCreateDto.side === 'Buy'
-              ? tradingPair.quoteAssetTickerSymbol
-              : tradingPair.baseAssetTickerSymbol;
-
-          const orderAmount =
-            orderCreateDto.side === 'Buy'
-              ? new Decimal(orderCreateDto.price).times(
-                  new Decimal(orderCreateDto.quantity)
-                )
-              : orderCreateDto.quantity;
-
-          const assetBalance = await tx.assetBalance.update({
-            where: {
-              userId_assetTickerSymbol: {
-                userId,
-                assetTickerSymbol: assetBalanceTickerSymbol,
-              },
-            },
-            data: {
-              available: {
-                decrement: orderAmount,
-              },
-              locked: {
-                increment: orderAmount,
-              },
-            },
-          });
-
-          if (assetBalance.available.lessThan(0)) {
-            throw new BadRequestException('Insufficient balance');
-          }
-        } catch (error) {
-          if (isRecordNotFoundError(error)) {
-            throw new BadRequestException('Insufficient balance');
-          }
-
-          throw error;
-        }
+        await this.lockAssetsForOrder(userId, tradingPair, orderCreateDto, tx);
 
         const createdOrder = await tx.order.create({
           data: {
@@ -104,38 +67,11 @@ export class OrdersService {
           })),
         });
 
-        await Promise.all(
-          orderBookTrades.map(async (trade) => {
-            await tx.order.updateMany({
-              where: {
-                id: trade.makerOrder.id,
-                status: {
-                  not: 'Canceled',
-                },
-              },
-              data: {
-                status: trade.makerOrder.remainingQuantity.equals(0)
-                  ? 'Filled'
-                  : 'PartiallyFilled',
-              },
-            });
-
-            await this.transferAssetBalance(
-              {
-                userId: trade.makerOrder.userId,
-                orderSide: orderCreateDto.side === 'Buy' ? 'Sell' : 'Buy',
-                baseAsset: {
-                  quantity: trade.quantity,
-                  tickerSymbol: tradingPair.baseAssetTickerSymbol,
-                },
-                quoteAsset: {
-                  amount: trade.quantity.times(trade.price),
-                  tickerSymbol: tradingPair.quoteAssetTickerSymbol,
-                },
-              },
-              tx
-            );
-          })
+        await this.updateMakerOrders(
+          orderBookTrades,
+          tradingPair,
+          orderCreateDto.side === 'Buy' ? 'Sell' : 'Buy',
+          tx
         );
 
         const updatedOrder = await tx.order.update({
@@ -147,7 +83,7 @@ export class OrdersService {
           },
         });
 
-        await this.transferAssetBalance(
+        await this.updateAssetBalance(
           {
             userId: userId,
             orderSide: orderCreateDto.side,
@@ -177,7 +113,102 @@ export class OrdersService {
     );
   }
 
-  private async transferAssetBalance(
+  private async lockAssetsForOrder(
+    userId: number,
+    tradingPair: {
+      quoteAssetTickerSymbol: string;
+      baseAssetTickerSymbol: string;
+    },
+    orderCreateDto: OrderCreateDto,
+    tx: PrismaTransaction
+  ) {
+    try {
+      const assetBalanceTickerSymbol =
+        orderCreateDto.side === 'Buy'
+          ? tradingPair.quoteAssetTickerSymbol
+          : tradingPair.baseAssetTickerSymbol;
+
+      const orderAmount =
+        orderCreateDto.side === 'Buy'
+          ? new Decimal(orderCreateDto.price).times(
+              new Decimal(orderCreateDto.quantity)
+            )
+          : orderCreateDto.quantity;
+
+      const assetBalance = await tx.assetBalance.update({
+        where: {
+          userId_assetTickerSymbol: {
+            userId,
+            assetTickerSymbol: assetBalanceTickerSymbol,
+          },
+        },
+        data: {
+          available: {
+            decrement: orderAmount,
+          },
+          locked: {
+            increment: orderAmount,
+          },
+        },
+      });
+
+      if (assetBalance.available.lessThan(0)) {
+        throw new BadRequestException('Insufficient balance');
+      }
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new BadRequestException('Insufficient balance');
+      }
+
+      throw error;
+    }
+  }
+
+  private async updateMakerOrders(
+    orderBookTrades: OrderBookTradeDto[],
+    tradingPair: {
+      quoteAssetTickerSymbol: string;
+      baseAssetTickerSymbol: string;
+    },
+    orderSide: OrderSide,
+    tx: PrismaTransaction
+  ) {
+    await Promise.all(
+      orderBookTrades.map(async (trade) => {
+        await tx.order.updateMany({
+          where: {
+            id: trade.makerOrder.id,
+            status: {
+              not: 'Canceled',
+            },
+          },
+          data: {
+            status: trade.makerOrder.remainingQuantity.equals(0)
+              ? 'Filled'
+              : 'PartiallyFilled',
+          },
+        });
+
+        await this.updateAssetBalance(
+          {
+            userId: trade.makerOrder.userId,
+            orderSide,
+            baseAsset: {
+              quantity: trade.quantity,
+              tickerSymbol: tradingPair.baseAssetTickerSymbol,
+            },
+            quoteAsset: {
+              amount: trade.quantity.times(trade.price),
+              tickerSymbol: tradingPair.quoteAssetTickerSymbol,
+            },
+          },
+          tx
+        );
+      })
+    );
+  }
+
+  private async updateAssetBalance(
     orderBalanceTransferDto: OrderBalanceTransferDto,
     tx: PrismaTransaction
   ) {

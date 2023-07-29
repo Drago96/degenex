@@ -110,6 +110,30 @@ export class TradingBotsService {
       throw new InternalServerErrorException();
     }
 
+    await this.prepareBotAssetBalances(
+      botUser.id,
+      tradingPair,
+      botOrderSide,
+      orderPrice,
+      orderQuantity
+    );
+
+    await this.ordersService.createOrder(botUser.id, {
+      price: orderPrice.toNumber(),
+      quantity: orderQuantity.toNumber(),
+      side: botOrderSide,
+      tradingPairId: tradingPair.id,
+      type: 'Limit',
+    });
+  }
+
+  private async prepareBotAssetBalances(
+    botUserId: number,
+    tradingPair: TradingPairWithAssociations,
+    botOrderSide: OrderSide,
+    orderPrice: Decimal,
+    orderQuantity: Decimal
+  ) {
     const tickerSymbolToFund =
       botOrderSide === 'Buy'
         ? tradingPair.quoteAsset.tickerSymbol
@@ -121,7 +145,7 @@ export class TradingBotsService {
     await this.prisma.assetBalance.upsert({
       where: {
         userId_assetTickerSymbol: {
-          userId: botUser.id,
+          userId: botUserId,
           assetTickerSymbol: tickerSymbolToFund,
         },
       },
@@ -131,12 +155,12 @@ export class TradingBotsService {
       },
       create: {
         available: amountToFund,
-        userId: botUser.id,
+        userId: botUserId,
         assetTickerSymbol: tickerSymbolToFund,
       },
     });
 
-    const tickerSymbolToWithdraw =
+    const tickerSymbolToReset =
       botOrderSide === 'Buy'
         ? tradingPair.baseAsset.tickerSymbol
         : tradingPair.quoteAsset.tickerSymbol;
@@ -144,8 +168,8 @@ export class TradingBotsService {
     await this.prisma.assetBalance.upsert({
       where: {
         userId_assetTickerSymbol: {
-          userId: botUser.id,
-          assetTickerSymbol: tickerSymbolToWithdraw,
+          userId: botUserId,
+          assetTickerSymbol: tickerSymbolToReset,
         },
       },
       update: {
@@ -154,17 +178,9 @@ export class TradingBotsService {
       },
       create: {
         available: 0,
-        userId: botUser.id,
-        assetTickerSymbol: tickerSymbolToWithdraw,
+        userId: botUserId,
+        assetTickerSymbol: tickerSymbolToReset,
       },
-    });
-
-    await this.ordersService.createOrder(botUser.id, {
-      price: orderPrice.toNumber(),
-      quantity: orderQuantity.toNumber(),
-      side: botOrderSide,
-      tradingPairId: tradingPair.id,
-      type: 'Limit',
     });
   }
 
