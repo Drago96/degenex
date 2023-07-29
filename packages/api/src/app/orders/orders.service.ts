@@ -7,8 +7,10 @@ import {
 import { OrderBookService } from '@/order-book/order-book.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderCreateDto } from './order-create.dto';
-import { Decimal } from '@prisma/client/runtime';
+import { Decimal } from '@prisma/client/runtime/library';
 import { isRecordNotFoundError } from '@/prisma/prisma-error.utils';
+import { PrismaTransaction } from '@/types/prisma-transaction';
+import { OrderBalanceTransferDto } from './order-balance-transfer.dto';
 
 @Injectable()
 export class OrdersService {
@@ -23,8 +25,8 @@ export class OrdersService {
         id: orderCreateDto.tradingPairId,
       },
       select: {
-        baseAssetTickerSymbol: orderCreateDto.side === 'Sell',
-        quoteAssetTickerSymbol: orderCreateDto.side === 'Buy',
+        baseAssetTickerSymbol: true,
+        quoteAssetTickerSymbol: true,
       },
     });
 
@@ -102,45 +104,39 @@ export class OrdersService {
           })),
         });
 
-        const filledMakerOrderIds = orderBookTrades
-          .filter((trade) => trade.makerOrder.remainingQuantity.equals(0))
-          .map((trade) => trade.makerOrder.id);
+        await Promise.all(
+          orderBookTrades.map(async (trade) => {
+            await tx.order.updateMany({
+              where: {
+                id: trade.makerOrder.id,
+                status: {
+                  not: 'Canceled',
+                },
+              },
+              data: {
+                status: trade.makerOrder.remainingQuantity.equals(0)
+                  ? 'Filled'
+                  : 'PartiallyFilled',
+              },
+            });
 
-        const partiallyFilledMakerOrderIds = orderBookTrades
-          .filter((trade) => !trade.makerOrder.remainingQuantity.equals(0))
-          .map((trade) => trade.makerOrder.id);
-
-        if (filledMakerOrderIds.length > 0) {
-          await tx.order.updateMany({
-            where: {
-              id: {
-                in: filledMakerOrderIds,
+            await this.transferAssetBalance(
+              {
+                userId: trade.makerOrder.userId,
+                orderSide: orderCreateDto.side === 'Buy' ? 'Sell' : 'Buy',
+                baseAsset: {
+                  quantity: trade.quantity,
+                  tickerSymbol: tradingPair.baseAssetTickerSymbol,
+                },
+                quoteAsset: {
+                  amount: trade.quantity.times(trade.price),
+                  tickerSymbol: tradingPair.quoteAssetTickerSymbol,
+                },
               },
-              status: {
-                not: 'Canceled',
-              },
-            },
-            data: {
-              status: 'Filled',
-            },
-          });
-        }
-
-        if (partiallyFilledMakerOrderIds.length > 0) {
-          await tx.order.updateMany({
-            where: {
-              id: {
-                in: partiallyFilledMakerOrderIds,
-              },
-              status: {
-                not: 'Canceled',
-              },
-            },
-            data: {
-              status: 'PartiallyFilled',
-            },
-          });
-        }
+              tx
+            );
+          })
+        );
 
         const updatedOrder = await tx.order.update({
           where: {
@@ -151,11 +147,90 @@ export class OrdersService {
           },
         });
 
+        await this.transferAssetBalance(
+          {
+            userId: userId,
+            orderSide: orderCreateDto.side,
+            baseAsset: {
+              quantity: Decimal.sum(
+                ...orderBookTrades.map((trade) => trade.quantity)
+              ),
+              tickerSymbol: tradingPair.baseAssetTickerSymbol,
+            },
+            quoteAsset: {
+              amount: Decimal.sum(
+                ...orderBookTrades.map((trade) =>
+                  trade.quantity.times(trade.price)
+                )
+              ),
+              tickerSymbol: tradingPair.quoteAssetTickerSymbol,
+            },
+          },
+          tx
+        );
+
         return updatedOrder;
       },
       {
         isolationLevel: 'RepeatableRead',
       }
     );
+  }
+
+  private async transferAssetBalance(
+    orderBalanceTransferDto: OrderBalanceTransferDto,
+    tx: PrismaTransaction
+  ) {
+    await tx.assetBalance.upsert({
+      where: {
+        userId_assetTickerSymbol: {
+          userId: orderBalanceTransferDto.userId,
+          assetTickerSymbol: orderBalanceTransferDto.baseAsset.tickerSymbol,
+        },
+      },
+      update: {
+        ...(orderBalanceTransferDto.orderSide === 'Buy' && {
+          available: {
+            increment: orderBalanceTransferDto.baseAsset.quantity,
+          },
+        }),
+        ...(orderBalanceTransferDto.orderSide === 'Sell' && {
+          locked: {
+            decrement: orderBalanceTransferDto.baseAsset.quantity,
+          },
+        }),
+      },
+      create: {
+        available: orderBalanceTransferDto.baseAsset.quantity,
+        userId: orderBalanceTransferDto.userId,
+        assetTickerSymbol: orderBalanceTransferDto.baseAsset.tickerSymbol,
+      },
+    });
+
+    await tx.assetBalance.upsert({
+      where: {
+        userId_assetTickerSymbol: {
+          userId: orderBalanceTransferDto.userId,
+          assetTickerSymbol: orderBalanceTransferDto.quoteAsset.tickerSymbol,
+        },
+      },
+      update: {
+        ...(orderBalanceTransferDto.orderSide === 'Sell' && {
+          available: {
+            increment: orderBalanceTransferDto.quoteAsset.amount,
+          },
+        }),
+        ...(orderBalanceTransferDto.orderSide === 'Buy' && {
+          locked: {
+            decrement: orderBalanceTransferDto.quoteAsset.amount,
+          },
+        }),
+      },
+      create: {
+        available: orderBalanceTransferDto.quoteAsset.amount,
+        userId: orderBalanceTransferDto.userId,
+        assetTickerSymbol: orderBalanceTransferDto.quoteAsset.tickerSymbol,
+      },
+    });
   }
 }

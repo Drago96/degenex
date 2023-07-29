@@ -5,6 +5,7 @@ export type OrderBookTradeDto = {
   quantity: Decimal;
   makerOrder: {
     id: number;
+    userId: number;
     orderBookId: string;
     remainingQuantity: Decimal;
   };

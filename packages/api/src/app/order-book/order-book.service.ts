@@ -46,7 +46,7 @@ export class OrderBookService {
 
         const remainingQuantity = order.quantity.minus(totalTradedQuantity);
 
-        await this.enqueueOrder(order, order.side, remainingQuantity);
+        await this.enqueueOrder(order, remainingQuantity);
       }
 
       const filledOrderBookIds = orderBookTrades
@@ -341,6 +341,7 @@ export class OrderBookService {
       quantity: quantityToExecute,
       makerOrder: {
         id: makerOrder.orderId,
+        userId: makerOrder.userId,
         orderBookId: makerOrderBookId,
         remainingQuantity: new Decimal(makerOrder.remainingQuantity).sub(
           quantityToExecute
@@ -349,25 +350,22 @@ export class OrderBookService {
     };
   }
 
-  private async enqueueOrder(
-    order: Order,
-    orderSide: OrderSide,
-    remainingQuantity: Decimal
-  ) {
+  private async enqueueOrder(order: Order, remainingQuantity: Decimal) {
     const orderBookDto: OrderBookEntryDto = {
       orderId: order.id,
+      userId: order.userId,
       remainingQuantity,
     };
 
     const orderPriceKey =
-      orderSide === 'Buy'
+      order.side === 'Buy'
         ? order.price.negated().toString()
         : order.price.toString();
 
     await this.redis
       .multi()
       .zadd(
-        this.buildTradingPairOrderBookKey(order.tradingPairId, orderSide),
+        this.buildTradingPairOrderBookKey(order.tradingPairId, order.side),
         orderPriceKey,
         order.orderBookId
       )
@@ -401,6 +399,7 @@ export class OrderBookService {
     const orderEntries = orders.map((order) => {
       const orderBookDto: OrderBookEntryDto = {
         orderId: order.id,
+        userId: order.userId,
         remainingQuantity: order.remainingQuantity,
       };
 
