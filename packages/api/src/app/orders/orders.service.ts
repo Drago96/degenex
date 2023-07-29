@@ -7,6 +7,7 @@ import {
 import { OrderBookService } from '@/order-book/order-book.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderCreateDto } from './order-create.dto';
+import { Decimal } from '@prisma/client/runtime';
 
 @Injectable()
 export class OrdersService {
@@ -34,14 +35,16 @@ export class OrdersService {
       async (tx) => {
         try {
           const assetBalanceTickerSymbol =
-            orderCreateDto.side === 'Sell'
-              ? tradingPair.baseAssetTickerSymbol
-              : tradingPair.quoteAssetTickerSymbol;
+            orderCreateDto.side === 'Buy'
+              ? tradingPair.quoteAssetTickerSymbol
+              : tradingPair.baseAssetTickerSymbol;
 
           const orderAmount =
-            orderCreateDto.side === 'Sell'
-              ? orderCreateDto.quantity
-              : orderCreateDto.price * orderCreateDto.quantity;
+            orderCreateDto.side === 'Buy'
+              ? new Decimal(orderCreateDto.price).times(
+                  new Decimal(orderCreateDto.quantity)
+                )
+              : orderCreateDto.quantity;
 
           const assetBalance = await tx.assetBalance.update({
             where: {

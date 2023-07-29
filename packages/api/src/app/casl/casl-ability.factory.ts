@@ -23,11 +23,11 @@ export class CaslAbilityFactory {
       createPrismaAbility
     );
 
+    can(Action.Read, 'all');
+    cannot(Action.Read, 'health');
+
     if (user.roles.includes('Admin')) {
       can(Action.Manage, 'all');
-    } else {
-      can(Action.Read, 'all');
-      cannot(Action.Read, 'health');
     }
 
     return build();

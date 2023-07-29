@@ -25,7 +25,7 @@ export class TradingPairsController {
   ): Observable<MessageEvent> {
     return interval(1000).pipe(
       withLatestFrom(
-        this.tradingPairPricesStreamService.getPricesForTradingPairSymbols$(
+        this.tradingPairPricesStreamService.getTradingPairsPrices$(
           tradingPairSymbols
         )
       ),

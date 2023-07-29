@@ -22,5 +22,25 @@ export const seedUsers = async (prisma: PrismaClient) => {
     },
   });
 
+  await prisma.user.upsert({
+    where: { email: 'buy.bot@gmail.com' },
+    update: {},
+    create: {
+      email: 'buy.bot@gmail.com',
+      password: await bcrypt.hash('TestBotPassword1!', 10),
+      roles: [],
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'sell.bot@gmail.com' },
+    update: {},
+    create: {
+      email: 'sell.bot@gmail.com',
+      password: await bcrypt.hash('TestBotPassword1!', 10),
+      roles: [],
+    },
+  });
+
   console.log('Seeded users...');
 };

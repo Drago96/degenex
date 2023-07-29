@@ -16,6 +16,7 @@ import { TradingPairsService } from './trading-pairs.service';
     TradingPairsPriceCacheService,
     TwelveDataService,
   ],
+  exports: [TradingPairsService, TradingPairsPriceCacheService],
   controllers: [TradingPairsController],
 })
 export class TradingPairsModule {}
