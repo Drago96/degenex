@@ -3,7 +3,7 @@ import { BaseExceptionFilter } from '@nestjs/core';
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 
-const UNIQUE_CONSTRAINT_VIOLATION_CODE = 'P2002';
+import { isUniqueConstraintError } from './prisma-error.utils';
 
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaClientExceptionFilter extends BaseExceptionFilter {
@@ -11,7 +11,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
 
-    if (exception.code === UNIQUE_CONSTRAINT_VIOLATION_CODE && exception.meta) {
+    if (isUniqueConstraintError(exception) && exception.meta) {
       const status = HttpStatus.CONFLICT;
 
       return response.status(status).json({

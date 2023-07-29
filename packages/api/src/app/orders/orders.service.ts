@@ -8,6 +8,7 @@ import { OrderBookService } from '@/order-book/order-book.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderCreateDto } from './order-create.dto';
 import { Decimal } from '@prisma/client/runtime';
+import { isRecordNotFoundError } from '@/prisma/prisma-error.utils';
 
 @Injectable()
 export class OrdersService {
@@ -67,7 +68,11 @@ export class OrdersService {
             throw new BadRequestException('Insufficient balance');
           }
         } catch (error) {
-          throw new BadRequestException('Insufficient balance');
+          if (isRecordNotFoundError(error)) {
+            throw new BadRequestException('Insufficient balance');
+          }
+
+          throw error;
         }
 
         const createdOrder = await tx.order.create({
