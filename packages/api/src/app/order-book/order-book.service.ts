@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
-import { chunk, flatten, groupBy, zip } from 'lodash';
+import { flatten, groupBy, zip } from 'lodash';
 import Redlock from 'redlock';
 
 import { Order, OrderSide } from '@prisma/client';
@@ -13,7 +13,6 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { OrderBookEntryDto } from './order-book-entry.dto';
 import { OrderBookTradeDto } from './order-book-trade.dto';
 import { OrderBookDepthDto } from './order-book-depth.dto';
-import { OrderBookLookupDto } from './order-book-lookup.dto';
 
 @Injectable()
 export class OrderBookService {
@@ -64,13 +63,13 @@ export class OrderBookService {
         );
       }
 
-      const partiallyFilledMakerOrders = orderBookTrades
-        .filter((trade) => !trade.makerOrder.remainingQuantity.equals(0))
-        .map((trade) => trade.makerOrder);
+      const partiallyFilledTrades = orderBookTrades.filter(
+        (trade) => !trade.makerOrder.remainingQuantity.equals(0)
+      );
 
-      if (partiallyFilledMakerOrders.length > 0) {
+      if (partiallyFilledTrades.length > 0) {
         await this.updateOrderQuantities(
-          partiallyFilledMakerOrders,
+          partiallyFilledTrades,
           takerOrder.tradingPairId
         );
       }
@@ -89,21 +88,21 @@ export class OrderBookService {
     orderSide: OrderSide,
     targetPrice: Decimal
   ): Promise<OrderBookDepthDto[]> {
-    let orders: OrderBookLookupDto[];
+    let orderBookIds: string[];
 
     if (orderSide === 'Buy') {
-      orders = await this.getBuyOrders(tradingPairId, targetPrice);
+      orderBookIds = await this.getBuyOrderBookids(tradingPairId, targetPrice);
     } else {
-      orders = await this.getSellOrders(tradingPairId, targetPrice);
+      orderBookIds = await this.getSellOrderBookIds(tradingPairId, targetPrice);
     }
 
-    if (orders.length === 0) {
+    if (orderBookIds.length === 0) {
       return [];
     }
 
     const ordersJson = await this.redis.hmget(
       this.buildTradingPairOrdersKey(tradingPairId),
-      ...orders.map((order) => order.orderBookId)
+      ...orderBookIds
     );
 
     const orderEntries: OrderBookEntryDto[] = ordersJson.map((orderJson) => {
@@ -116,7 +115,7 @@ export class OrderBookService {
 
     const ordersByPrice = groupBy(
       zip(
-        orders.map((order) => order.price),
+        orderEntries.map((orderEntry) => orderEntry.price),
         orderEntries.map((orderEntry) => orderEntry.remainingQuantity)
       ),
       (zippedOrder) => zippedOrder.at(0)
@@ -183,26 +182,37 @@ export class OrderBookService {
     remainingQuantity: Decimal,
     orderBookIndex: number
   ) {
-    const makerSellOrder = await this.getSellOrder(
+    const makerOrderBookId = await this.getSellOrderBookId(
       buyOrder.tradingPairId,
       orderBookIndex
     );
 
-    if (makerSellOrder === null) {
+    if (makerOrderBookId === null) {
       return null;
     }
 
-    const { orderBookId, price: sellPrice } = makerSellOrder;
+    const makerOrderJson = await this.redis.hget(
+      this.buildTradingPairOrdersKey(buyOrder.tradingPairId),
+      makerOrderBookId
+    );
 
-    if (buyOrder.type === 'Limit' && buyOrder.price.lessThan(sellPrice)) {
+    if (makerOrderJson === null) {
+      throw new InternalServerErrorException();
+    }
+
+    const makerOrder: OrderBookEntryDto = JSON.parse(makerOrderJson);
+
+    if (
+      buyOrder.type === 'Limit' &&
+      buyOrder.price.lessThan(new Decimal(makerOrder.price))
+    ) {
       return null;
     }
 
     const orderBookTrade = await this.buildTrade(
-      buyOrder.tradingPairId,
-      remainingQuantity,
-      sellPrice,
-      orderBookId
+      makerOrderBookId,
+      makerOrder,
+      remainingQuantity
     );
 
     return orderBookTrade;
@@ -213,35 +223,46 @@ export class OrderBookService {
     remainingQuantity: Decimal,
     orderBookIndex: number
   ) {
-    const makerBuyOrder = await this.getBuyOrder(
+    const makerOrderBookId = await this.getBuyOrderBookId(
       sellOrder.tradingPairId,
       orderBookIndex
     );
 
-    if (makerBuyOrder === null) {
+    if (makerOrderBookId === null) {
       return null;
     }
 
-    const { orderBookId, price: buyPrice } = makerBuyOrder;
+    const makerOrderJson = await this.redis.hget(
+      this.buildTradingPairOrdersKey(sellOrder.tradingPairId),
+      makerOrderBookId
+    );
 
-    if (sellOrder.type === 'Limit' && sellOrder.price.greaterThan(buyPrice)) {
+    if (makerOrderJson === null) {
+      throw new InternalServerErrorException();
+    }
+
+    const makerOrder: OrderBookEntryDto = JSON.parse(makerOrderJson);
+
+    if (
+      sellOrder.type === 'Limit' &&
+      sellOrder.price.greaterThan(new Decimal(makerOrder.price))
+    ) {
       return null;
     }
 
     const orderBookTrade = await this.buildTrade(
-      sellOrder.tradingPairId,
-      remainingQuantity,
-      buyPrice,
-      orderBookId
+      makerOrderBookId,
+      makerOrder,
+      remainingQuantity
     );
 
     return orderBookTrade;
   }
 
-  private async getSellOrder(
+  private async getSellOrderBookId(
     tradingPairId: number,
     orderBookIndex: number
-  ): Promise<OrderBookLookupDto | null> {
+  ): Promise<string | null> {
     const sellOrder = await this.redis.zrange(
       this.buildTradingPairOrderBookKey(tradingPairId, 'Sell'),
       orderBookIndex,
@@ -253,19 +274,16 @@ export class OrderBookService {
       return null;
     }
 
-    const [orderBookId, price] = sellOrder;
+    const [orderBookId] = sellOrder;
 
-    return {
-      orderBookId: orderBookId,
-      price: new Decimal(price),
-    };
+    return orderBookId;
   }
 
-  private async getSellOrders(
+  private async getSellOrderBookIds(
     tradingPairId: number,
     ceilingPrice: Decimal
-  ): Promise<OrderBookLookupDto[]> {
-    const sellOrders = await this.redis.zrange(
+  ): Promise<string[]> {
+    const orderBookIds = await this.redis.zrange(
       this.buildTradingPairOrderBookKey(tradingPairId, 'Sell'),
       '-inf',
       ceilingPrice.toString(),
@@ -273,16 +291,13 @@ export class OrderBookService {
       'WITHSCORES'
     );
 
-    return chunk(sellOrders, 2).map(([sellOrderBookId, sellPrice]) => ({
-      orderBookId: sellOrderBookId,
-      price: new Decimal(sellPrice),
-    }));
+    return orderBookIds;
   }
 
-  private async getBuyOrder(
+  private async getBuyOrderBookId(
     tradingPairId: number,
     orderBookIndex: number
-  ): Promise<OrderBookLookupDto | null> {
+  ): Promise<string | null> {
     const buyOrder = await this.redis.zrange(
       this.buildTradingPairOrderBookKey(tradingPairId, 'Buy'),
       orderBookIndex,
@@ -294,16 +309,16 @@ export class OrderBookService {
       return null;
     }
 
-    const [orderBookId, price] = buyOrder;
+    const [orderBookId] = buyOrder;
 
-    return { orderBookId, price: new Decimal(price).absoluteValue() };
+    return orderBookId;
   }
 
-  private async getBuyOrders(
+  private async getBuyOrderBookids(
     tradingPairId: number,
     floorPrice: Decimal
-  ): Promise<OrderBookLookupDto[]> {
-    const buyOrders = await this.redis.zrange(
+  ): Promise<string[]> {
+    const orderBookIds = await this.redis.zrange(
       this.buildTradingPairOrderBookKey(tradingPairId, 'Buy'),
       '-inf',
       floorPrice.negated().toString(),
@@ -311,36 +326,21 @@ export class OrderBookService {
       'WITHSCORES'
     );
 
-    return chunk(buyOrders, 2).map(([orderBookId, price]) => ({
-      orderBookId,
-      price: new Decimal(price).absoluteValue(),
-    }));
+    return orderBookIds;
   }
 
   private async buildTrade(
-    tradingPairId: number,
-    takerOrderQuantity: Decimal,
-    price: Decimal,
-    makerOrderBookId: string
+    makerOrderBookId: string,
+    makerOrder: OrderBookEntryDto,
+    takerOrderQuantity: Decimal
   ): Promise<OrderBookTradeDto> {
-    const makerOrderJson = await this.redis.hget(
-      this.buildTradingPairOrdersKey(tradingPairId),
-      makerOrderBookId
-    );
-
-    if (makerOrderJson === null) {
-      throw new InternalServerErrorException();
-    }
-
-    const makerOrder: OrderBookEntryDto = JSON.parse(makerOrderJson);
-
     const quantityToExecute = Decimal.min(
       takerOrderQuantity,
       new Decimal(makerOrder.remainingQuantity)
     );
 
     return {
-      price,
+      price: new Decimal(makerOrder.price),
       quantity: quantityToExecute,
       makerOrder: {
         id: makerOrder.orderId,
@@ -357,6 +357,7 @@ export class OrderBookService {
     const orderBookDto: OrderBookEntryDto = {
       orderId: order.id,
       userId: order.userId,
+      price: order.price,
       remainingQuantity,
     };
 
@@ -396,17 +397,21 @@ export class OrderBookService {
   }
 
   private async updateOrderQuantities(
-    orders: OrderBookTradeDto['makerOrder'][],
+    orderBookTrades: OrderBookTradeDto[],
     tradingPairId: number
   ) {
-    const orderEntries = orders.map((order) => {
+    const orderEntries = orderBookTrades.map((orderBookTrade) => {
       const orderBookDto: OrderBookEntryDto = {
-        orderId: order.id,
-        userId: order.userId,
-        remainingQuantity: order.remainingQuantity,
+        orderId: orderBookTrade.makerOrder.id,
+        userId: orderBookTrade.makerOrder.userId,
+        price: orderBookTrade.price,
+        remainingQuantity: orderBookTrade.makerOrder.remainingQuantity,
       };
 
-      return [order.orderBookId, JSON.stringify(orderBookDto)];
+      return [
+        orderBookTrade.makerOrder.orderBookId,
+        JSON.stringify(orderBookDto),
+      ];
     });
 
     await this.redis.hset(
