@@ -78,16 +78,16 @@ export class TradingBotsService {
 
     await this.placeBotOrder(
       tradingPair,
-      'Buy',
+      makerSide,
       targetPrice,
-      'Buy' === makerSide ? makerBotQuantity : takerBotQuantity
+      makerBotQuantity
     );
 
     await this.placeBotOrder(
       tradingPair,
-      'Sell',
+      makerSide === 'Buy' ? 'Sell' : 'Buy',
       targetPrice,
-      'Sell' === makerSide ? makerBotQuantity : takerBotQuantity
+      takerBotQuantity
     );
   }
 
