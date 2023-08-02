@@ -36,81 +36,76 @@ export class OrdersService {
       throw new NotFoundException('Trading pair not found');
     }
 
-    return this.prisma.$transaction(
-      async (tx) => {
-        await this.lockAssetsForOrder(userId, tradingPair, orderCreateDto, tx);
+    return this.prisma.$transaction(async (tx) => {
+      await this.lockAssetsForOrder(userId, tradingPair, orderCreateDto, tx);
 
-        const createdOrder = await tx.order.create({
-          data: {
-            side: orderCreateDto.side,
-            type: orderCreateDto.type,
-            quantity: orderCreateDto.quantity,
-            price: orderCreateDto.price,
-            tradingPairId: orderCreateDto.tradingPairId,
-            userId,
-          },
-        });
+      const createdOrder = await tx.order.create({
+        data: {
+          side: orderCreateDto.side,
+          type: orderCreateDto.type,
+          quantity: orderCreateDto.quantity,
+          price: orderCreateDto.price,
+          tradingPairId: orderCreateDto.tradingPairId,
+          userId,
+        },
+      });
 
-        const { isOrderFilled, orderBookTrades } =
-          await this.orderBookService.placeOrder(createdOrder);
+      const { isOrderFilled, orderBookTrades } =
+        await this.orderBookService.placeOrder(createdOrder);
 
-        if (orderBookTrades.length === 0) {
-          return createdOrder;
-        }
-
-        await tx.trade.createMany({
-          data: orderBookTrades.map((trade) => ({
-            takerOrderId: createdOrder.id,
-            makerOrderId: trade.makerOrder.id,
-            price: trade.price,
-            quantity: trade.quantity,
-          })),
-        });
-
-        await this.updateMakerOrders(
-          orderBookTrades,
-          tradingPair,
-          orderCreateDto.side === 'Buy' ? 'Sell' : 'Buy',
-          tx
-        );
-
-        const updatedOrder = await tx.order.update({
-          where: {
-            id: createdOrder.id,
-          },
-          data: {
-            status: isOrderFilled ? 'Filled' : 'PartiallyFilled',
-          },
-        });
-
-        await this.updateAssetBalance(
-          {
-            userId: userId,
-            orderSide: orderCreateDto.side,
-            baseAsset: {
-              quantity: Decimal.sum(
-                ...orderBookTrades.map((trade) => trade.quantity)
-              ),
-              tickerSymbol: tradingPair.baseAssetTickerSymbol,
-            },
-            quoteAsset: {
-              amount: Decimal.sum(
-                ...orderBookTrades.map((trade) =>
-                  trade.quantity.times(trade.price)
-                )
-              ),
-              tickerSymbol: tradingPair.quoteAssetTickerSymbol,
-            },
-          },
-          tx
-        );
-
-        return updatedOrder;
-      },
-      {
-        isolationLevel: 'RepeatableRead',
+      if (orderBookTrades.length === 0) {
+        return createdOrder;
       }
-    );
+
+      await tx.trade.createMany({
+        data: orderBookTrades.map((trade) => ({
+          takerOrderId: createdOrder.id,
+          makerOrderId: trade.makerOrder.id,
+          price: trade.price,
+          quantity: trade.quantity,
+        })),
+      });
+
+      await this.updateMakerOrders(
+        orderBookTrades,
+        tradingPair,
+        orderCreateDto.side === 'Buy' ? 'Sell' : 'Buy',
+        tx
+      );
+
+      const updatedOrder = await tx.order.update({
+        where: {
+          id: createdOrder.id,
+        },
+        data: {
+          status: isOrderFilled ? 'Filled' : 'PartiallyFilled',
+        },
+      });
+
+      await this.updateAssetBalance(
+        {
+          userId: userId,
+          orderSide: orderCreateDto.side,
+          baseAsset: {
+            quantity: Decimal.sum(
+              ...orderBookTrades.map((trade) => trade.quantity)
+            ),
+            tickerSymbol: tradingPair.baseAssetTickerSymbol,
+          },
+          quoteAsset: {
+            amount: Decimal.sum(
+              ...orderBookTrades.map((trade) =>
+                trade.quantity.times(trade.price)
+              )
+            ),
+            tickerSymbol: tradingPair.quoteAssetTickerSymbol,
+          },
+        },
+        tx
+      );
+
+      return updatedOrder;
+    });
   }
 
   private async lockAssetsForOrder(
@@ -179,7 +174,9 @@ export class OrdersService {
           where: {
             id: trade.makerOrder.id,
             status: {
-              not: 'Canceled',
+              not: {
+                in: ['Canceled', 'Filled'],
+              },
             },
           },
           data: {
