@@ -266,8 +266,7 @@ export class OrderBookService {
     const sellOrder = await this.redis.zrange(
       this.buildTradingPairOrderBookKey(tradingPairId, 'Sell'),
       orderBookIndex,
-      orderBookIndex,
-      'WITHSCORES'
+      orderBookIndex
     );
 
     if (sellOrder.length === 0) {
@@ -287,8 +286,7 @@ export class OrderBookService {
       this.buildTradingPairOrderBookKey(tradingPairId, 'Sell'),
       '-inf',
       ceilingPrice.toString(),
-      'BYSCORE',
-      'WITHSCORES'
+      'BYSCORE'
     );
 
     return orderBookIds;
@@ -301,8 +299,7 @@ export class OrderBookService {
     const buyOrder = await this.redis.zrange(
       this.buildTradingPairOrderBookKey(tradingPairId, 'Buy'),
       orderBookIndex,
-      orderBookIndex,
-      'WITHSCORES'
+      orderBookIndex
     );
 
     if (buyOrder.length === 0) {
@@ -322,8 +319,7 @@ export class OrderBookService {
       this.buildTradingPairOrderBookKey(tradingPairId, 'Buy'),
       '-inf',
       floorPrice.negated().toString(),
-      'BYSCORE',
-      'WITHSCORES'
+      'BYSCORE'
     );
 
     return orderBookIds;
