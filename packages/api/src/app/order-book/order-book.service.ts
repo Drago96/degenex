@@ -91,7 +91,7 @@ export class OrderBookService {
     let orderBookIds: string[];
 
     if (orderSide === 'Buy') {
-      orderBookIds = await this.getBuyOrderBookids(tradingPairId, targetPrice);
+      orderBookIds = await this.getBuyOrderBookIds(tradingPairId, targetPrice);
     } else {
       orderBookIds = await this.getSellOrderBookIds(tradingPairId, targetPrice);
     }
@@ -314,7 +314,7 @@ export class OrderBookService {
     return orderBookId;
   }
 
-  private async getBuyOrderBookids(
+  private async getBuyOrderBookIds(
     tradingPairId: number,
     floorPrice: Decimal
   ): Promise<string[]> {
