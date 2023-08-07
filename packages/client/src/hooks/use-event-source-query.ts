@@ -15,6 +15,8 @@ export const useEventSourceQuery = <DataT = unknown>(
   }, []);
 
   const fetchData = () => {
+    eventSourceRef.current?.close();
+
     const eventSource = new EventSource(url, { withCredentials: true });
     eventSourceRef.current = eventSource;
 
