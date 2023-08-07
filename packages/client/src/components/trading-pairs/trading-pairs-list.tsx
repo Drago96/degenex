@@ -1,7 +1,6 @@
 import { get } from "lodash";
 
 import {
-  buildTradingPairSymbol,
   TradingPairResponseDto,
   TradingPairsPricesDto,
 } from "@degenex/common";
@@ -21,16 +20,14 @@ export default function TradingPairsList(props: TradingPairsListProps) {
             <TradingPairListItem key={index} loading />
           ))
         : props.tradingPairs.map((tradingPair) => {
-            const tradingPairSymbol = buildTradingPairSymbol(tradingPair);
-
             const tradingPairPrice = get(
               props.tradingPairsPrices,
-              tradingPairSymbol
+              tradingPair.id
             );
 
             return (
               <TradingPairListItem
-                key={tradingPairSymbol}
+                key={tradingPair.id}
                 tradingPairPrice={tradingPairPrice}
                 {...tradingPair}
               />

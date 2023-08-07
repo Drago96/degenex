@@ -1,18 +1,18 @@
 import { flattenDeep } from "lodash";
 
 export const buildTradingPairPricesQuery = (
-  tradingPairSymbols?: string[] | string
+  tradingPairIds?: number[]
 ) => {
-  if (!tradingPairSymbols) {
+  if (!tradingPairIds) {
     return undefined;
   }
 
   const tradingPairPricesSearchParams = new URLSearchParams();
 
-  flattenDeep([tradingPairSymbols]).forEach((tradingPairSymbol) =>
+  flattenDeep([tradingPairIds]).forEach((tradingPairId) =>
     tradingPairPricesSearchParams.append(
-      "tradingPairSymbols",
-      tradingPairSymbol
+      "tradingPairIds",
+      tradingPairId.toString()
     )
   );
 

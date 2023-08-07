@@ -21,12 +21,12 @@ export class TradingPairsController {
 
   @Sse('track-prices')
   trackPrices(
-    @Query('tradingPairSymbols') tradingPairSymbols: string[]
+    @Query('tradingPairIds') tradingPairIds: number[]
   ): Observable<MessageEvent> {
     return interval(1000).pipe(
       withLatestFrom(
         this.tradingPairPricesStreamService.getTradingPairsPrices$(
-          tradingPairSymbols
+          tradingPairIds
         )
       ),
       map(([_, tradingPairPrices]) => ({

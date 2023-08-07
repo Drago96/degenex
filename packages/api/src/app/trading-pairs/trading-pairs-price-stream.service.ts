@@ -3,7 +3,7 @@ import { Interval } from '@nestjs/schedule';
 import { pick } from 'lodash';
 import { map, Observable, scan, Subject } from 'rxjs';
 
-import { buildTradingPairSymbol, TradingPairsPricesDto } from '@degenex/common';
+import { TradingPairsPricesDto } from '@degenex/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { TradingPairPriceUpdateDto } from './trading-pair-price-update.dto';
 import { TradingPairsService } from './trading-pairs.service';
@@ -21,7 +21,7 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
       scan(
         (accumulatedTradingPairsPrice, tradingPairPriceUpdate) => ({
           ...accumulatedTradingPairsPrice,
-          [tradingPairPriceUpdate.symbol]: tradingPairPriceUpdate.price,
+          [tradingPairPriceUpdate.id]: tradingPairPriceUpdate.price,
         }),
         {}
       )
@@ -43,14 +43,13 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
 
         this.tradingPairPriceUpdate$.next({
           id: tradingPair.id,
-          symbol: buildTradingPairSymbol(tradingPair),
           price: tradingPairPrice.toNumber(),
         });
       })
     );
   }
 
-  getTradingPairsPrices$(tradingPairSymbols: string[]) {
+  getTradingPairsPrices$(tradingPairSymbols: number[]) {
     return this.tradingPairsPrices$.pipe(
       map((tradingPairsPrices) => pick(tradingPairsPrices, tradingPairSymbols))
     );

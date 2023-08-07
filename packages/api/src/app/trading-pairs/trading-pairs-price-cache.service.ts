@@ -3,7 +3,6 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import Redis from 'ioredis';
 
-import { buildTradingPairSymbol } from '@degenex/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { TradingPairWithAssociations } from './trading-pair-with-associations';
 import { TwelveDataService } from './twelve-data.service';
@@ -83,6 +82,6 @@ export class TradingPairsPriceCacheService implements OnApplicationBootstrap {
   private buildTradingPairPriceCacheKey(
     tradingPair: TradingPairWithAssociations
   ) {
-    return `trading-pair-price-cached:${buildTradingPairSymbol(tradingPair)}`;
+    return `trading-pair-price-cached:${tradingPair.id}`;
   }
 }
