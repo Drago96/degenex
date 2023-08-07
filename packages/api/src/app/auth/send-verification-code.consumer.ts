@@ -1,4 +1,4 @@
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { InjectRedis } from '@songkeys/nestjs-redis';
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
 import { Redis } from 'ioredis';
