@@ -9,5 +9,5 @@ const AssetBalancesQuerySchema = z.object({
 });
 
 export class AssetBalancesQueryDto extends createZodDto(
-  AssetBalancesQuerySchema
+  AssetBalancesQuerySchema,
 ) {}

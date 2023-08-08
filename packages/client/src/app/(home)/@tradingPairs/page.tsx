@@ -11,7 +11,7 @@ export default async function TradingPairs() {
       next: {
         revalidate: 300,
       },
-    }
+    },
   );
 
   if (!tradingPairsResponse.isSuccess) {

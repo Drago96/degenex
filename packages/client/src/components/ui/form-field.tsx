@@ -33,7 +33,7 @@ export default function FormField({
             {...labelProps}
             className={twMerge(
               "text-primary-contrastText dark:text-primary-contrastText-dark",
-              labelProps.className
+              labelProps.className,
             )}
           >
             {label}

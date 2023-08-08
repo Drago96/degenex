@@ -42,7 +42,7 @@ export class AuthService {
     @InjectQueue(CREATE_STRIPE_CUSTOMER_QUEUE_NAME)
     private readonly createStripeCustomerQueue: Queue<CreateStripeCustomerDto>,
     @InjectRedis()
-    private readonly redis: Redis
+    private readonly redis: Redis,
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
@@ -70,7 +70,7 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     const verificationCode = await this.redis.get(
-      buildVerificationCodeKey(registerDto.email)
+      buildVerificationCodeKey(registerDto.email),
     );
 
     if (verificationCode !== registerDto.verificationCode) {
@@ -102,7 +102,7 @@ export class AuthService {
 
     const isPasswordValid = await bcrypt.compare(
       authDto.password,
-      user.password
+      user.password,
     );
 
     if (!isPasswordValid) {
@@ -165,7 +165,7 @@ export class AuthService {
         refreshToken,
         {
           secret: this.configService.getOrThrow('REFRESH_TOKEN_SECRET'),
-        }
+        },
       );
     } catch (error) {
       throw new AuthException('Invalid refresh token');
@@ -174,7 +174,7 @@ export class AuthService {
 
   private async generateAuthTokens(
     user: User,
-    sessionId: string | null = null
+    sessionId: string | null = null,
   ): Promise<AuthResultDto> {
     const accessTokenPayload: AccessTokenPayloadDto = {
       sub: user.id,

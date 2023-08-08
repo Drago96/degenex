@@ -8,7 +8,7 @@ export default function Card({ children, className }: CardProps) {
     <div
       className={twMerge(
         "inline-block rounded bg-primary p-2 dark:bg-primary-dark",
-        className
+        className,
       )}
     >
       {children}

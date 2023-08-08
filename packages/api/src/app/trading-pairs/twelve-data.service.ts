@@ -19,7 +19,7 @@ export class TwelveDataService {
       '/price',
       {
         params: { symbol },
-      }
+      },
     );
 
     return response.data.price;

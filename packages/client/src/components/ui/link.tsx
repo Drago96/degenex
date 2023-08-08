@@ -17,7 +17,7 @@ type AppLinkProps = {
 
 function Link(
   { children, className, variant = "link", ...props }: AppLinkProps,
-  ref: Ref<HTMLAnchorElement>
+  ref: Ref<HTMLAnchorElement>,
 ) {
   return (
     <NextLink

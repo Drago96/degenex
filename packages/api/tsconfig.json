@@ -16,6 +16,6 @@
     "paths": {
       "@degenex/common": ["packages/common/src/index.ts"],
       "@/*": ["packages/api/src/app/*"]
-    },
+    }
   }
 }

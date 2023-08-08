@@ -10,5 +10,5 @@ export const AssetBalanceResponseSchema = z.object({
 });
 
 export class AssetBalanceResponseDto extends createZodDto(
-  AssetBalanceResponseSchema
+  AssetBalanceResponseSchema,
 ) {}

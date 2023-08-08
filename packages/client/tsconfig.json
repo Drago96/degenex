@@ -17,17 +17,10 @@
         "name": "next"
       }
     ],
-    "types": [
-      "jest",
-      "node"
-    ],
+    "types": ["jest", "node"],
     "paths": {
-      "@degenex/common": [
-        "packages/common/src/index.ts"
-      ],
-      "@/*": [
-        "packages/client/src/*"
-      ]
+      "@degenex/common": ["packages/common/src/index.ts"],
+      "@/*": ["packages/client/src/*"]
     }
   },
   "include": [

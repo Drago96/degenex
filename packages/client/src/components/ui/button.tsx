@@ -17,7 +17,7 @@ type ButtonProps = {
 
 function Button(
   { children, className, variant = "button", ...props }: ButtonProps,
-  ref: Ref<HTMLButtonElement>
+  ref: Ref<HTMLButtonElement>,
 ) {
   return (
     <button

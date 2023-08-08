@@ -22,7 +22,7 @@ export class StripeService {
     private readonly prisma: PrismaService,
     @InjectQueue(PROCESS_STRIPE_EVENT_QUEUE_NAME)
     private readonly processStripeEventQueue: Queue<Stripe.Event>,
-    private readonly configService: ConfigService<EnvironmentVariables>
+    private readonly configService: ConfigService<EnvironmentVariables>,
   ) {
     this.stripe = new Stripe(configService.getOrThrow('STRIPE_SECRET_KEY'), {
       apiVersion: configService.getOrThrow('STRIPE_API_VERSION'),
@@ -37,7 +37,7 @@ export class StripeService {
 
   async createCheckoutSession(
     userId: number,
-    stripeCheckoutDto: StripeCheckoutDto
+    stripeCheckoutDto: StripeCheckoutDto,
   ) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -54,7 +54,7 @@ export class StripeService {
 
     if (!user.paymentsCustomerId) {
       throw new BadRequestException(
-        'User has no associated payments customer id'
+        'User has no associated payments customer id',
       );
     }
 
@@ -91,7 +91,7 @@ export class StripeService {
       const event = await this.stripe.webhooks.constructEventAsync(
         stripePayload,
         stripeSignature,
-        this.configService.getOrThrow('STRIPE_WEBHOOK_SIGNING_SECRET')
+        this.configService.getOrThrow('STRIPE_WEBHOOK_SIGNING_SECRET'),
       );
 
       await this.processStripeEventQueue.add(event);

@@ -6,7 +6,7 @@ type CreateFormServerActionArgs<ActionInputT, ActionResponseT = unknown> = {
   serverAction: (args: ActionInputT) => Promise<FetchResponse<ActionResponseT>>;
   onSuccess?: (
     response: ActionResponseT,
-    args: ActionInputT
+    args: ActionInputT,
   ) => Promise<unknown>;
   onError?: (error: string, args: ActionInputT) => Promise<unknown>;
   validateForm?: UseFormTrigger<FieldValues>;
@@ -15,7 +15,7 @@ type CreateFormServerActionArgs<ActionInputT, ActionResponseT = unknown> = {
 
 export function createFormServerAction<
   ActionInputT,
-  ActionResponseT = unknown
+  ActionResponseT = unknown,
 >({
   serverAction,
   onSuccess,
@@ -36,7 +36,7 @@ export function createFormServerAction<
 
     if (rawActionInput instanceof FormData) {
       actionInput = Object.fromEntries(
-        rawActionInput.entries()
+        rawActionInput.entries(),
       ) as ActionInputT;
     } else {
       actionInput = rawActionInput;

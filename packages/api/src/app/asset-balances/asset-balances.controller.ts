@@ -16,11 +16,11 @@ export class AssetBalancesController {
   @ZodSerializerDto(AssetBalanceResponseDto)
   async getMany(
     @Req() req: RequestWithUser,
-    @Query() assetBalancesQueryDto: AssetBalancesQueryDto
+    @Query() assetBalancesQueryDto: AssetBalancesQueryDto,
   ): Promise<AssetBalanceResponseDto[]> {
     return await this.assetBalancesService.getMany(
       req.user.id,
-      assetBalancesQueryDto.assetType
+      assetBalancesQueryDto.assetType,
     );
   }
 }

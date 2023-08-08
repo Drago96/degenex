@@ -10,7 +10,7 @@ import { TradingPairsService } from './trading-pairs.service';
 export class TradingPairsController {
   constructor(
     private tradingPairsService: TradingPairsService,
-    private tradingPairPricesStreamService: TradingPairsPriceStreamService
+    private tradingPairPricesStreamService: TradingPairsPriceStreamService,
   ) {}
 
   @Get()
@@ -21,17 +21,17 @@ export class TradingPairsController {
 
   @Sse('track-prices')
   trackPrices(
-    @Query('tradingPairIds') tradingPairIds: number[]
+    @Query('tradingPairIds') tradingPairIds: number[],
   ): Observable<MessageEvent> {
     return interval(1000).pipe(
       withLatestFrom(
         this.tradingPairPricesStreamService.getTradingPairsPrices$(
-          tradingPairIds
-        )
+          tradingPairIds,
+        ),
       ),
       map(([_, tradingPairPrices]) => ({
         data: tradingPairPrices,
-      }))
+      })),
     );
   }
 }

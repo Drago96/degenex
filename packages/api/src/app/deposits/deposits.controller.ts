@@ -14,7 +14,7 @@ export class DepositsController {
   @Post()
   async createDeposit(
     @Req() req: RequestWithUser,
-    @Body() stripePaymentDto: StripePaymentDto
+    @Body() stripePaymentDto: StripePaymentDto,
   ): Promise<Deposit> {
     return this.depositsService.createDeposit(req.user.id, stripePaymentDto);
   }

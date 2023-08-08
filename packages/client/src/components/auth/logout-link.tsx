@@ -19,7 +19,7 @@ type LogoutLinkProps = {
 
 function LogoutLink(
   { className, children, disabled, onClick, ...props }: LogoutLinkProps,
-  ref: Ref<HTMLButtonElement>
+  ref: Ref<HTMLButtonElement>,
 ) {
   const [isLogoutPending, startLogoutTransition] = useTransition();
 

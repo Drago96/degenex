@@ -25,7 +25,7 @@ export default function AssetBalancesTabLink({
             "bg-primary": active,
             "dark:bg-primary-dark": active,
           },
-          "inline-block w-full rounded-t-lg p-4 hover:bg-accent hover:dark:bg-accent-dark"
+          "inline-block w-full rounded-t-lg p-4 hover:bg-accent hover:dark:bg-accent-dark",
         )}
       >
         {children}

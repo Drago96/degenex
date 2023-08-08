@@ -9,11 +9,11 @@ export class StripeController {
   @Post('webhooks')
   async processWebhook(
     @Req() request: RawBodyRequest<Request>,
-    @Headers('stripe-signature') stripeSignature: string
+    @Headers('stripe-signature') stripeSignature: string,
   ) {
     await this.stripeService.enqueueEvent(
       request.rawBody as Buffer,
-      stripeSignature
+      stripeSignature,
     );
   }
 }

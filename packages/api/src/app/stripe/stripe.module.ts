@@ -20,7 +20,7 @@ import { StripeService } from './stripe.service';
       },
       {
         name: PROCESS_STRIPE_EVENT_QUEUE_NAME,
-      }
+      },
     ),
   ],
   providers: [

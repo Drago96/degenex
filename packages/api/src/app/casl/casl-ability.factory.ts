@@ -20,7 +20,7 @@ export type AppAbility = PureAbility<[Action, Subjects], PrismaQuery>;
 export class CaslAbilityFactory {
   createForUser(user: UserResponseDto) {
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
-      createPrismaAbility
+      createPrismaAbility,
     );
 
     can(Action.Read, 'all');

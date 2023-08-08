@@ -18,7 +18,7 @@ import { OrderSide } from '@prisma/client';
 export class OrdersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly orderBookService: OrderBookService
+    private readonly orderBookService: OrderBookService,
   ) {}
 
   async createOrder(userId: number, orderCreateDto: OrderCreateDto) {
@@ -70,7 +70,7 @@ export class OrdersService {
         orderBookTrades,
         tradingPair,
         orderCreateDto.side === 'Buy' ? 'Sell' : 'Buy',
-        tx
+        tx,
       );
 
       const updatedOrder = await tx.order.update({
@@ -88,20 +88,20 @@ export class OrdersService {
           orderSide: orderCreateDto.side,
           baseAsset: {
             quantity: Decimal.sum(
-              ...orderBookTrades.map((trade) => trade.quantity)
+              ...orderBookTrades.map((trade) => trade.quantity),
             ),
             tickerSymbol: tradingPair.baseAssetTickerSymbol,
           },
           quoteAsset: {
             amount: Decimal.sum(
               ...orderBookTrades.map((trade) =>
-                trade.quantity.times(trade.price)
-              )
+                trade.quantity.times(trade.price),
+              ),
             ),
             tickerSymbol: tradingPair.quoteAssetTickerSymbol,
           },
         },
-        tx
+        tx,
       );
 
       return updatedOrder;
@@ -115,7 +115,7 @@ export class OrdersService {
       baseAssetTickerSymbol: string;
     },
     orderCreateDto: OrderCreateDto,
-    tx: PrismaTransaction
+    tx: PrismaTransaction,
   ) {
     try {
       const assetBalanceTickerSymbol =
@@ -126,7 +126,7 @@ export class OrdersService {
       const orderAmount =
         orderCreateDto.side === 'Buy'
           ? new Decimal(orderCreateDto.price).times(
-              new Decimal(orderCreateDto.quantity)
+              new Decimal(orderCreateDto.quantity),
             )
           : orderCreateDto.quantity;
 
@@ -166,7 +166,7 @@ export class OrdersService {
       baseAssetTickerSymbol: string;
     },
     orderSide: OrderSide,
-    tx: PrismaTransaction
+    tx: PrismaTransaction,
   ) {
     await Promise.all(
       orderBookTrades.map(async (trade) => {
@@ -199,15 +199,15 @@ export class OrdersService {
               tickerSymbol: tradingPair.quoteAssetTickerSymbol,
             },
           },
-          tx
+          tx,
         );
-      })
+      }),
     );
   }
 
   private async updateAssetBalance(
     orderBalanceTransferDto: OrderBalanceTransferDto,
-    tx: PrismaTransaction
+    tx: PrismaTransaction,
   ) {
     await tx.assetBalance.upsert({
       where: {

@@ -1,7 +1,7 @@
 import { Decimal } from '@prisma/client/runtime/library';
 
 export type OrderBookTradeDto = {
-  price: Decimal,
+  price: Decimal;
   quantity: Decimal;
   makerOrder: {
     id: number;

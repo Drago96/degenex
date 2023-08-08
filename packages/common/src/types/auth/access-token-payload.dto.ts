@@ -10,5 +10,5 @@ export const AccessTokenPayloadSchema = z.object({
 });
 
 export class AccessTokenPayloadDto extends createZodDto(
-  AccessTokenPayloadSchema
+  AccessTokenPayloadSchema,
 ) {}

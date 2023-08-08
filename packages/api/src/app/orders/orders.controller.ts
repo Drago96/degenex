@@ -14,7 +14,7 @@ export class OrdersController {
   @Post()
   async createDeposit(
     @Req() req: RequestWithUser,
-    @Body() orderCreateDto: OrderCreateDto
+    @Body() orderCreateDto: OrderCreateDto,
   ): Promise<Order> {
     return await this.ordersService.createOrder(req.user.id, orderCreateDto);
   }

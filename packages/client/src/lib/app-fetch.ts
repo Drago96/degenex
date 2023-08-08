@@ -28,7 +28,7 @@ type RequestOptions<BodyT = unknown> = Omit<RequestInit, "body"> & {
 
 export const getAppFetchHeaders = (
   cookiesStore?: CookiesStore,
-  headersStore?: HeadersStore
+  headersStore?: HeadersStore,
 ) => {
   cookiesStore = cookiesStore ?? cookies();
   headersStore = headersStore ?? headers();
@@ -52,7 +52,7 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
   input: RequestInput,
   options?: RequestOptions<BodyT>,
   cookiesStore?: CookiesStore,
-  headersStore?: HeadersStore
+  headersStore?: HeadersStore,
 ): Promise<FetchResponse<ResponseT>> {
   cookiesStore = cookiesStore ?? cookies();
   headersStore = headersStore ?? headers();

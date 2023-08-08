@@ -19,9 +19,9 @@ export default function Typography({
     {
       className: twMerge(
         "text-primary-contrastText dark:text-primary-contrastText-dark",
-        className
+        className,
       ),
     },
-    children
+    children,
   );
 }

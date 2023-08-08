@@ -12,7 +12,7 @@ import { TradingPairsService } from './trading-pairs.service';
 export class TradingPairsPriceStreamService implements OnModuleDestroy {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly tradingPairsService: TradingPairsService
+    private readonly tradingPairsService: TradingPairsService,
   ) {}
 
   private tradingPairPriceUpdate$ = new Subject<TradingPairPriceUpdateDto>();
@@ -23,8 +23,8 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
           ...accumulatedTradingPairsPrice,
           [tradingPairPriceUpdate.id]: tradingPairPriceUpdate.price,
         }),
-        {}
-      )
+        {},
+      ),
     );
 
   @Interval(1000)
@@ -45,13 +45,13 @@ export class TradingPairsPriceStreamService implements OnModuleDestroy {
           id: tradingPair.id,
           price: tradingPairPrice.toNumber(),
         });
-      })
+      }),
     );
   }
 
   getTradingPairsPrices$(tradingPairSymbols: number[]) {
     return this.tradingPairsPrices$.pipe(
-      map((tradingPairsPrices) => pick(tradingPairsPrices, tradingPairSymbols))
+      map((tradingPairsPrices) => pick(tradingPairsPrices, tradingPairSymbols)),
     );
   }
 

@@ -11,5 +11,5 @@ export const withFallback = <T>(schema: z.ZodType<T>, fallback: T) =>
 
       return fallback;
     },
-    z.custom<T>(() => true)
+    z.custom<T>(() => true),
   );

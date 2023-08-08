@@ -20,7 +20,7 @@ function Input(
     errorProps = {},
     ...props
   }: SelectProps,
-  ref: Ref<HTMLSelectElement>
+  ref: Ref<HTMLSelectElement>,
 ) {
   return (
     <FormField
@@ -36,7 +36,7 @@ function Input(
         name={name}
         className={twMerge(
           "inline-block w-full rounded-lg border border-gray-300 bg-white p-2 text-sm placeholder-muted-contrastText disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none dark:bg-muted-dark dark:text-primary-contrastText-dark",
-          className
+          className,
         )}
         ref={ref}
         {...props}

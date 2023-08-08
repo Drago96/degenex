@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 export const useEventSourceQuery = <DataT = unknown>(
   queryKey: QueryKey,
-  url: string
+  url: string,
 ) => {
   const queryClient = useQueryClient();
   const eventSourceRef = useRef<EventSource | null>(null);

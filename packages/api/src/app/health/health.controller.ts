@@ -21,7 +21,7 @@ export class HealthController {
     private readonly configService: ConfigService<EnvironmentVariables>,
     private readonly health: HealthCheckService,
     private readonly db: PrismaHealthIndicator,
-    private readonly microservice: MicroserviceHealthIndicator
+    private readonly microservice: MicroserviceHealthIndicator,
   ) {}
 
   @Get()
@@ -36,7 +36,7 @@ export class HealthController {
           transport: Transport.REDIS,
           options: {
             url: `redis://${this.configService.getOrThrow(
-              'REDIS_HOST'
+              'REDIS_HOST',
             )}:${this.configService.getOrThrow('REDIS_PORT')}`,
           },
         }),

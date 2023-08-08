@@ -19,5 +19,5 @@ export const TradingPairResponseSchema = z.object({
 });
 
 export class TradingPairResponseDto extends createZodDto(
-  TradingPairResponseSchema
+  TradingPairResponseSchema,
 ) {}

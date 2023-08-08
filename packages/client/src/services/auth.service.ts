@@ -8,7 +8,7 @@ export const REFRESH_TOKEN_COOKIE_KEY = "refresh-token";
 
 export const setAccessToken = (
   accessToken: string,
-  cookiesStore?: CookiesStore
+  cookiesStore?: CookiesStore,
 ) => {
   cookiesStore = cookiesStore ?? cookies();
 

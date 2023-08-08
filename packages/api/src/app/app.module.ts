@@ -35,7 +35,7 @@ import { TradingBotsModule } from './trading-bots/trading-bots.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (
-        configService: ConfigService<EnvironmentVariables>
+        configService: ConfigService<EnvironmentVariables>,
       ) => ({
         redis: {
           host: configService.getOrThrow('REDIS_HOST'),
@@ -54,7 +54,7 @@ import { TradingBotsModule } from './trading-bots/trading-bots.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (
-        configService: ConfigService<EnvironmentVariables>
+        configService: ConfigService<EnvironmentVariables>,
       ) => ({
         config: {
           host: configService.getOrThrow('REDIS_HOST'),

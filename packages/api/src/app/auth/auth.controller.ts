@@ -39,7 +39,7 @@ export class AuthController {
   @ZodSerializerDto(AuthResponseDto)
   async register(
     @Res({ passthrough: true }) response: Response,
-    @Body() registerDto: RegisterDto
+    @Body() registerDto: RegisterDto,
   ): Promise<AuthResponseDto> {
     const authResult = await this.authService.register(registerDto);
 
@@ -53,7 +53,7 @@ export class AuthController {
   @ZodSerializerDto(AuthResponseDto)
   async login(
     @Res({ passthrough: true }) response: Response,
-    @Body() authDto: AuthDto
+    @Body() authDto: AuthDto,
   ): Promise<AuthResponseDto> {
     const authResult = await this.authService.login(authDto);
 
@@ -67,7 +67,7 @@ export class AuthController {
   @ZodSerializerDto(AuthResponseDto)
   async refresh(
     @Req() request: Request,
-    @Res({ passthrough: true }) response: Response
+    @Res({ passthrough: true }) response: Response,
   ): Promise<AuthResponseDto> {
     const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE_KEY];
 
@@ -83,7 +83,7 @@ export class AuthController {
   @HttpCode(204)
   async logout(
     @Req() request: Request,
-    @Res({ passthrough: true }) response: Response
+    @Res({ passthrough: true }) response: Response,
   ) {
     const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE_KEY];
 

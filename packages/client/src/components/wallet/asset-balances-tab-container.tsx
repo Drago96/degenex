@@ -12,7 +12,7 @@ export default async function AssetBalancesTabContainer({
   assetType,
 }: AssetBalancesTabContainerProps) {
   const assetBalancesResponse = await appFetch<AssetBalanceResponseDto[]>(
-    `asset-balances?assetType=${assetType}`
+    `asset-balances?assetType=${assetType}`,
   );
 
   if (!assetBalancesResponse.isSuccess) {

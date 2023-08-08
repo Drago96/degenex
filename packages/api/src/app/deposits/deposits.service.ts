@@ -8,7 +8,7 @@ import { StripeService } from '@/stripe/stripe.service';
 export class DepositsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly stripeService: StripeService
+    private readonly stripeService: StripeService,
   ) {}
 
   async createDeposit(userId: number, stripePaymentDto: StripePaymentDto) {

@@ -25,7 +25,7 @@ export const middleware: NextMiddleware = async (request: NextRequest) => {
       `${process.env.API_BASE_URL}/${request.nextUrl.pathname}${request.nextUrl.search}`,
       {
         headers: getAppFetchHeaders(request.cookies, response.headers),
-      }
+      },
     );
   }
 
@@ -64,7 +64,7 @@ async function refreshAuth(request: NextRequest, response: NextResponse) {
       },
     },
     response.cookies,
-    response.headers
+    response.headers,
   );
 
   if (!refreshAuthResponse.isSuccess && refreshAuthResponse.statusCode < 500) {

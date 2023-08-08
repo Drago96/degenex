@@ -89,7 +89,7 @@ function ConfirmVerificationCode() {
                         const newValue =
                           find(
                             event.currentTarget.value,
-                            (inputValue) => inputValue !== value
+                            (inputValue) => inputValue !== value,
                           ) || value;
 
                         if (!/\d/.test(newValue)) {
@@ -112,7 +112,7 @@ function ConfirmVerificationCode() {
 
                         const isVerificationCodeIncomplete =
                           verificationCodeCharacters.some(
-                            (codeCharacter) => codeCharacter === undefined
+                            (codeCharacter) => codeCharacter === undefined,
                           );
 
                         if (isVerificationCodeIncomplete) {

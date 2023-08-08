@@ -1,9 +1,6 @@
 import { get } from "lodash";
 
-import {
-  TradingPairResponseDto,
-  TradingPairsPricesDto,
-} from "@degenex/common";
+import { TradingPairResponseDto, TradingPairsPricesDto } from "@degenex/common";
 import { PendingFetch } from "@/types/pending-fetch";
 import TradingPairListItem from "./trading-pairs-list-item";
 
@@ -22,7 +19,7 @@ export default function TradingPairsList(props: TradingPairsListProps) {
         : props.tradingPairs.map((tradingPair) => {
             const tradingPairPrice = get(
               props.tradingPairsPrices,
-              tradingPair.id
+              tradingPair.id,
             );
 
             return (

@@ -16,7 +16,7 @@ export class SendVerificationCodeConsumer {
     private readonly mailerService: MailerService,
     private readonly prisma: PrismaService,
     @InjectRedis()
-    private readonly redis: Redis
+    private readonly redis: Redis,
   ) {}
 
   @Process()
@@ -35,7 +35,7 @@ export class SendVerificationCodeConsumer {
       buildVerificationCodeKey(job.data.email),
       verificationCode,
       'EX',
-      60 * 30
+      60 * 30,
     );
 
     return this.mailerService.sendEmail({

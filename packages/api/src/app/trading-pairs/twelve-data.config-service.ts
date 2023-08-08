@@ -9,7 +9,7 @@ const BASE_URL = 'https://twelve-data1.p.rapidapi.com';
 @Injectable()
 export class TwelveDataConfigService implements HttpModuleOptionsFactory {
   constructor(
-    private readonly configService: ConfigService<EnvironmentVariables>
+    private readonly configService: ConfigService<EnvironmentVariables>,
   ) {}
 
   createHttpOptions(): HttpModuleOptions {

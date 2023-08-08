@@ -16,7 +16,7 @@ export const getCurrentUser = cache(async (cookiesStore?: CookiesStore) => {
   }
 
   const accessToken = await jwtDecode<AccessTokenPayloadDto>(
-    accessTokenJwt.value
+    accessTokenJwt.value,
   );
 
   return {

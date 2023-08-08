@@ -11,5 +11,9 @@ function createPrismaErrorPredicate(errorCode: string) {
   };
 }
 
-export const isUniqueConstraintError = createPrismaErrorPredicate(UNIQUE_CONSTRAINT_VIOLATION_CODE);
-export const isRecordNotFoundError = createPrismaErrorPredicate(RECORD_NOT_FOUND_CODE);
+export const isUniqueConstraintError = createPrismaErrorPredicate(
+  UNIQUE_CONSTRAINT_VIOLATION_CODE,
+);
+export const isRecordNotFoundError = createPrismaErrorPredicate(
+  RECORD_NOT_FOUND_CODE,
+);

@@ -21,8 +21,8 @@ export default function Skeleton({
             rounded: variant === "text",
             "rounded-full": variant === "circle",
           },
-          className
-        )
+          className,
+        ),
       )}
     />
   );

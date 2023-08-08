@@ -13,7 +13,9 @@ export class MailerService {
   constructor(
     private readonly configService: ConfigService<EnvironmentVariables>,
   ) {
-    this.ses = new aws.SES({ region: this.configService.getOrThrow('AWS_REGION') });
+    this.ses = new aws.SES({
+      region: this.configService.getOrThrow('AWS_REGION'),
+    });
   }
 
   async sendEmail(emailDto: EmailDto) {

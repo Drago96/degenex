@@ -20,7 +20,7 @@ export class TradingBotsService {
     private readonly tradingPairsService: TradingPairsService,
     private readonly tradingPairsPriceCacheService: TradingPairsPriceCacheService,
     private readonly ordersService: OrdersService,
-    private readonly orderBookService: OrderBookService
+    private readonly orderBookService: OrderBookService,
   ) {}
 
   @Interval(1000)
@@ -35,7 +35,7 @@ export class TradingBotsService {
     for (const tradingPair of tradingPairs) {
       const cachedTradingPairPrice =
         await this.tradingPairsPriceCacheService.getCachedTradingPairPrice(
-          tradingPair
+          tradingPair,
         );
 
       const latestTradingPairPrice =
@@ -44,7 +44,7 @@ export class TradingBotsService {
       await this.simulateTrade(
         tradingPair,
         latestTradingPairPrice,
-        this.generateApproximateTradingPairPrice(cachedTradingPairPrice ?? 0)
+        this.generateApproximateTradingPairPrice(cachedTradingPairPrice ?? 0),
       );
     }
   }
@@ -52,7 +52,7 @@ export class TradingBotsService {
   private async simulateTrade(
     tradingPair: TradingPairWithAssociations,
     currentPrice: Decimal,
-    targetPrice: Decimal
+    targetPrice: Decimal,
   ) {
     if (currentPrice.equals(targetPrice)) {
       return;
@@ -65,12 +65,12 @@ export class TradingBotsService {
     const orderBookDepth = await this.orderBookService.getDepth(
       tradingPair.id,
       makerSide,
-      targetPrice
+      targetPrice,
     );
 
     const orderBookQuantity = Decimal.sum(
       new Decimal(0),
-      ...orderBookDepth.map((orderBookDepthDto) => orderBookDepthDto.quantity)
+      ...orderBookDepth.map((orderBookDepthDto) => orderBookDepthDto.quantity),
     );
 
     const makerBotQuantity = new Decimal(1);
@@ -80,14 +80,14 @@ export class TradingBotsService {
       tradingPair,
       makerSide,
       targetPrice,
-      makerBotQuantity
+      makerBotQuantity,
     );
 
     await this.placeBotOrder(
       tradingPair,
       makerSide === 'Buy' ? 'Sell' : 'Buy',
       targetPrice,
-      takerBotQuantity
+      takerBotQuantity,
     );
   }
 
@@ -95,7 +95,7 @@ export class TradingBotsService {
     tradingPair: TradingPairWithAssociations,
     botOrderSide: OrderSide,
     orderPrice: Decimal,
-    orderQuantity: Decimal
+    orderQuantity: Decimal,
   ) {
     const botUser = await this.prisma.user.findUnique({
       where: {
@@ -115,7 +115,7 @@ export class TradingBotsService {
       tradingPair,
       botOrderSide,
       orderPrice,
-      orderQuantity
+      orderQuantity,
     );
 
     await this.ordersService.createOrder(botUser.id, {
@@ -132,7 +132,7 @@ export class TradingBotsService {
     tradingPair: TradingPairWithAssociations,
     botOrderSide: OrderSide,
     orderPrice: Decimal,
-    orderQuantity: Decimal
+    orderQuantity: Decimal,
   ) {
     const tickerSymbolToFund =
       botOrderSide === 'Buy'
@@ -191,7 +191,7 @@ export class TradingBotsService {
       cachedTradingPairPrice - (1 / 100) * cachedTradingPairPrice;
 
     return new Decimal(
-      Math.floor(Math.random() * (maxPrice - minPrice + 1)) + minPrice
+      Math.floor(Math.random() * (maxPrice - minPrice + 1)) + minPrice,
     );
   }
 }
