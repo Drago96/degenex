@@ -21,6 +21,7 @@ import { AssetBalancesModule } from './asset-balances/asset-balances.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderBookModule } from './order-book/order-book.module';
 import { TradingBotsModule } from './trading-bots/trading-bots.module';
+import { CandlesticksModule } from './candlesticks/candlesticks.module';
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { TradingBotsModule } from './trading-bots/trading-bots.module';
     OrdersModule,
     OrderBookModule,
     TradingBotsModule,
+    CandlesticksModule,
   ],
   providers: [
     {

@@ -63,12 +63,13 @@ enum AssetType {
 }
 
 model TradingPair {
-  id                     Int     @id @default(autoincrement())
+  id                     Int           @id @default(autoincrement())
   baseAssetTickerSymbol  String
-  baseAsset              Asset   @relation("tradeableQuoteAssets", fields: [baseAssetTickerSymbol], references: [tickerSymbol], onDelete: Cascade)
+  baseAsset              Asset         @relation("tradeableQuoteAssets", fields: [baseAssetTickerSymbol], references: [tickerSymbol], onDelete: Cascade)
   quoteAssetTickerSymbol String
-  quoteAsset             Asset   @relation("tradeableBaseAssets", fields: [quoteAssetTickerSymbol], references: [tickerSymbol], onDelete: Cascade)
+  quoteAsset             Asset         @relation("tradeableBaseAssets", fields: [quoteAssetTickerSymbol], references: [tickerSymbol], onDelete: Cascade)
   orders                 Order[]
+  candlesticks           Candlestick[]
 
   @@unique([baseAssetTickerSymbol, quoteAssetTickerSymbol])
 }
@@ -159,4 +160,26 @@ model Trade {
   @@index([takerOrderId], type: Hash)
   @@index([makerOrderId], type: Hash)
   @@index([createdAt(sort: Desc)])
+}
+
+model Candlestick {
+  id               Int                 @id @default(autoincrement())
+  openTime         DateTime
+  openPrice        Decimal
+  closePrice       Decimal
+  highestPrice     Decimal
+  lowestPrice      Decimal
+  baseAssetVolume  Decimal
+  quoteAssetVolume Decimal
+  tradesCount      Int
+  interval         CandlestickInterval
+  lastTradeId      Int
+  tradingPairId    Int
+  tradingPair      TradingPair         @relation(fields: [tradingPairId], references: [id], onDelete: Cascade)
+
+  @@index([tradingPairId, interval, openTime(sort: Desc)])
+}
+
+enum CandlestickInterval {
+  OneHour
 }
