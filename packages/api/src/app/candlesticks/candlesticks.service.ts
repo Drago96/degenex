@@ -53,7 +53,11 @@ export class CandlesticksService {
     }
   }
 
-  buildInitialCandlestick(
+  private async acquireCandlestickLock(tradingPairId: number) {
+    return await this.redlock.acquire([`candlestick:${tradingPairId}`], 3000);
+  }
+
+  private buildInitialCandlestick(
     interval: CandlestickInterval,
   ): CurrentCandlestickDto {
     return {
@@ -68,16 +72,12 @@ export class CandlesticksService {
     };
   }
 
-  getOpenTimeForInterval(interval: CandlestickInterval): Date {
+  private getOpenTimeForInterval(interval: CandlestickInterval): Date {
     if (interval === 'OneHour') {
       return moment.utc().startOf('hour').toDate();
     }
 
     return new Date();
-  }
-
-  private async acquireCandlestickLock(tradingPairId: number) {
-    return await this.redlock.acquire([`candlestick:${tradingPairId}`], 3000);
   }
 
   private buildUpdatedCandlestick(
