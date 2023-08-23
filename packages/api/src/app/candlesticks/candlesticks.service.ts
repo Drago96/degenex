@@ -4,11 +4,13 @@ import { InjectRedis } from '@songkeys/nestjs-redis';
 import Redis from 'ioredis';
 import { Decimal } from '@prisma/client/runtime/library';
 import { max } from 'lodash';
+import moment from 'moment';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { CandlestickAggregateDto } from './candlestick-aggregate.dto';
 import { CandlestickInterval, Trade } from '@prisma/client';
 import { CurrentCandlestickDto } from './current-candlestick.dto';
-import moment from 'moment';
+import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
 export class CandlesticksService {
@@ -17,8 +19,19 @@ export class CandlesticksService {
   constructor(
     @InjectRedis()
     private readonly redis: Redis,
+    private readonly prisma: PrismaService,
   ) {
     this.redlock = new Redlock([redis]);
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async aggregateCandlesticks() {
+    const tradingPairs = await this.prisma.tradingPair.findMany({
+      include: {
+        baseAsset: true,
+        quoteAsset: true,
+      },
+    });
   }
 
   async addTrades(tradingPairId: number, trades: Trade[]) {

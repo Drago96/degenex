@@ -15,7 +15,7 @@ export default function AssetBalanceTabItem(props: AssetBalanceTabItemProps) {
           <Skeleton variant="circle" className="h-[40px] w-[40px]" />
         ) : (
           <div className="relative h-[40px] w-[40px]">
-            <Image src={props.logoUrl} alt={props.tickerSymbol} fill />
+            <Image src={props.asset.logoUrl} alt={props.asset.tickerSymbol} fill />
           </div>
         )}
       </td>
@@ -27,8 +27,8 @@ export default function AssetBalanceTabItem(props: AssetBalanceTabItemProps) {
           </div>
         ) : (
           <Typography variant="div" className="flex flex-col gap-2 leading-4">
-            <div>{props.tickerSymbol}</div>
-            <div>{props.fullName}</div>
+            <div>{props.asset.tickerSymbol}</div>
+            <div>{props.asset.fullName}</div>
           </Typography>
         )}
       </td>
@@ -37,7 +37,7 @@ export default function AssetBalanceTabItem(props: AssetBalanceTabItemProps) {
           <Skeleton className="w-[150px]" />
         ) : (
           <Typography className="leading-4">
-            {props.userBalance.toFixed(10)}
+            {(props.available + props.locked).toFixed(10)}
           </Typography>
         )}
       </td>

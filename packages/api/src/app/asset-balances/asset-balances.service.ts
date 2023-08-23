@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { omit } from 'lodash';
 
 import { PrismaService } from '@/prisma/prisma.service';
 import { AssetType } from '@prisma/client';
+import { AssetBalanceResponseDto } from '@degenex/common';
 
 @Injectable()
 export class AssetBalancesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getMany(userId: number, assetType: AssetType | null) {
+  async getMany(
+    userId: number,
+    assetType: AssetType | null,
+  ): Promise<AssetBalanceResponseDto[]> {
     const assets = await this.prisma.asset.findMany({
       where: {
         ...(assetType && { type: assetType }),
@@ -37,9 +40,14 @@ export class AssetBalancesService {
       const userBalance = asset.userBalances.at(0);
 
       return {
-        ...omit(asset, 'userBalances'),
-        userBalance:
-          userBalance?.available.plus(userBalance?.locked).toNumber() ?? 0,
+        available: userBalance?.available.toNumber() ?? 0,
+        locked: userBalance?.locked.toNumber() ?? 0,
+        asset: {
+          id: asset.id,
+          logoUrl: asset.logoUrl,
+          tickerSymbol: asset.tickerSymbol,
+          fullName: asset.fullName,
+        },
       };
     });
   }

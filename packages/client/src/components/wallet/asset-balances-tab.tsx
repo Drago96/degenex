@@ -17,7 +17,7 @@ export default function AssetBalancesTab(props: AssetBalancesTabProps) {
           : props.assetBalances.map((assetBalance) => {
               return (
                 <AssetBalanceTabItem
-                  key={assetBalance.tickerSymbol}
+                  key={assetBalance.asset.id}
                   {...assetBalance}
                 />
               );
