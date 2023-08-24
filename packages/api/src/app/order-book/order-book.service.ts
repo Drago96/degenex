@@ -10,7 +10,10 @@ import Redlock from 'redlock';
 
 import { Order, OrderSide } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
-import { OrderBookEntryDto } from './order-book-entry.dto';
+import {
+  OrderBookEntryDto,
+  OrderBookEntrySchema,
+} from './order-book-entry.dto';
 import { OrderBookTradeDto } from './order-book-trade.dto';
 import { OrderBookDepthDto } from './order-book-depth.dto';
 
@@ -110,7 +113,7 @@ export class OrderBookService {
         throw new InternalServerErrorException();
       }
 
-      return JSON.parse(orderJson);
+      return OrderBookEntrySchema.parse(JSON.parse(orderJson));
     });
 
     const ordersByPrice = groupBy(
@@ -118,7 +121,7 @@ export class OrderBookService {
         orderEntries.map((orderEntry) => orderEntry.price),
         orderEntries.map((orderEntry) => orderEntry.remainingQuantity),
       ),
-      (zippedOrder) => zippedOrder.at(0),
+      (zippedOrder) => zippedOrder.at(0)?.toString(),
     );
 
     const orderBookDepth = Object.entries(ordersByPrice).map(
@@ -200,11 +203,13 @@ export class OrderBookService {
       throw new InternalServerErrorException();
     }
 
-    const makerOrder: OrderBookEntryDto = JSON.parse(makerOrderJson);
+    const makerOrder: OrderBookEntryDto = OrderBookEntrySchema.parse(
+      JSON.parse(makerOrderJson),
+    );
 
     if (
       buyOrder.type === 'Limit' &&
-      buyOrder.price.lessThan(new Decimal(makerOrder.price))
+      buyOrder.price.lessThan(makerOrder.price)
     ) {
       return null;
     }
@@ -241,11 +246,13 @@ export class OrderBookService {
       throw new InternalServerErrorException();
     }
 
-    const makerOrder: OrderBookEntryDto = JSON.parse(makerOrderJson);
+    const makerOrder: OrderBookEntryDto = OrderBookEntrySchema.parse(
+      JSON.parse(makerOrderJson),
+    );
 
     if (
       sellOrder.type === 'Limit' &&
-      sellOrder.price.greaterThan(new Decimal(makerOrder.price))
+      sellOrder.price.greaterThan(makerOrder.price)
     ) {
       return null;
     }
@@ -332,19 +339,17 @@ export class OrderBookService {
   ): Promise<OrderBookTradeDto> {
     const quantityToExecute = Decimal.min(
       takerOrderQuantity,
-      new Decimal(makerOrder.remainingQuantity),
+      makerOrder.remainingQuantity,
     );
 
     return {
-      price: new Decimal(makerOrder.price),
+      price: makerOrder.price,
       quantity: quantityToExecute,
       makerOrder: {
         id: makerOrder.orderId,
         userId: makerOrder.userId,
         orderBookId: makerOrderBookId,
-        remainingQuantity: new Decimal(makerOrder.remainingQuantity).sub(
-          quantityToExecute,
-        ),
+        remainingQuantity: makerOrder.remainingQuantity.sub(quantityToExecute),
       },
     };
   }

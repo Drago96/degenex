@@ -37,7 +37,7 @@ export default function AssetBalanceTabItem(props: AssetBalanceTabItemProps) {
           <Skeleton className="w-[150px]" />
         ) : (
           <Typography className="leading-4">
-            {(props.available + props.locked).toFixed(10)}
+            {(props.available.add(props.locked)).toFixed(10)}
           </Typography>
         )}
       </td>

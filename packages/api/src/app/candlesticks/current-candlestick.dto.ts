@@ -1,13 +1,19 @@
-import { Candlestick } from '@prisma/client';
+import { z } from 'nestjs-zod/z';
+import { createZodDto } from 'nestjs-zod';
 
-export type CurrentCandlestickDto = Pick<
-  Candlestick,
-  | 'openPrice'
-  | 'openTime'
-  | 'lowestPrice'
-  | 'highestPrice'
-  | 'baseAssetVolume'
-  | 'quoteAssetVolume'
-  | 'tradesCount'
-  | 'lastTradeId'
->;
+import { decimal } from '@degenex/common';
+
+export const CurrentCandlestickSchema = z.object({
+  openPrice: decimal(),
+  openTime: z.date(),
+  lowestPrice: decimal(),
+  highestPrice: decimal(),
+  baseAssetVolume: decimal(),
+  quoteAssetVolume: decimal(),
+  tradesCount: z.number(),
+  lastTradeId: z.number(),
+});
+
+export class CurrentCandlestickDto extends createZodDto(
+  CurrentCandlestickSchema,
+) {}

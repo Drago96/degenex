@@ -5,6 +5,7 @@ import { ResponseCookies } from "next/dist/compiled/@edge-runtime/cookies";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/services/auth.service";
 import { CookiesStore } from "@/types/cookies-store";
 import { HeadersStore } from "@/types/headers-store";
+import { ZodSchema } from "zod";
 
 export const FORWARDED_FOR_HEADER_KEY = "x-forwarded-for";
 
@@ -24,6 +25,7 @@ export type FetchResponse<DataT = unknown> = { statusCode: number } & (
 type RequestInput = RequestInfo | URL;
 type RequestOptions<BodyT = unknown> = Omit<RequestInit, "body"> & {
   body?: BodyT;
+  responseSchema?: ZodSchema
 };
 
 export const getAppFetchHeaders = (
@@ -109,7 +111,7 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
 
   return {
     isSuccess: true,
-    data: fetchResponseBody,
+    data: options?.responseSchema ? options.responseSchema.parse(fetchResponseBody) : fetchResponseBody,
     error: null,
     statusCode: fetchResponse.status,
   };

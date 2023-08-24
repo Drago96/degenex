@@ -125,9 +125,7 @@ export class OrdersService {
 
       const orderAmount =
         orderCreateDto.side === 'Buy'
-          ? new Decimal(orderCreateDto.price).times(
-              new Decimal(orderCreateDto.quantity),
-            )
+          ? orderCreateDto.price.times(orderCreateDto.quantity)
           : orderCreateDto.quantity;
 
       const assetBalance = await tx.assetBalance.update({

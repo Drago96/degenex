@@ -119,8 +119,8 @@ export class TradingBotsService {
     );
 
     await this.ordersService.createOrder(botUser.id, {
-      price: orderPrice.toNumber(),
-      quantity: orderQuantity.toNumber(),
+      price: orderPrice,
+      quantity: orderQuantity,
       side: botOrderSide,
       tradingPairId: tradingPair.id,
       type: 'Limit',

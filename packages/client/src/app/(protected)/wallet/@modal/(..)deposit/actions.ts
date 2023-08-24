@@ -7,6 +7,6 @@ import { Deposit } from "@prisma/client";
 export async function createDeposit({ currency, amount }: StripePaymentDto) {
   return appFetch<Deposit, StripePaymentDto>("deposits", {
     method: "POST",
-    body: { currency, amount: Number(amount) },
+    body: { currency, amount },
   });
 }

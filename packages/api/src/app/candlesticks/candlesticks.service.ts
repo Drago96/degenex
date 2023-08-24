@@ -9,7 +9,10 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { CandlestickAggregateDto } from './candlestick-aggregate.dto';
 import { CandlestickInterval, Trade } from '@prisma/client';
-import { CurrentCandlestickDto } from './current-candlestick.dto';
+import {
+  CurrentCandlestickDto,
+  CurrentCandlestickSchema,
+} from './current-candlestick.dto';
 import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
@@ -45,7 +48,9 @@ export class CandlesticksService {
       let currentCandlestick: CurrentCandlestickDto;
 
       if (currentCandlestickJson !== null) {
-        currentCandlestick = JSON.parse(currentCandlestickJson);
+        currentCandlestick = CurrentCandlestickSchema.parse(
+          JSON.parse(currentCandlestickJson),
+        );
       } else {
         currentCandlestick = this.buildInitialCandlestick(
           CandlestickInterval.OneHour,

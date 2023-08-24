@@ -1,9 +1,11 @@
 import { createZodDto } from 'nestjs-zod/dto';
 import { z } from 'nestjs-zod/z';
 
+import { decimal } from '../../utils';
+
 export const AssetBalanceResponseSchema = z.object({
-  available: z.number(),
-  locked: z.number(),
+  available: decimal(),
+  locked: decimal(),
   asset: z.object({
     id: z.number(),
     logoUrl: z.string(),

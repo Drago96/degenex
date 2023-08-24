@@ -1,4 +1,6 @@
-import { TradingPairResponseDto } from "@degenex/common";
+import { z } from "nestjs-zod/z";
+
+import { TradingPairResponseDto, TradingPairResponseSchema } from "@degenex/common";
 import { appFetch } from "@/lib/app-fetch";
 import TradingPairsContainer from "@/components/trading-pairs/trading-pairs-container";
 import TradingPairsList from "@/components/trading-pairs/trading-pairs-list";
@@ -8,6 +10,7 @@ export default async function TradingPairs() {
   const tradingPairsResponse = await appFetch<TradingPairResponseDto[]>(
     "trading-pairs",
     {
+      responseSchema: z.array(TradingPairResponseSchema),
       next: {
         revalidate: 300,
       },

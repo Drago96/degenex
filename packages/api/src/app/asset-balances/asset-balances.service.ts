@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { AssetType } from '@prisma/client';
 import { AssetBalanceResponseDto } from '@degenex/common';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class AssetBalancesService {
@@ -40,8 +41,8 @@ export class AssetBalancesService {
       const userBalance = asset.userBalances.at(0);
 
       return {
-        available: userBalance?.available.toNumber() ?? 0,
-        locked: userBalance?.locked.toNumber() ?? 0,
+        available: userBalance?.available ?? new Decimal(0),
+        locked: userBalance?.locked ?? new Decimal(0),
         asset: {
           id: asset.id,
           logoUrl: asset.logoUrl,

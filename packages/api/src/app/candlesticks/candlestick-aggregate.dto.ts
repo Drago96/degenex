@@ -1,11 +1,17 @@
-import { Candlestick } from '@prisma/client';
+import { z } from 'nestjs-zod/z';
+import { createZodDto } from 'nestjs-zod/dto';
 
-export type CandlestickAggregateDto = Pick<
-  Candlestick,
-  | 'lowestPrice'
-  | 'highestPrice'
-  | 'baseAssetVolume'
-  | 'quoteAssetVolume'
-  | 'tradesCount'
-  | 'lastTradeId'
->;
+import { decimal } from '@degenex/common';
+
+export const CandlestickAggregateSchema = z.object({
+  lowestPrice: decimal(),
+  highestPrice: decimal(),
+  baseAssetVolume: decimal(),
+  quoteAssetVolume: decimal(),
+  tradesCount: z.number(),
+  lastTradeId: z.number(),
+});
+
+export class CandlestickAggregateDto extends createZodDto(
+  CandlestickAggregateSchema,
+) {}
