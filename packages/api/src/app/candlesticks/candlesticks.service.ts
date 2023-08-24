@@ -72,7 +72,7 @@ export class CandlesticksService {
   }
 
   private async acquireCandlestickLock(tradingPairId: number) {
-    return await this.redlock.acquire([`candlestick:${tradingPairId}`], 3000);
+    return await this.redlock.acquire([`candlestick-lock:${tradingPairId}`], 3000);
   }
 
   private buildInitialCandlestick(

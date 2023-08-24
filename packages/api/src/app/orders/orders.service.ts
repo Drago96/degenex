@@ -13,12 +13,14 @@ import { PrismaTransaction } from '@/types/prisma-transaction';
 import { OrderBalanceTransferDto } from './order-balance-transfer.dto';
 import { OrderBookTradeDto } from '@/order-book/order-book-trade.dto';
 import { OrderSide } from '@prisma/client';
+import { CandlesticksService } from '@/candlesticks/candlesticks.service';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly orderBookService: OrderBookService,
+    private readonly candlesticksService: CandlesticksService,
   ) {}
 
   async createOrder(userId: number, orderCreateDto: OrderCreateDto) {
@@ -57,14 +59,23 @@ export class OrdersService {
         return createdOrder;
       }
 
-      await tx.trade.createMany({
-        data: orderBookTrades.map((trade) => ({
-          takerOrderId: createdOrder.id,
-          makerOrderId: trade.makerOrder.id,
-          price: trade.price,
-          quantity: trade.quantity,
-        })),
-      });
+      const trades = await Promise.all(
+        orderBookTrades.map((trade) =>
+          tx.trade.create({
+            data: {
+              takerOrderId: createdOrder.id,
+              makerOrderId: trade.makerOrder.id,
+              price: trade.price,
+              quantity: trade.quantity,
+            },
+          }),
+        ),
+      );
+
+      await this.candlesticksService.addTrades(
+        orderCreateDto.tradingPairId,
+        trades,
+      );
 
       await this.updateMakerOrders(
         orderBookTrades,

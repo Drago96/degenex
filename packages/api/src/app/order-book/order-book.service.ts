@@ -140,7 +140,7 @@ export class OrderBookService {
 
   private async acquireOrderBookLock(tradingPairId: number) {
     return await this.redlock.acquire(
-      [`trading-pair-order-book:${tradingPairId}`],
+      [`trading-pair-order-book-lock:${tradingPairId}`],
       3000,
     );
   }

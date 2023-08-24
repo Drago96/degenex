@@ -5,7 +5,7 @@ import { decimal } from '@degenex/common';
 
 export const CurrentCandlestickSchema = z.object({
   openPrice: decimal(),
-  openTime: z.date(),
+  openTime: z.coerce.date(),
   lowestPrice: decimal(),
   highestPrice: decimal(),
   baseAssetVolume: decimal(),
