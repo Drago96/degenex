@@ -8,7 +8,6 @@ import { OrderBookService } from '@/order-book/order-book.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrderCreateDto } from './order-create.dto';
 import { Decimal } from '@prisma/client/runtime/library';
-import { isRecordNotFoundError } from '@/prisma/prisma-error.utils';
 import { PrismaTransaction } from '@/types/prisma-transaction';
 import { OrderBalanceTransferDto } from './order-balance-transfer.dto';
 import { OrderBookTradeDto } from '@/order-book/order-book-trade.dto';
@@ -128,43 +127,36 @@ export class OrdersService {
     orderCreateDto: OrderCreateDto,
     tx: PrismaTransaction,
   ) {
-    try {
-      const assetBalanceTickerSymbol =
-        orderCreateDto.side === 'Buy'
-          ? tradingPair.quoteAssetTickerSymbol
-          : tradingPair.baseAssetTickerSymbol;
+    const assetBalanceTickerSymbol =
+      orderCreateDto.side === 'Buy'
+        ? tradingPair.quoteAssetTickerSymbol
+        : tradingPair.baseAssetTickerSymbol;
 
-      const orderAmount =
-        orderCreateDto.side === 'Buy'
-          ? orderCreateDto.price.times(orderCreateDto.quantity)
-          : orderCreateDto.quantity;
+    const orderAmount =
+      orderCreateDto.side === 'Buy'
+        ? orderCreateDto.price.times(orderCreateDto.quantity)
+        : orderCreateDto.quantity;
 
-      const assetBalance = await tx.assetBalance.update({
-        where: {
-          userId_assetTickerSymbol: {
-            userId,
-            assetTickerSymbol: assetBalanceTickerSymbol,
-          },
+    const updateBatch = await tx.assetBalance.updateMany({
+      where: {
+        userId,
+        assetTickerSymbol: assetBalanceTickerSymbol,
+        available: {
+          gte: orderAmount,
         },
-        data: {
-          available: {
-            decrement: orderAmount,
-          },
-          locked: {
-            increment: orderAmount,
-          },
+      },
+      data: {
+        available: {
+          decrement: orderAmount,
         },
-      });
+        locked: {
+          increment: orderAmount,
+        },
+      },
+    });
 
-      if (assetBalance.available.lessThan(0)) {
-        throw new BadRequestException('Insufficient balance');
-      }
-    } catch (error) {
-      if (isRecordNotFoundError(error)) {
-        throw new BadRequestException('Insufficient balance');
-      }
-
-      throw error;
+    if (updateBatch.count === 0) {
+      throw new BadRequestException('Insufficient balance');
     }
   }
 
