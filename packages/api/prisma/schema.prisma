@@ -159,7 +159,7 @@ model Trade {
 
   @@index([takerOrderId], type: Hash)
   @@index([makerOrderId], type: Hash)
-  @@index([createdAt(sort: Desc)])
+  @@index([createdAt(ops: TimestampBloomOps)], type: Brin)
 }
 
 model Candlestick {
