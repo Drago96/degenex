@@ -12,6 +12,7 @@ export const CurrentCandlestickSchema = z.object({
   quoteAssetVolume: decimal(),
   tradesCount: z.number(),
   lastTradeId: z.number(),
+  lastTradePrice: decimal(),
 });
 
 export class CurrentCandlestickDto extends createZodDto(

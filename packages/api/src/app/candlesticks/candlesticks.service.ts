@@ -3,7 +3,7 @@ import Redlock from 'redlock';
 import { InjectRedis } from '@songkeys/nestjs-redis';
 import Redis from 'ioredis';
 import { Decimal } from '@prisma/client/runtime/library';
-import { max } from 'lodash';
+import { maxBy, zip } from 'lodash';
 import moment from 'moment';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
@@ -14,6 +14,7 @@ import {
   CurrentCandlestickSchema,
 } from './current-candlestick.dto';
 import { PrismaService } from '@/prisma/prisma.service';
+import { UnreachableCodeException } from '@degenex/common';
 
 @Injectable()
 export class CandlesticksService {
@@ -28,34 +29,58 @@ export class CandlesticksService {
   }
 
   @Cron(CronExpression.EVERY_HOUR)
-  async aggregateCandlesticks() {
+  async persistCandlesticks() {
     const tradingPairs = await this.prisma.tradingPair.findMany({
-      include: {
-        baseAsset: true,
-        quoteAsset: true,
-      },
+      select: { id: true },
+    });
+
+    const currentCandlesticks = await Promise.all(
+      tradingPairs.map((tradingPair) => {
+        return this.openNewCandlestick(
+          tradingPair.id,
+          CandlestickInterval.OneHour,
+        );
+      }),
+    );
+
+    await this.prisma.candlestick.createMany({
+      data: zip(
+        currentCandlesticks,
+        tradingPairs.map((tradingPair) => tradingPair.id),
+      ).map(([currentCandlestick, tradingPairId]) => {
+        if (!currentCandlestick || !tradingPairId) {
+          throw new UnreachableCodeException();
+        }
+
+        return {
+          tradingPairId,
+          baseAssetVolume: currentCandlestick.baseAssetVolume,
+          closePrice: currentCandlestick.lastTradePrice,
+          highestPrice: currentCandlestick.highestPrice,
+          interval: 'OneHour',
+          lastTradeId: currentCandlestick.lastTradeId,
+          lowestPrice: currentCandlestick.lowestPrice,
+          openPrice: currentCandlestick.openPrice,
+          openTime: currentCandlestick.openTime,
+          quoteAssetVolume: currentCandlestick.quoteAssetVolume,
+          tradesCount: currentCandlestick.tradesCount,
+        };
+      }),
     });
   }
 
   async addTrades(tradingPairId: number, trades: Trade[]) {
+    if (trades.length === 0) {
+      return;
+    }
+
     const candlestickLock = await this.acquireCandlestickLock(tradingPairId);
 
     try {
-      const currentCandlestickJson = await this.redis.get(
-        this.buildTradingPairCandlestickKey(tradingPairId),
+      const currentCandlestick = await this.getOrCreateCurrentCandlestick(
+        tradingPairId,
+        CandlestickInterval.OneHour,
       );
-
-      let currentCandlestick: CurrentCandlestickDto;
-
-      if (currentCandlestickJson !== null) {
-        currentCandlestick = CurrentCandlestickSchema.parse(
-          JSON.parse(currentCandlestickJson),
-        );
-      } else {
-        currentCandlestick = this.buildInitialCandlestick(
-          CandlestickInterval.OneHour,
-        );
-      }
 
       const updatedCandlestick = this.buildUpdatedCandlestick(
         currentCandlestick,
@@ -72,7 +97,66 @@ export class CandlesticksService {
   }
 
   private async acquireCandlestickLock(tradingPairId: number) {
-    return await this.redlock.acquire([`candlestick-lock:${tradingPairId}`], 3000);
+    return await this.redlock.acquire(
+      [`candlestick-lock:${tradingPairId}`],
+      3000,
+    );
+  }
+
+  private async getOrCreateCurrentCandlestick(
+    tradingPairId: number,
+    interval: CandlestickInterval,
+  ): Promise<CurrentCandlestickDto> {
+    const currentCandlestickJson = await this.redis.get(
+      this.buildTradingPairCandlestickKey(tradingPairId),
+    );
+
+    let currentCandlestick: CurrentCandlestickDto;
+
+    if (currentCandlestickJson !== null) {
+      currentCandlestick = CurrentCandlestickSchema.parse(
+        JSON.parse(currentCandlestickJson),
+      );
+    } else {
+      currentCandlestick = this.buildInitialCandlestick(interval);
+    }
+
+    return currentCandlestick;
+  }
+
+  private async openNewCandlestick(
+    tradingPairId: number,
+    interval: CandlestickInterval,
+  ): Promise<CurrentCandlestickDto> {
+    const candlestickLock = await this.acquireCandlestickLock(tradingPairId);
+
+    try {
+      const currentCandlestick = await this.getOrCreateCurrentCandlestick(
+        tradingPairId,
+        interval,
+      );
+
+      const newCandlestick: CurrentCandlestickDto = {
+        openPrice: currentCandlestick.lastTradePrice,
+        openTime: this.getOpenTimeForInterval(interval),
+        lowestPrice: currentCandlestick.lastTradePrice,
+        highestPrice: currentCandlestick.lastTradePrice,
+        baseAssetVolume: new Decimal(0),
+        quoteAssetVolume: new Decimal(0),
+        tradesCount: 0,
+        lastTradeId: currentCandlestick.lastTradeId,
+        lastTradePrice: currentCandlestick.lastTradePrice,
+      };
+
+      await this.redis.set(
+        this.buildTradingPairCandlestickKey(tradingPairId),
+        JSON.stringify(newCandlestick),
+      );
+
+      return currentCandlestick;
+    } finally {
+      await candlestickLock.release();
+    }
   }
 
   private buildInitialCandlestick(
@@ -87,6 +171,7 @@ export class CandlesticksService {
       quoteAssetVolume: new Decimal(0),
       tradesCount: 0,
       lastTradeId: 0,
+      lastTradePrice: new Decimal(0),
     };
   }
 
@@ -124,10 +209,17 @@ export class CandlesticksService {
       tradesCount:
         candlestick.tradesCount + candlestickAggregateDto.tradesCount,
       lastTradeId: candlestickAggregateDto.lastTradeId,
+      lastTradePrice: candlestickAggregateDto.lastTradePrice,
     };
   }
 
   private aggregateTrades(trades: Trade[]): CandlestickAggregateDto {
+    const lastTrade = maxBy(trades, (trade) => trade.id);
+
+    if (!lastTrade) {
+      throw new UnreachableCodeException();
+    }
+
     return {
       lowestPrice: Decimal.min(...trades.map((trade) => trade.price)),
       highestPrice: Decimal.max(...trades.map((trade) => trade.price)),
@@ -136,7 +228,8 @@ export class CandlesticksService {
         ...trades.map((trade) => trade.quantity.times(trade.price)),
       ),
       tradesCount: trades.length,
-      lastTradeId: max(trades.map((trade) => trade.id))!,
+      lastTradeId: lastTrade.id,
+      lastTradePrice: lastTrade.price,
     };
   }
 

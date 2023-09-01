@@ -16,6 +16,7 @@ import {
 } from './order-book-entry.dto';
 import { OrderBookTradeDto } from './order-book-trade.dto';
 import { OrderBookDepthDto } from './order-book-depth.dto';
+import { UnreachableCodeException } from '@degenex/common';
 
 @Injectable()
 export class OrderBookService {
@@ -129,7 +130,13 @@ export class OrderBookService {
         return {
           price: new Decimal(price),
           quantity: Decimal.sum(
-            ...orders.map(([_, quantity]) => new Decimal(quantity!)),
+            ...orders.map(([_, quantity]) => {
+              if (quantity === undefined) {
+                throw new UnreachableCodeException();
+              }
+
+              return new Decimal(quantity);
+            }),
           ),
         };
       },

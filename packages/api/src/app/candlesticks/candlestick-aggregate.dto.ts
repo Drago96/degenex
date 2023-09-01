@@ -10,6 +10,7 @@ export const CandlestickAggregateSchema = z.object({
   quoteAssetVolume: decimal(),
   tradesCount: z.number(),
   lastTradeId: z.number(),
+  lastTradePrice: decimal(),
 });
 
 export class CandlestickAggregateDto extends createZodDto(
