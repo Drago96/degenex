@@ -4,7 +4,7 @@ import * as nodemailer from 'nodemailer';
 import * as aws from '@aws-sdk/client-ses';
 
 import { EnvironmentVariables } from '../configuration';
-import { EmailDto } from './email.dto.ts';
+import { EmailDto } from './email.dto';
 
 @Injectable()
 export class MailerService {
