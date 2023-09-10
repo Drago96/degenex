@@ -55,9 +55,8 @@ export class TradingPairsPriceCacheService implements OnApplicationBootstrap {
 
     await Promise.all(
       tradingPairs.map(async (tradingPair) => {
-        const cachedTradingPairPrice = await this.getCachedTradingPairPrice(
-          tradingPair,
-        );
+        const cachedTradingPairPrice =
+          await this.getCachedTradingPairPrice(tradingPair);
 
         if (cachedTradingPairPrice === null) {
           await this.fetchAndCacheTradingPairPrice(tradingPair);

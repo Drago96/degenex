@@ -25,7 +25,7 @@ export type FetchResponse<DataT = unknown> = { statusCode: number } & (
 type RequestInput = RequestInfo | URL;
 type RequestOptions<BodyT = unknown> = Omit<RequestInit, "body"> & {
   body?: BodyT;
-  responseSchema?: ZodSchema
+  responseSchema?: ZodSchema;
 };
 
 export const getAppFetchHeaders = (
@@ -111,7 +111,9 @@ export async function appFetch<ResponseT = unknown, BodyT = unknown>(
 
   return {
     isSuccess: true,
-    data: options?.responseSchema ? options.responseSchema.parse(fetchResponseBody) : fetchResponseBody,
+    data: options?.responseSchema
+      ? options.responseSchema.parse(fetchResponseBody)
+      : fetchResponseBody,
     error: null,
     statusCode: fetchResponse.status,
   };
