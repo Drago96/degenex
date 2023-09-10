@@ -81,7 +81,7 @@ Create and set up a developer account for the following cloud service providers.
    ```sh
    npm start
    ```
-6. Start the Stripe webhook integration
+6. Start the Stripe webhooks integration
    ```sh
    nx run api:stripe:webhooks
    ```
