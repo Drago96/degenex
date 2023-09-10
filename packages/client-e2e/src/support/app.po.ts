@@ -1,1 +1,1 @@
-export const getGreeting = () => cy.get('div');
+export const getHeading = () => cy.get('h2');

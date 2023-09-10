@@ -1,4 +1,4 @@
-import { getGreeting } from '../support/app.po';
+import { getHeading } from '../support/app.po';
 
 describe('client', () => {
   beforeEach(() => cy.visit('/'));
@@ -8,6 +8,6 @@ describe('client', () => {
     cy.login('my-email@something.com', 'myPassword');
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome to Degenex!');
+    getHeading().contains('Buy & sell Assets in minutes');
   });
 });
