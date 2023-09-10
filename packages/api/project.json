@@ -63,7 +63,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/api",
-        "command": "npx prisma generate"
+        "command": "prisma generate"
       }
     },
     "migrate:dev": {
