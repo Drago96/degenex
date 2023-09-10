@@ -8,7 +8,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: process.env.CLOUDFRONT_URL,
+        hostname: process.env.CLOUDFRONT_URL || "**",
         port: "",
         pathname: "/**",
       },

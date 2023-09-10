@@ -1,6 +1,9 @@
 import { z } from "nestjs-zod/z";
 
-import { TradingPairResponseDto, TradingPairResponseSchema } from "@degenex/common";
+import {
+  TradingPairResponseDto,
+  TradingPairResponseSchema,
+} from "@degenex/common";
 import { appFetch } from "@/lib/app-fetch";
 import TradingPairsContainer from "@/components/trading-pairs/trading-pairs-container";
 import TradingPairsList from "@/components/trading-pairs/trading-pairs-list";

@@ -1,4 +1,7 @@
-import { AssetBalanceResponseDto, AssetBalanceResponseSchema } from "@degenex/common";
+import {
+  AssetBalanceResponseDto,
+  AssetBalanceResponseSchema,
+} from "@degenex/common";
 import { appFetch } from "@/lib/app-fetch";
 import { AssetType } from "@prisma/client";
 import { z } from "nestjs-zod/z";
@@ -16,8 +19,8 @@ export default async function AssetBalancesTabContainer({
   const assetBalancesResponse = await appFetch<AssetBalanceResponseDto[]>(
     `asset-balances?assetType=${assetType}`,
     {
-      responseSchema: z.array(AssetBalanceResponseSchema)
-    }
+      responseSchema: z.array(AssetBalanceResponseSchema),
+    },
   );
 
   if (!assetBalancesResponse.isSuccess) {

@@ -15,7 +15,11 @@ export default function AssetBalanceTabItem(props: AssetBalanceTabItemProps) {
           <Skeleton variant="circle" className="h-[40px] w-[40px]" />
         ) : (
           <div className="relative h-[40px] w-[40px]">
-            <Image src={props.asset.logoUrl} alt={props.asset.tickerSymbol} fill />
+            <Image
+              src={props.asset.logoUrl}
+              alt={props.asset.tickerSymbol}
+              fill
+            />
           </div>
         )}
       </td>
@@ -37,7 +41,7 @@ export default function AssetBalanceTabItem(props: AssetBalanceTabItemProps) {
           <Skeleton className="w-[150px]" />
         ) : (
           <Typography className="leading-4">
-            {(props.available.add(props.locked)).toFixed(10)}
+            {props.available.add(props.locked).toFixed(10)}
           </Typography>
         )}
       </td>
