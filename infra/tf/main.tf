@@ -10,7 +10,8 @@ terraform {
 }
 
 locals {
-  service_name = "degenex-${terraform.workspace}"
+  service_name     = "degenex-${terraform.workspace}"
+  asset_logos_path = "${path.module}/../../assets/images/asset-logos"
 }
 
 provider "aws" {
@@ -69,6 +70,23 @@ resource "aws_s3_bucket_acl" "s3_bucket_acl" {
 
   bucket = aws_s3_bucket.s3_bucket.id
   acl    = "public-read"
+}
+
+resource "aws_s3_object" "s3_logos_folder" {
+  bucket = aws_s3_bucket.s3_bucket.id
+  acl    = "public-read"
+  key    = "logos/"
+}
+
+resource "aws_s3_object" "s3_logos" {
+  for_each = fileset(local.asset_logos_path, "*")
+
+  bucket       = aws_s3_bucket.s3_bucket.id
+  acl          = "public-read"
+  key          = "logos/${each.value}"
+  source       = "${local.asset_logos_path}/${each.value}"
+  content_type = "image/svg+xml"
+  etag         = filemd5("${local.asset_logos_path}/${each.value}")
 }
 
 resource "aws_cloudfront_origin_access_control" "cloudfront_s3_oac" {
