@@ -129,22 +129,3 @@ resource "aws_ses_email_identity" "ses_email_entities" {
 
   email = each.value
 }
-
-data "aws_ami" "linux_ami" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-2023*"]
-  }
-}
-
-resource "aws_instance" "app_server" {
-  ami           = data.aws_ami.linux_ami.id
-  instance_type = "t3.micro"
-
-  tags = {
-    Name = local.service_name
-  }
-}
