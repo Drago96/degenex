@@ -1,7 +1,7 @@
 ![CI workflow](https://github.com/Drago96/degenex/actions/workflows/ci.yml/badge.svg)
 
 <div align="center">
-  <img src="images/logo.png" alt="Logo" height="50">
+  <img src="assets/images/logo.png" alt="Logo" height="50">
   <p>The trading exchange of the future</p>
 </div>
 
