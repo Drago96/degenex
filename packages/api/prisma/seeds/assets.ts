@@ -8,7 +8,7 @@ export const seedAssets = async (prisma: PrismaClient) => {
       tickerSymbol: 'AAPL',
       fullName: 'Apple',
       type: AssetType.Stock,
-      logoUrl: 'https://d1zd1ouamy16t4.cloudfront.net/logos/apple-logo.svg',
+      logoUrl: `${process.env.CLOUDFRONT_URL}/logos/apple-logo.svg`,
     },
   });
 
@@ -19,7 +19,7 @@ export const seedAssets = async (prisma: PrismaClient) => {
       tickerSymbol: 'MSFT',
       fullName: 'Microsoft',
       type: AssetType.Stock,
-      logoUrl: 'https://d1zd1ouamy16t4.cloudfront.net/logos/microsoft-logo.svg',
+      logoUrl: `${process.env.CLOUDFRONT_URL}/logos/microsoft-logo.svg`,
     },
   });
 
@@ -30,7 +30,7 @@ export const seedAssets = async (prisma: PrismaClient) => {
       tickerSymbol: 'BTC',
       fullName: 'Bitcoin',
       type: AssetType.Crypto,
-      logoUrl: 'https://d1zd1ouamy16t4.cloudfront.net/logos/bitcoin-logo.svg',
+      logoUrl: `${process.env.CLOUDFRONT_URL}/logos/bitcoin-logo.svg`,
     },
   });
 
@@ -42,7 +42,7 @@ export const seedAssets = async (prisma: PrismaClient) => {
       fullName: 'United States Dollar',
       type: AssetType.FiatMoney,
       currencySymbol: '$',
-      logoUrl: 'https://d1zd1ouamy16t4.cloudfront.net/logos/dollar-logo.svg',
+      logoUrl: `${process.env.CLOUDFRONT_URL}/logos/dollar-logo.svg`,
     },
   });
 

@@ -23,7 +23,8 @@ export const EnvironmentVariablesSchema = z.object({
   STRIPE_SECRET_KEY: z.string(),
   STRIPE_API_VERSION: z.string(),
   STRIPE_WEBHOOK_SIGNING_SECRET: z.string(),
-  CLIENT_URL: z.string(),
+  CLIENT_URL: z.string().url(),
+  CLOUDFRONT_URL: z.string().url(),
 });
 
 export class EnvironmentVariables extends createZodDto(
