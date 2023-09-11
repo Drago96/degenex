@@ -23,20 +23,11 @@ data "aws_ami" "linux_ami" {
   }
 }
 
-resource "aws_instance" "api_server" {
+resource "aws_instance" "app_server" {
   ami           = data.aws_ami.linux_ami.id
   instance_type = "t3.micro"
 
   tags = {
-    Name = "Degenex API - ${terraform.workspace}"
-  }
-}
-
-resource "aws_instance" "client_server" {
-  ami           = data.aws_ami.linux_ami.id
-  instance_type = "t3.micro"
-
-  tags = {
-    Name = "Degenex Client - ${terraform.workspace}"
+    Name = "Degenex - ${terraform.workspace}"
   }
 }
