@@ -36,9 +36,9 @@ Degenex is a small and concise trading exchange. It aims to allow its users to:
 
 ### Built With
 
-- [![Nx][Nx]][Nx-url]
-- [![Next][Next.js]][Next-url]
-- [![Nest][Nest.js]][Nest-url]
+- [![Nx](https://img.shields.io/badge/nx-143055?style=for-the-badge&logo=nx&logoColor=white)](https://nx.dev)
+- [![Next](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+- [![Nest](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com)
 
 ## Getting started
 
@@ -48,9 +48,9 @@ To get a local copy of the project up and running follow these simple steps:
 
 Before setting up the project, install and set up the following dependencies:
 
-- [![Node][NodeJS]][NodeJS-url]
-- [![Postgres][Postgres]][Postgres-url]
-- [![Redis][Redis]][Redis-url]
+- [![Node](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/en/download)
+- [![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/download/)
+- [![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/download/)
 
 Create and set up a developer account for the following cloud service providers. You won't need a paid plan for any of them:
 
@@ -89,16 +89,3 @@ Create and set up a developer account for the following cloud service providers.
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-[Nx]: https://img.shields.io/badge/nx-143055?style=for-the-badge&logo=nx&logoColor=white
-[Nx-url]: https://nx.dev
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[Nest.js]: https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white
-[Nest-url]: https://nestjs.com
-[NodeJS]: https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white
-[NodeJS-url]: https://nodejs.org/en/download
-[Postgres]: https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white
-[Postgres-url]: https://www.postgresql.org/download/
-[Redis]: https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white
-[Redis-url]: https://redis.io/download/
