@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -22,6 +22,7 @@ import { OrdersModule } from './orders/orders.module';
 import { OrderBookModule } from './order-book/order-book.module';
 import { TradingBotsModule } from './trading-bots/trading-bots.module';
 import { CandlesticksModule } from './candlesticks/candlesticks.module';
+import { HttpLoggerMiddleware } from './http-logger.middleware';
 
 @Module({
   imports: [
@@ -94,4 +95,8 @@ import { CandlesticksModule } from './candlesticks/candlesticks.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(HttpLoggerMiddleware).forRoutes('/');
+  }
+}
