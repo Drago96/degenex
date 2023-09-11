@@ -54,7 +54,7 @@ Before setting up the project, install and set up the following dependencies:
 
 Create and set up a developer account for the following cloud service providers. You won't need a paid plan for any of them:
 
-- [Amazon Web Services](https://aws.amazon.com/)
+- [Amazon Web Services](https://aws.amazon.com/) (You can use the existing Terraform configuration in `infra/tf` to get you started)
   - SES
   - S3 + Cloudfront
 - [Stripe](https://stripe.com)

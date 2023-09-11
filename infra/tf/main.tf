@@ -14,6 +14,12 @@ locals {
   asset_logos_path = "${path.module}/../../assets/images/asset-logos"
 }
 
+variable "ses_emails" {
+  type = set(string)
+
+  default = ["dragproychev@gmail.com", "dr.proychev@gmail.com", "dragomirproychev@gmail.com"]
+}
+
 provider "aws" {
   region = "eu-south-1"
 }
@@ -135,4 +141,10 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
       locations        = []
     }
   }
+}
+
+resource "aws_ses_email_identity" "ses_email_entities" {
+  for_each = var.ses_emails
+
+  email = each.value
 }
