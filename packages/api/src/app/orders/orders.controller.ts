@@ -12,7 +12,7 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  async createDeposit(
+  async createOrder(
     @Req() req: RequestWithUser,
     @Body() orderCreateDto: OrderCreateDto,
   ): Promise<Order> {
