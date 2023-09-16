@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import moment from 'moment';
 
 import { Decimal } from '@prisma/client/runtime/library';
 import { TradingPairResponseDto } from '@degenex/common';
@@ -31,21 +32,40 @@ export class TradingPairsService {
     });
   }
 
-  async getTradingPairPrice(tradingPairId: number) {
-    const latestTrade = await this.prisma.trade.findFirst({
+  async getPreviousPrice(tradingPairId: number) {
+    let priceChangeTrade = await this.prisma.trade.findFirst({
       orderBy: {
         id: 'desc',
+      },
+      where: {
+        makerOrder: {
+          tradingPairId,
+        },
+        createdAt: {
+          lte: moment().subtract(1, 'day').toDate(),
+        },
       },
       select: {
         price: true,
       },
-      where: {
-        makerOrder: {
-          tradingPairId: tradingPairId,
-        },
-      },
     });
 
-    return latestTrade?.price ?? new Decimal(0);
+    if (!priceChangeTrade) {
+      priceChangeTrade = await this.prisma.trade.findFirst({
+        orderBy: {
+          id: 'asc',
+        },
+        where: {
+          makerOrder: {
+            tradingPairId,
+          },
+        },
+        select: {
+          price: true,
+        },
+      });
+    }
+
+    return priceChangeTrade?.price ?? new Decimal(0);
   }
 }

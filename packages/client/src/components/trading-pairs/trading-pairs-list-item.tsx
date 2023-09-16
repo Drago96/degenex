@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Decimal from "decimal.js";
 
 import {
   buildTradingPairSymbol,
@@ -10,7 +11,7 @@ import Typography from "../ui/typography";
 import Skeleton from "../ui/skeleton";
 
 type TradingPairListItemProps = PendingFetch<
-  TradingPairResponseDto & { tradingPairPrice?: number }
+  TradingPairResponseDto & { tradingPairPrice?: Decimal }
 >;
 
 export default function TradingPairListItem(props: TradingPairListItemProps) {

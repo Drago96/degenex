@@ -1,7 +1,7 @@
 import { z } from 'nestjs-zod/z';
-import { createZodDto } from 'nestjs-zod';
+import { createZodDto } from 'nestjs-zod/dto';
 
-import { decimal } from '@degenex/common';
+import { decimal } from '../../utils';
 
 export const CurrentCandlestickSchema = z.object({
   openPrice: decimal(),

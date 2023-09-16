@@ -1,6 +1,10 @@
 "use client";
 
-import { TradingPairsPricesDto, TradingPairResponseDto } from "@degenex/common";
+import {
+  TradingPairsStatisticsDto,
+  TradingPairResponseDto,
+  TradingPairsStatisticsSchema,
+} from "@degenex/common";
 import { useEventSourceQuery } from "@/hooks/use-event-source-query";
 import { buildTradingPairPricesQuery } from "@/lib/trading-pairs/build-trading-pair-prices-query";
 import TradingPairsList from "./trading-pairs-list";
@@ -16,12 +20,16 @@ export default function TradingPairsContainer({
     tradingPairs.map((tradingPair) => tradingPair.id),
   );
 
-  const { data } = useEventSourceQuery<TradingPairsPricesDto>(
-    ["trading-pair-prices"],
-    `api/trading-pairs/track-prices?${tradingPairPricesQuery}`,
+  const { data } = useEventSourceQuery<TradingPairsStatisticsDto>(
+    ["trading-pair-statistics"],
+    `api/trading-pairs/track-statistics?${tradingPairPricesQuery}`,
+    TradingPairsStatisticsSchema,
   );
 
   return (
-    <TradingPairsList tradingPairs={tradingPairs} tradingPairsPrices={data} />
+    <TradingPairsList
+      tradingPairs={tradingPairs}
+      tradingPairsStatistics={data}
+    />
   );
 }

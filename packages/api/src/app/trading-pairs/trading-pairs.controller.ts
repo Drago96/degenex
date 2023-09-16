@@ -3,14 +3,14 @@ import { ZodSerializerDto } from 'nestjs-zod';
 import { interval, map, Observable, withLatestFrom } from 'rxjs';
 
 import { TradingPairResponseDto } from '@degenex/common';
-import { TradingPairsPriceStreamService } from './trading-pairs-price-stream.service';
+import { TradingPairsStatisticStreamService } from './trading-pairs-statistics-stream.service';
 import { TradingPairsService } from './trading-pairs.service';
 
 @Controller('trading-pairs')
 export class TradingPairsController {
   constructor(
     private tradingPairsService: TradingPairsService,
-    private tradingPairPricesStreamService: TradingPairsPriceStreamService,
+    private tradingPairsStatisticsStreamService: TradingPairsStatisticStreamService,
   ) {}
 
   @Get()
@@ -19,18 +19,18 @@ export class TradingPairsController {
     return this.tradingPairsService.getAll();
   }
 
-  @Sse('track-prices')
+  @Sse('track-statistics')
   trackPrices(
     @Query('tradingPairIds') tradingPairIds: number[],
   ): Observable<MessageEvent> {
     return interval(1000).pipe(
       withLatestFrom(
-        this.tradingPairPricesStreamService.getTradingPairsPrices$(
+        this.tradingPairsStatisticsStreamService.getTradingPairsStatistics$(
           tradingPairIds,
         ),
       ),
-      map(([_, tradingPairPrices]) => ({
-        data: tradingPairPrices,
+      map(([_, tradingPairStatistics]) => ({
+        data: tradingPairStatistics,
       })),
     );
   }

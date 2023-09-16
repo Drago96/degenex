@@ -4,11 +4,11 @@ import { Interval } from '@nestjs/schedule';
 import { Decimal } from '@prisma/client/runtime/library';
 import { TradingPairsPriceCacheService } from '@/trading-pairs/trading-pairs-price-cache.service';
 import { PrismaService } from '@/prisma/prisma.service';
-import { TradingPairsService } from '@/trading-pairs/trading-pairs.service';
 import { OrderBookService } from '@/order-book/order-book.service';
 import { OrderSide } from '@prisma/client';
 import { TradingPairWithAssociations } from '@/trading-pairs/trading-pair-with-associations';
 import { OrdersService } from '@/orders/orders.service';
+import { CandlesticksService } from '@/candlesticks/candlesticks.service';
 
 const BUY_BOT_EMAIL = 'buy.bot@gmail.com';
 const SELL_BOT_EMAIL = 'sell.bot@gmail.com';
@@ -17,8 +17,8 @@ const SELL_BOT_EMAIL = 'sell.bot@gmail.com';
 export class TradingBotsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly tradingPairsService: TradingPairsService,
     private readonly tradingPairsPriceCacheService: TradingPairsPriceCacheService,
+    private readonly candlesticksService: CandlesticksService,
     private readonly ordersService: OrdersService,
     private readonly orderBookService: OrderBookService,
   ) {}
@@ -38,12 +38,14 @@ export class TradingBotsService {
           tradingPair,
         );
 
-      const latestTradingPairPrice =
-        await this.tradingPairsService.getTradingPairPrice(tradingPair.id);
+      const tradingPairStatistics =
+        await this.candlesticksService.getOrBuildCurrentCandlestick(
+          tradingPair.id,
+        );
 
       await this.simulateTrade(
         tradingPair,
-        latestTradingPairPrice,
+        tradingPairStatistics.lastTradePrice,
         this.generateApproximateTradingPairPrice(cachedTradingPairPrice ?? 0),
       );
     }

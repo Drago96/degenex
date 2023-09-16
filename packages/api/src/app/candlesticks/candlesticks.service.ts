@@ -9,12 +9,12 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { CandlestickAggregateDto } from './candlestick-aggregate.dto';
 import { CandlestickInterval, Trade } from '@prisma/client';
+import { PrismaService } from '@/prisma/prisma.service';
 import {
   CurrentCandlestickDto,
   CurrentCandlestickSchema,
-} from './current-candlestick.dto';
-import { PrismaService } from '@/prisma/prisma.service';
-import { UnreachableCodeException } from '@degenex/common';
+  UnreachableCodeException,
+} from '@degenex/common';
 
 @Injectable()
 export class CandlesticksService {
@@ -36,10 +36,7 @@ export class CandlesticksService {
 
     const currentCandlesticks = await Promise.all(
       tradingPairs.map((tradingPair) => {
-        return this.openNewCandlestick(
-          tradingPair.id,
-          CandlestickInterval.OneHour,
-        );
+        return this.openNewCandlestick(tradingPair.id, 'OneHour');
       }),
     );
 
@@ -77,7 +74,7 @@ export class CandlesticksService {
     const candlestickLock = await this.acquireCandlestickLock(tradingPairId);
 
     try {
-      const currentCandlestick = await this.getOrCreateCurrentCandlestick(
+      const currentCandlestick = await this.getOrBuildCurrentCandlestick(
         tradingPairId,
         CandlestickInterval.OneHour,
       );
@@ -96,16 +93,9 @@ export class CandlesticksService {
     }
   }
 
-  private async acquireCandlestickLock(tradingPairId: number) {
-    return await this.redlock.acquire(
-      [`candlestick-lock:${tradingPairId}`],
-      3000,
-    );
-  }
-
-  private async getOrCreateCurrentCandlestick(
+  async getOrBuildCurrentCandlestick(
     tradingPairId: number,
-    interval: CandlestickInterval,
+    interval: CandlestickInterval = 'OneHour',
   ): Promise<CurrentCandlestickDto> {
     const currentCandlestickJson = await this.redis.get(
       this.buildTradingPairCandlestickKey(tradingPairId),
@@ -124,6 +114,13 @@ export class CandlesticksService {
     return currentCandlestick;
   }
 
+  private async acquireCandlestickLock(tradingPairId: number) {
+    return await this.redlock.acquire(
+      [`candlestick-lock:${tradingPairId}`],
+      3000,
+    );
+  }
+
   private async openNewCandlestick(
     tradingPairId: number,
     interval: CandlestickInterval,
@@ -131,7 +128,7 @@ export class CandlesticksService {
     const candlestickLock = await this.acquireCandlestickLock(tradingPairId);
 
     try {
-      const currentCandlestick = await this.getOrCreateCurrentCandlestick(
+      const currentCandlestick = await this.getOrBuildCurrentCandlestick(
         tradingPairId,
         interval,
       );

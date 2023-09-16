@@ -1,12 +1,15 @@
 import { get } from "lodash";
 
-import { TradingPairResponseDto, TradingPairsPricesDto } from "@degenex/common";
+import {
+  TradingPairResponseDto,
+  TradingPairsStatisticsDto,
+} from "@degenex/common";
 import { PendingFetch } from "@/types/pending-fetch";
 import TradingPairListItem from "./trading-pairs-list-item";
 
 type TradingPairsListProps = PendingFetch<{
   tradingPairs: TradingPairResponseDto[];
-  tradingPairsPrices?: TradingPairsPricesDto | null;
+  tradingPairsStatistics?: TradingPairsStatisticsDto | null;
 }>;
 
 export default function TradingPairsList(props: TradingPairsListProps) {
@@ -17,15 +20,15 @@ export default function TradingPairsList(props: TradingPairsListProps) {
             <TradingPairListItem key={index} loading />
           ))
         : props.tradingPairs.map((tradingPair) => {
-            const tradingPairPrice = get(
-              props.tradingPairsPrices,
+            const tradingPairStatistics = get(
+              props.tradingPairsStatistics,
               tradingPair.id,
             );
 
             return (
               <TradingPairListItem
                 key={tradingPair.id}
-                tradingPairPrice={tradingPairPrice}
+                tradingPairPrice={tradingPairStatistics?.lastTradePrice}
                 {...tradingPair}
               />
             );
