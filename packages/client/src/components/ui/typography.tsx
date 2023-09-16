@@ -18,7 +18,7 @@ export default function Typography({
     variant,
     {
       className: twMerge(
-        "text-primary-contrastText dark:text-primary-contrastText-dark caret-transparent cursor-default",
+        "text-primary-contrastText dark:text-primary-contrastText-dark",
         className,
       ),
     },
