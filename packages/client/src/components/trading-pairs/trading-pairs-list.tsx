@@ -14,28 +14,26 @@ type TradingPairsListProps = PendingFetch<{
 
 export default function TradingPairsList(props: TradingPairsListProps) {
   return (
-    <table className="table-fixed">
-      <tbody>
-        {props.loading
-          ? Array.from({ length: 3 }).map((_, index) => (
-              <TradingPairListItem key={index} loading />
-            ))
-          : props.tradingPairs.map((tradingPair) => {
-              const tradingPairStatistics = get(
-                props.tradingPairsStatistics,
-                tradingPair.id,
-              );
+    <div className="table border-collapse">
+      {props.loading
+        ? Array.from({ length: 3 }).map((_, index) => (
+            <TradingPairListItem key={index} loading />
+          ))
+        : props.tradingPairs.map((tradingPair) => {
+            const tradingPairStatistics = get(
+              props.tradingPairsStatistics,
+              tradingPair.id,
+            );
 
-              return (
-                <TradingPairListItem
-                  key={tradingPair.id}
-                  currentPrice={tradingPairStatistics?.lastTradePrice}
-                  priceChange={tradingPairStatistics?.priceChange}
-                  {...tradingPair}
-                />
-              );
-            })}
-      </tbody>
-    </table>
+            return (
+              <TradingPairListItem
+                key={tradingPair.id}
+                currentPrice={tradingPairStatistics?.lastTradePrice}
+                priceChange={tradingPairStatistics?.priceChange}
+                {...tradingPair}
+              />
+            );
+          })}
+    </div>
   );
 }

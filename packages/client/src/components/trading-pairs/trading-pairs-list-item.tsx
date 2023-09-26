@@ -9,6 +9,7 @@ import { PendingFetch } from "@/types/pending-fetch";
 import Typography from "../ui/typography";
 import Skeleton from "../ui/skeleton";
 import PriceChangeBadge from "./price-change-badge";
+import Link from "../ui/link";
 
 type TradingPairListItemProps = PendingFetch<
   TradingPairResponseDto & { currentPrice?: Decimal; priceChange?: Decimal }
@@ -16,8 +17,11 @@ type TradingPairListItemProps = PendingFetch<
 
 export default function TradingPairListItem(props: TradingPairListItemProps) {
   return (
-    <tr className="border-b border-primary hover:bg-primary dark:border-background-dark dark:bg-primary-dark dark:hover:bg-accent-dark">
-      <td className="px-6 py-4" width={100}>
+    <Link
+      href={props.loading ? "" : `/trading-pairs/${props.id}`}
+      className="table-row border-b border-solid border-primary hover:bg-primary dark:border-background-dark dark:bg-primary-dark dark:hover:bg-accent-dark"
+    >
+      <div className="table-cell w-[100px] px-6 py-4 align-middle">
         {props.loading ? (
           <Skeleton variant="circle" className="h-[40px] w-[40px]" />
         ) : (
@@ -29,8 +33,8 @@ export default function TradingPairListItem(props: TradingPairListItemProps) {
             />
           </div>
         )}
-      </td>
-      <td className="px-6 py-4" width={150}>
+      </div>
+      <div className="table-cell w-[150px] px-6 py-4 align-middle">
         {props.loading ? (
           <Skeleton />
         ) : (
@@ -38,8 +42,8 @@ export default function TradingPairListItem(props: TradingPairListItemProps) {
             {buildTradingPairSymbol(props)}
           </Typography>
         )}
-      </td>
-      <td className="px-6 py-4" width={150}>
+      </div>
+      <div className="table-cell w-[150px] px-6 py-4 align-middle">
         {props.loading || props.currentPrice === undefined ? (
           <Skeleton className="w-[100px]" />
         ) : (
@@ -48,8 +52,8 @@ export default function TradingPairListItem(props: TradingPairListItemProps) {
             {props.currentPrice.toFixed(2)}
           </Typography>
         )}
-      </td>
-      <td className="px-6 py-2">
+      </div>
+      <div className="table-cell px-6 py-2 align-middle">
         {props.loading ||
         props.currentPrice === undefined ||
         props.priceChange === undefined ? (
@@ -60,7 +64,7 @@ export default function TradingPairListItem(props: TradingPairListItemProps) {
             priceChange={props.priceChange}
           />
         )}
-      </td>
-    </tr>
+      </div>
+    </Link>
   );
 }
