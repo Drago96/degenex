@@ -34,12 +34,7 @@ export class TradingPairsStatisticStreamService implements OnModuleDestroy {
 
   @Interval(1000)
   async updateTradingPairsPrices() {
-    const tradingPairs = await this.prisma.tradingPair.findMany({
-      include: {
-        baseAsset: true,
-        quoteAsset: true,
-      },
-    });
+    const tradingPairs = await this.prisma.tradingPair.findMany();
 
     await Promise.all(
       tradingPairs.map(async (tradingPair) => {

@@ -8,10 +8,7 @@ export const buildTradingPairPricesQuery = (tradingPairIds?: number[]) => {
   const tradingPairPricesSearchParams = new URLSearchParams();
 
   flattenDeep([tradingPairIds]).forEach((tradingPairId) =>
-    tradingPairPricesSearchParams.append(
-      "tradingPairIds",
-      tradingPairId.toString(),
-    ),
+    tradingPairPricesSearchParams.append("ids", tradingPairId.toString()),
   );
 
   return tradingPairPricesSearchParams.toString();

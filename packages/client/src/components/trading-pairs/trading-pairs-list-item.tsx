@@ -18,7 +18,7 @@ type TradingPairListItemProps = PendingFetch<
 export default function TradingPairListItem(props: TradingPairListItemProps) {
   return (
     <Link
-      href={props.loading ? "" : `/trading-pairs/${props.id}`}
+      href={props.loading ? "#" : `/trading-pairs/${props.id}`}
       className="table-row border-b border-solid border-primary hover:bg-primary dark:border-background-dark dark:bg-primary-dark dark:hover:bg-accent-dark"
     >
       <div className="table-cell w-[100px] px-6 py-4 align-middle">

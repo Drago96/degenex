@@ -3,7 +3,10 @@ import { BaseExceptionFilter } from '@nestjs/core';
 import { Prisma } from '@prisma/client';
 import { Response } from 'express';
 
-import { isUniqueConstraintError } from './prisma-error.utils';
+import {
+  isRecordNotFoundError,
+  isUniqueConstraintError,
+} from './prisma-error.utils';
 
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaClientExceptionFilter extends BaseExceptionFilter {
@@ -17,6 +20,15 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
       return response.status(status).json({
         statusCode: status,
         message: `Unique constraint violated. Fields: ${exception.meta.target}`,
+      });
+    }
+
+    if (isRecordNotFoundError(exception)) {
+      const status = HttpStatus.NOT_FOUND;
+
+      return response.status(status).json({
+        statusCode: status,
+        message: 'Record not found.',
       });
     }
 

@@ -32,6 +32,32 @@ export class TradingPairsService {
     });
   }
 
+  async getById(tradingPairId: number): Promise<TradingPairResponseDto> {
+    return this.prisma.tradingPair.findUniqueOrThrow({
+      where: {
+        id: tradingPairId,
+      },
+      select: {
+        id: true,
+        baseAsset: {
+          select: {
+            id: true,
+            tickerSymbol: true,
+            type: true,
+            logoUrl: true,
+          },
+        },
+        quoteAsset: {
+          select: {
+            id: true,
+            tickerSymbol: true,
+            currencySymbol: true,
+          },
+        },
+      },
+    });
+  }
+
   async getPreviousPrice(tradingPairId: number) {
     let priceChangeTrade = await this.prisma.trade.findFirst({
       orderBy: {

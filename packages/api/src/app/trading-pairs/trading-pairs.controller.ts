@@ -1,4 +1,12 @@
-import { Controller, Query, Sse, MessageEvent, Get } from '@nestjs/common';
+import {
+  Controller,
+  Query,
+  Param,
+  Sse,
+  MessageEvent,
+  Get,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { interval, map, Observable, withLatestFrom } from 'rxjs';
 
@@ -20,18 +28,22 @@ export class TradingPairsController {
   }
 
   @Sse('track-statistics')
-  trackPrices(
-    @Query('tradingPairIds') tradingPairIds: number[],
-  ): Observable<MessageEvent> {
+  trackPrices(@Query('ids') ids: number[]): Observable<MessageEvent> {
     return interval(1000).pipe(
       withLatestFrom(
         this.tradingPairsStatisticsStreamService.getTradingPairsStatistics$(
-          tradingPairIds,
+          ids,
         ),
       ),
       map(([_, tradingPairStatistics]) => ({
         data: tradingPairStatistics,
       })),
     );
+  }
+
+  @Get(':id')
+  @ZodSerializerDto(TradingPairResponseDto)
+  async getById(@Param('id', new ParseIntPipe()) id: number) {
+    return this.tradingPairsService.getById(id);
   }
 }
