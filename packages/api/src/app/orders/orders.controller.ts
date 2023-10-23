@@ -4,7 +4,7 @@ import { AccessTokenAuthGuard } from '../auth/access-token-auth.guard';
 import { Order } from '@prisma/client';
 import { RequestWithUser } from '@/types/request-with-user';
 import { OrdersService } from './orders.service';
-import { OrderCreateDto } from './order-create.dto';
+import { CreateOrderDto } from './dto/create-order.dto';
 
 @Controller('orders')
 @UseGuards(AccessTokenAuthGuard)
@@ -14,8 +14,8 @@ export class OrdersController {
   @Post()
   async createOrder(
     @Req() req: RequestWithUser,
-    @Body() orderCreateDto: OrderCreateDto,
+    @Body() createOrderDto: CreateOrderDto,
   ): Promise<Order> {
-    return await this.ordersService.createOrder(req.user.id, orderCreateDto);
+    return await this.ordersService.createOrder(req.user.id, createOrderDto);
   }
 }

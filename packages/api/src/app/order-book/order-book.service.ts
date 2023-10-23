@@ -13,9 +13,9 @@ import { Decimal } from '@prisma/client/runtime/library';
 import {
   OrderBookEntryDto,
   OrderBookEntrySchema,
-} from './order-book-entry.dto';
-import { OrderBookTradeDto } from './order-book-trade.dto';
-import { OrderBookDepthDto } from './order-book-depth.dto';
+} from './dto/order-book-entry.dto';
+import { OrderBookTradeDto } from './dto/order-book-trade.dto';
+import { OrderBookDepthDto } from './dto/order-book-depth.dto';
 import { UnreachableCodeException } from '@degenex/common';
 
 @Injectable()

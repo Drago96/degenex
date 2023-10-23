@@ -10,7 +10,7 @@ import {
 import { promisify } from 'util';
 
 import { EnvironmentVariables } from '../configuration';
-import { EncryptionDto } from './encryption.dto';
+import { EncryptionDto } from './dto/encryption.dto';
 
 const scryptAsync = promisify<BinaryLike, BinaryLike, number, Buffer>(scrypt);
 

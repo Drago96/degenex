@@ -11,7 +11,7 @@ import { InjectQueue } from '@nestjs/bull';
 
 import { EnvironmentVariables } from '@/configuration';
 import { PrismaService } from '@/prisma/prisma.service';
-import { StripeCheckoutDto } from './stripe-checkout.dto';
+import { StripeCheckoutDto } from './dto/stripe-checkout.dto';
 import { PROCESS_STRIPE_EVENT_QUEUE_NAME } from './process-stripe-event.consumer';
 
 @Injectable()

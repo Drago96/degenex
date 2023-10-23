@@ -7,7 +7,7 @@ import { maxBy, zip } from 'lodash';
 import moment from 'moment';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
-import { CandlestickAggregateDto } from './candlestick-aggregate.dto';
+import { CandlestickAggregateDto } from './dto/candlestick-aggregate.dto';
 import { CandlestickInterval, Trade } from '@prisma/client';
 import { PrismaService } from '@/prisma/prisma.service';
 import {

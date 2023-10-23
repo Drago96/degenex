@@ -1,7 +1,7 @@
 import { OrderSide } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
-export type OrderBalanceTransferDto = {
+export type TransferOrderBalanceDto = {
   userId: number;
   orderSide: OrderSide;
   baseAsset: {

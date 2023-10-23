@@ -22,14 +22,14 @@ import {
   SendVerificationCodeDto,
 } from '@degenex/common';
 import { CREATE_STRIPE_CUSTOMER_QUEUE_NAME } from '@/stripe/create-stripe-customer.consumer';
-import { CreateStripeCustomerDto } from '@/stripe/create-stripe-customer.dto';
+import { CreateStripeCustomerDto } from '@/stripe/dto/create-stripe-customer.dto';
 import { EnvironmentVariables } from '../configuration';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthResultDto } from './auth-result.dto';
+import { AuthResultDto } from './dto/auth-result.dto';
 import { AuthException } from './auth.exception';
 import { SEND_VERIFICATION_CODE_QUEUE_NAME } from './send-verification-code.consumer';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
-import { RefreshTokenPayloadDto } from './refresh-token-payload.dto';
+import { RefreshTokenPayloadDto } from './dto/refresh-token-payload.dto';
 
 @Injectable()
 export class AuthService {

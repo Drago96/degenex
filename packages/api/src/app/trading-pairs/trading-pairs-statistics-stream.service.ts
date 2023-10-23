@@ -4,7 +4,7 @@ import { pick } from 'lodash';
 import { map, Observable, scan, Subject } from 'rxjs';
 
 import {
-  TradingPairStatisticsUpdateDto,
+  UpdateTradingPairStatisticsDto,
   TradingPairsStatisticsDto,
 } from '@degenex/common';
 import { PrismaService } from '../prisma/prisma.service';
@@ -19,14 +19,14 @@ export class TradingPairsStatisticStreamService implements OnModuleDestroy {
     private readonly candleSticksService: CandlesticksService,
   ) {}
 
-  private tradingPairStatisticsUpdate$ =
-    new Subject<TradingPairStatisticsUpdateDto>();
+  private updateTradingPairStatistics$ =
+    new Subject<UpdateTradingPairStatisticsDto>();
   private tradingPairsStatistics$: Observable<TradingPairsStatisticsDto> =
-    this.tradingPairStatisticsUpdate$.pipe(
+    this.updateTradingPairStatistics$.pipe(
       scan(
-        (accumulatedTradingPairsPrice, tradingPairStatisticsUpdate) => ({
+        (accumulatedTradingPairsPrice, updateTradingPairStatisticsDto) => ({
           ...accumulatedTradingPairsPrice,
-          [tradingPairStatisticsUpdate.id]: tradingPairStatisticsUpdate,
+          [updateTradingPairStatisticsDto.id]: updateTradingPairStatisticsDto,
         }),
         {},
       ),
@@ -46,7 +46,7 @@ export class TradingPairsStatisticStreamService implements OnModuleDestroy {
         const previousTradingPairPrice =
           await this.tradingPairsService.getPreviousPrice(tradingPair.id);
 
-        this.tradingPairStatisticsUpdate$.next({
+        this.updateTradingPairStatistics$.next({
           id: tradingPair.id,
           priceChange: currentCandlestick.lastTradePrice.sub(
             previousTradingPairPrice,
@@ -64,6 +64,6 @@ export class TradingPairsStatisticStreamService implements OnModuleDestroy {
   }
 
   onModuleDestroy() {
-    this.tradingPairStatisticsUpdate$.complete();
+    this.updateTradingPairStatistics$.complete();
   }
 }

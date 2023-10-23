@@ -4,7 +4,7 @@ import { OrderSide, OrderType } from '@prisma/client';
 import { createZodDto } from 'nestjs-zod/dto';
 import { decimal } from '@degenex/common';
 
-export const OrderCreateSchema = z.object({
+export const CreateOrderSchema = z.object({
   side: z.nativeEnum(OrderSide),
   type: z.nativeEnum(OrderType),
   quantity: decimal((z) => z.gt(0)),
@@ -12,4 +12,4 @@ export const OrderCreateSchema = z.object({
   tradingPairId: z.number(),
 });
 
-export class OrderCreateDto extends createZodDto(OrderCreateSchema) {}
+export class CreateOrderDto extends createZodDto(CreateOrderSchema) {}

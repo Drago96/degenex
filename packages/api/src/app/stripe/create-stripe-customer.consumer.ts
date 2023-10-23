@@ -3,7 +3,7 @@ import { Job } from 'bull';
 
 import { PrismaService } from '@/prisma/prisma.service';
 import { StripeService } from './stripe.service';
-import { CreateStripeCustomerDto } from './create-stripe-customer.dto';
+import { CreateStripeCustomerDto } from './dto/create-stripe-customer.dto';
 
 export const CREATE_STRIPE_CUSTOMER_QUEUE_NAME = 'create-stripe-customer';
 

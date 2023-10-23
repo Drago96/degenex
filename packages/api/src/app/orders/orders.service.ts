@@ -6,11 +6,11 @@ import {
 
 import { OrderBookService } from '@/order-book/order-book.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { OrderCreateDto } from './order-create.dto';
+import { CreateOrderDto } from './dto/create-order.dto';
 import { Decimal } from '@prisma/client/runtime/library';
 import { PrismaTransaction } from '@/types/prisma-transaction';
-import { OrderBalanceTransferDto } from './order-balance-transfer.dto';
-import { OrderBookTradeDto } from '@/order-book/order-book-trade.dto';
+import { TransferOrderBalanceDto } from './dto/transfer-order-balance.dto';
+import { OrderBookTradeDto } from '@/order-book/dto/order-book-trade.dto';
 import { OrderSide } from '@prisma/client';
 import { CandlesticksService } from '@/candlesticks/candlesticks.service';
 
@@ -22,10 +22,10 @@ export class OrdersService {
     private readonly candlesticksService: CandlesticksService,
   ) {}
 
-  async createOrder(userId: number, orderCreateDto: OrderCreateDto) {
+  async createOrder(userId: number, createOrderDto: CreateOrderDto) {
     const tradingPair = await this.prisma.tradingPair.findUnique({
       where: {
-        id: orderCreateDto.tradingPairId,
+        id: createOrderDto.tradingPairId,
       },
       select: {
         baseAssetTickerSymbol: true,
@@ -38,15 +38,15 @@ export class OrdersService {
     }
 
     return this.prisma.$transaction(async (tx) => {
-      await this.lockAssetsForOrder(userId, tradingPair, orderCreateDto, tx);
+      await this.lockAssetsForOrder(userId, tradingPair, createOrderDto, tx);
 
       const createdOrder = await tx.order.create({
         data: {
-          side: orderCreateDto.side,
-          type: orderCreateDto.type,
-          quantity: orderCreateDto.quantity,
-          price: orderCreateDto.price,
-          tradingPairId: orderCreateDto.tradingPairId,
+          side: createOrderDto.side,
+          type: createOrderDto.type,
+          quantity: createOrderDto.quantity,
+          price: createOrderDto.price,
+          tradingPairId: createOrderDto.tradingPairId,
           userId,
         },
       });
@@ -72,14 +72,14 @@ export class OrdersService {
       );
 
       await this.candlesticksService.addTrades(
-        orderCreateDto.tradingPairId,
+        createOrderDto.tradingPairId,
         trades,
       );
 
       await this.updateMakerOrders(
         orderBookTrades,
         tradingPair,
-        orderCreateDto.side === 'Buy' ? 'Sell' : 'Buy',
+        createOrderDto.side === 'Buy' ? 'Sell' : 'Buy',
         tx,
       );
 
@@ -95,7 +95,7 @@ export class OrdersService {
       await this.updateAssetBalance(
         {
           userId: userId,
-          orderSide: orderCreateDto.side,
+          orderSide: createOrderDto.side,
           baseAsset: {
             quantity: Decimal.sum(
               ...orderBookTrades.map((trade) => trade.quantity),
@@ -124,7 +124,7 @@ export class OrdersService {
       quoteAssetTickerSymbol: string;
       baseAssetTickerSymbol: string;
     },
-    orderCreateDto: OrderCreateDto,
+    orderCreateDto: CreateOrderDto,
     tx: PrismaTransaction,
   ) {
     const assetBalanceTickerSymbol =
@@ -207,58 +207,58 @@ export class OrdersService {
   }
 
   private async updateAssetBalance(
-    orderBalanceTransferDto: OrderBalanceTransferDto,
+    transferOrderBalanceDto: TransferOrderBalanceDto,
     tx: PrismaTransaction,
   ) {
     await tx.assetBalance.upsert({
       where: {
         userId_assetTickerSymbol: {
-          userId: orderBalanceTransferDto.userId,
-          assetTickerSymbol: orderBalanceTransferDto.baseAsset.tickerSymbol,
+          userId: transferOrderBalanceDto.userId,
+          assetTickerSymbol: transferOrderBalanceDto.baseAsset.tickerSymbol,
         },
       },
       update: {
-        ...(orderBalanceTransferDto.orderSide === 'Buy' && {
+        ...(transferOrderBalanceDto.orderSide === 'Buy' && {
           available: {
-            increment: orderBalanceTransferDto.baseAsset.quantity,
+            increment: transferOrderBalanceDto.baseAsset.quantity,
           },
         }),
-        ...(orderBalanceTransferDto.orderSide === 'Sell' && {
+        ...(transferOrderBalanceDto.orderSide === 'Sell' && {
           locked: {
-            decrement: orderBalanceTransferDto.baseAsset.quantity,
+            decrement: transferOrderBalanceDto.baseAsset.quantity,
           },
         }),
       },
       create: {
-        available: orderBalanceTransferDto.baseAsset.quantity,
-        userId: orderBalanceTransferDto.userId,
-        assetTickerSymbol: orderBalanceTransferDto.baseAsset.tickerSymbol,
+        available: transferOrderBalanceDto.baseAsset.quantity,
+        userId: transferOrderBalanceDto.userId,
+        assetTickerSymbol: transferOrderBalanceDto.baseAsset.tickerSymbol,
       },
     });
 
     await tx.assetBalance.upsert({
       where: {
         userId_assetTickerSymbol: {
-          userId: orderBalanceTransferDto.userId,
-          assetTickerSymbol: orderBalanceTransferDto.quoteAsset.tickerSymbol,
+          userId: transferOrderBalanceDto.userId,
+          assetTickerSymbol: transferOrderBalanceDto.quoteAsset.tickerSymbol,
         },
       },
       update: {
-        ...(orderBalanceTransferDto.orderSide === 'Sell' && {
+        ...(transferOrderBalanceDto.orderSide === 'Sell' && {
           available: {
-            increment: orderBalanceTransferDto.quoteAsset.amount,
+            increment: transferOrderBalanceDto.quoteAsset.amount,
           },
         }),
-        ...(orderBalanceTransferDto.orderSide === 'Buy' && {
+        ...(transferOrderBalanceDto.orderSide === 'Buy' && {
           locked: {
-            decrement: orderBalanceTransferDto.quoteAsset.amount,
+            decrement: transferOrderBalanceDto.quoteAsset.amount,
           },
         }),
       },
       create: {
-        available: orderBalanceTransferDto.quoteAsset.amount,
-        userId: orderBalanceTransferDto.userId,
-        assetTickerSymbol: orderBalanceTransferDto.quoteAsset.tickerSymbol,
+        available: transferOrderBalanceDto.quoteAsset.amount,
+        userId: transferOrderBalanceDto.userId,
+        assetTickerSymbol: transferOrderBalanceDto.quoteAsset.tickerSymbol,
       },
     });
   }

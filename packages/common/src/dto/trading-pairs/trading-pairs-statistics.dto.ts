@@ -1,10 +1,10 @@
 import { z } from 'nestjs-zod/z';
 
-import { TradingPairStatisticsUpdateSchema } from './trading-pair-statistics-update.dto';
+import { UpdateTradingPairStatisticsSchema } from './update-trading-pair-statistics.dto';
 
 export const TradingPairsStatisticsSchema = z.record(
   z.coerce.number(),
-  TradingPairStatisticsUpdateSchema,
+  UpdateTradingPairStatisticsSchema,
 );
 
 export type TradingPairsStatisticsDto = z.infer<
