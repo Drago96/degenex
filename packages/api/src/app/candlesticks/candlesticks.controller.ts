@@ -8,8 +8,7 @@ export class CandlesticksController {
   constructor(private readonly candlesticksService: CandlesticksService) {}
 
   @Get()
-  async getMany(
-  ): Promise<Candlestick[]> {
+  async getMany(): Promise<Candlestick[]> {
     return [];
   }
 }
