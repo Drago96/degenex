@@ -10,6 +10,7 @@ import {
   setAccessToken,
 } from "./services/auth.service";
 import { appFetch, getAppFetchHeaders } from "./lib/app-fetch";
+import { cloneCookies } from "./lib/cookies";
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt).*)"],
@@ -21,12 +22,16 @@ export const middleware: NextMiddleware = async (request: NextRequest) => {
   await refreshAuth(request, response);
 
   if (request.nextUrl.pathname.startsWith("/api")) {
-    return NextResponse.rewrite(
+    const rewriteResponse = NextResponse.rewrite(
       `${process.env.API_BASE_URL}/${request.nextUrl.pathname}${request.nextUrl.search}`,
       {
         headers: getAppFetchHeaders(request.cookies, response.headers),
       },
     );
+
+    cloneCookies(response, rewriteResponse);
+
+    return rewriteResponse;
   }
 
   return response;
