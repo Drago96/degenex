@@ -84,6 +84,7 @@ export class CandlesticksService {
         tradingPairId,
       },
       ...(queryDto.cursor?.value && {
+        skip: 1,
         cursor: {
           id: +queryDto.cursor?.value,
         },
