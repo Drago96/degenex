@@ -4,3 +4,4 @@ export * from './candlesticks';
 export * from './stripe';
 export * from './trading-pairs';
 export * from './users';
+export * from './collection-query-options.dto';

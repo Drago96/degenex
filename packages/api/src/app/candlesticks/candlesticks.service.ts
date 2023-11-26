@@ -8,13 +8,17 @@ import moment from 'moment';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { CandlestickAggregateDto } from './dto/candlestick-aggregate.dto';
-import { CandlestickInterval, Trade } from '@prisma/client';
+import { Candlestick, CandlestickInterval, Trade } from '@prisma/client';
 import { PrismaService } from '@/prisma/prisma.service';
 import {
   CurrentCandlestickDto,
   CurrentCandlestickSchema,
+  CursorBasedQueryOptionsDto,
   UnreachableCodeException,
 } from '@degenex/common';
+
+const PAGE_SIZE = 50;
+const CURSOR_DIRECTION = 'backwards';
 
 @Injectable()
 export class CandlesticksService {
@@ -63,6 +67,31 @@ export class CandlesticksService {
           tradesCount: currentCandlestick.tradesCount,
         };
       }),
+    });
+  }
+
+  async getCandlesticks(
+    tradingPairId: number,
+    queryDto: CursorBasedQueryOptionsDto<Candlestick>,
+  ) {
+    const pageSize = queryDto.pageSize ?? PAGE_SIZE;
+    const cursorDirection = queryDto.cursor?.direction ?? CURSOR_DIRECTION;
+    const take = cursorDirection === 'backwards' ? -pageSize : +pageSize;
+
+    return await this.prisma.candlestick.findMany({
+      where: {
+        ...queryDto.filters,
+        tradingPairId,
+      },
+      ...(queryDto.cursor?.value && {
+        cursor: {
+          id: queryDto.cursor?.value,
+        },
+      }),
+      take,
+      orderBy: {
+        id: 'asc',
+      },
     });
   }
 
