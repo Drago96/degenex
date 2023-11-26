@@ -1,21 +1,21 @@
-import { Controller, Post, UseGuards, Req, Body } from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, Param, ParseIntPipe } from '@nestjs/common';
 
 import { StripePaymentDto } from '@degenex/common';
 import { AccessTokenAuthGuard } from '../auth/access-token-auth.guard';
 import { DepositsService } from './deposits.service';
 import { Deposit } from '@prisma/client';
-import { RequestWithUser } from '@/types/request-with-user';
+import { CurrentUserResourcesGuard } from '@/auth/current-user-resources.guard';
 
-@Controller('deposits')
-@UseGuards(AccessTokenAuthGuard)
+@Controller('users/:userId/deposits')
+@UseGuards(AccessTokenAuthGuard, CurrentUserResourcesGuard)
 export class DepositsController {
   constructor(private readonly depositsService: DepositsService) {}
 
   @Post()
   async createDeposit(
-    @Req() req: RequestWithUser,
+    @Param('userId', new ParseIntPipe()) userId: number,
     @Body() stripePaymentDto: StripePaymentDto,
   ): Promise<Deposit> {
-    return this.depositsService.createDeposit(req.user.id, stripePaymentDto);
+    return this.depositsService.createDeposit(userId, stripePaymentDto);
   }
 }
