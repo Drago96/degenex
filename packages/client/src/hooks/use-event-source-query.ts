@@ -34,5 +34,5 @@ export const useEventSourceQuery = <DataT = unknown>(
     };
   }, [fetchData]);
 
-  return useQuery<DataT | null>({ queryKey });
+  return useQuery<DataT | null>({ queryKey, refetchOnWindowFocus: false });
 };
