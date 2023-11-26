@@ -8,8 +8,11 @@ import { getCurrentUser } from "@/services/users.service";
 export async function createDeposit({ currency, amount }: StripePaymentDto) {
   const currentUser = await getCurrentUser();
 
-  return appFetch<Deposit, StripePaymentDto>(`users/${currentUser?.id}/deposits`, {
-    method: "POST",
-    body: { currency, amount },
-  });
+  return appFetch<Deposit, StripePaymentDto>(
+    `users/${currentUser?.id}/deposits`,
+    {
+      method: "POST",
+      body: { currency, amount },
+    },
+  );
 }

@@ -1,4 +1,11 @@
-import { Controller, Post, UseGuards, Body, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Body,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 
 import { StripePaymentDto } from '@degenex/common';
 import { AccessTokenAuthGuard } from '../auth/access-token-auth.guard';
