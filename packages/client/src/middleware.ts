@@ -1,5 +1,5 @@
 import { NextMiddleware, NextRequest, NextResponse } from "next/server";
-import jwtDecode, { JwtPayload } from "jwt-decode";
+import { JwtPayload, jwtDecode } from "jwt-decode";
 import moment from "moment";
 
 import { AuthResponseDto } from "@degenex/common";

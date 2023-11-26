@@ -1,5 +1,5 @@
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { ZodSchema } from "zod";
 
 export const useEventSourceQuery = <DataT = unknown>(
@@ -10,15 +10,7 @@ export const useEventSourceQuery = <DataT = unknown>(
   const queryClient = useQueryClient();
   const eventSourceRef = useRef<EventSource | null>(null);
 
-  useEffect(() => {
-    return () => {
-      eventSourceRef.current?.close();
-    };
-  }, []);
-
-  const fetchData = () => {
-    eventSourceRef.current?.close();
-
+  const fetchData = useCallback(() => {
     const eventSource = new EventSource(url, { withCredentials: true });
     eventSourceRef.current = eventSource;
 
@@ -32,9 +24,15 @@ export const useEventSourceQuery = <DataT = unknown>(
         );
       }
     });
+  }, [queryClient, queryKey, url, responseSchema]);
 
-    return null;
-  };
+  useEffect(() => {
+    fetchData();
 
-  return useQuery<DataT | null>(queryKey, fetchData);
+    return () => {
+      eventSourceRef.current?.close();
+    };
+  }, [fetchData]);
+
+  return useQuery<DataT | null>({ queryKey });
 };

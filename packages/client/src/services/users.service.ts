@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 import { AccessTokenPayloadDto } from "@degenex/common";
 import { CookiesStore } from "@/types/cookies-store";
