@@ -85,7 +85,7 @@ export class CandlesticksService {
       },
       ...(queryDto.cursor?.value && {
         cursor: {
-          id: queryDto.cursor?.value,
+          id: +queryDto.cursor?.value,
         },
       }),
       take,
