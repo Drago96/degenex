@@ -17,11 +17,9 @@ import {
   AuthResponseDto,
   RegisterDto,
   SendVerificationCodeDto,
-  UserResponseDto,
 } from '@degenex/common';
 import { AuthService } from './auth.service';
 import { AccessTokenAuthGuard } from './access-token-auth.guard';
-import { RequestWithUser } from '@/types/request-with-user';
 
 const REFRESH_TOKEN_COOKIE_KEY = 'refresh-token';
 
@@ -94,13 +92,6 @@ export class AuthController {
     await this.authService.clearSession(refreshToken);
 
     response.clearCookie(REFRESH_TOKEN_COOKIE_KEY);
-  }
-
-  @UseGuards(AccessTokenAuthGuard)
-  @Get('profile')
-  @ZodSerializerDto(UserResponseDto)
-  getProfile(@Req() req: RequestWithUser): UserResponseDto {
-    return req.user;
   }
 
   private setRefreshTokenCookie(response: Response, refreshToken: string) {
