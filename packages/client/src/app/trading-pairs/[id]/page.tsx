@@ -1,6 +1,11 @@
+import { notFound } from "next/navigation";
+
 import Typography from "@/components/ui/typography";
 import { appFetch } from "@/lib/app-fetch";
-import { TradingPairResponseDto } from "@degenex/common";
+import {
+  TradingPairResponseDto,
+  TradingPairResponseSchema,
+} from "@degenex/common";
 
 export default async function TradingPair({
   params: { id },
@@ -9,10 +14,13 @@ export default async function TradingPair({
 }) {
   const tradingPairResponse = await appFetch<TradingPairResponseDto>(
     `trading-pairs/${id}`,
+    {
+      responseSchema: TradingPairResponseSchema,
+    },
   );
 
-  if (!tradingPairResponse.isSuccess) {
-    return null;
+  if (tradingPairResponse.statusCode === 404) {
+    notFound();
   }
 
   return (
