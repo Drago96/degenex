@@ -5,8 +5,8 @@ import ThemeSwitcher from "./theme-switcher";
 import Link from "./ui/link";
 import UserActions from "./users/user-actions";
 
-export default async function Header() {
-  const currentUser = await getCurrentUser();
+export default function Header() {
+  const currentUser = getCurrentUser();
 
   return (
     <header>

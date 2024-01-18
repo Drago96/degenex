@@ -6,7 +6,7 @@ import { AccessTokenPayloadDto } from "@degenex/common";
 import { CookiesStore } from "@/types/cookies-store";
 import { ACCESS_TOKEN_COOKIE_KEY } from "./auth.service";
 
-export const getCurrentUser = cache(async (cookiesStore?: CookiesStore) => {
+export const getCurrentUser = cache((cookiesStore?: CookiesStore) => {
   cookiesStore = cookiesStore ?? cookies();
 
   const accessTokenJwt = cookiesStore.get(ACCESS_TOKEN_COOKIE_KEY);
@@ -15,7 +15,7 @@ export const getCurrentUser = cache(async (cookiesStore?: CookiesStore) => {
     return null;
   }
 
-  const accessToken = await jwtDecode<AccessTokenPayloadDto>(
+  const accessToken = jwtDecode<AccessTokenPayloadDto>(
     accessTokenJwt.value,
   );
 

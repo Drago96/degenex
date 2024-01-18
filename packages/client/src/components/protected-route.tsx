@@ -6,8 +6,8 @@ import { getCurrentUser } from "@/services/users.service";
 export default function ProtectedRoute<PropsT extends PropsWithChildren>(
   WrappedComponent: FC<PropsT>,
 ) {
-  async function ProtectedComponent(props: PropsT) {
-    const currentUser = await getCurrentUser();
+  function ProtectedComponent(props: PropsT) {
+    const currentUser = getCurrentUser();
 
     if (!currentUser) {
       redirect("/");

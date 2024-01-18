@@ -17,7 +17,7 @@ type AssetBalancesTabContainerProps = {
 export default async function AssetBalancesTabContainer({
   assetType,
 }: AssetBalancesTabContainerProps) {
-  const currentUser = await getCurrentUser();
+  const currentUser = getCurrentUser();
 
   const assetBalancesResponse = await appFetch<AssetBalanceResponseDto[]>(
     `users/${currentUser?.id}/asset-balances?assetType=${assetType}`,

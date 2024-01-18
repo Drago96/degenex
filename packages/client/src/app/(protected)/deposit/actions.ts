@@ -6,7 +6,7 @@ import { Deposit } from "@prisma/client";
 import { getCurrentUser } from "@/services/users.service";
 
 export async function createDeposit({ currency, amount }: StripePaymentDto) {
-  const currentUser = await getCurrentUser();
+  const currentUser = getCurrentUser();
 
   return appFetch<Deposit, StripePaymentDto>(
     `users/${currentUser?.id}/deposits`,
