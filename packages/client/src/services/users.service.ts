@@ -15,9 +15,7 @@ export const getCurrentUser = cache((cookiesStore?: CookiesStore) => {
     return null;
   }
 
-  const accessToken = jwtDecode<AccessTokenPayloadDto>(
-    accessTokenJwt.value,
-  );
+  const accessToken = jwtDecode<AccessTokenPayloadDto>(accessTokenJwt.value);
 
   return {
     id: accessToken.sub,
