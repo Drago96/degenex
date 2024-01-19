@@ -8,7 +8,7 @@ import { OrderBookService } from '@/order-book/order-book.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Decimal } from '@prisma/client/runtime/library';
-import { PrismaTransaction } from '@/types/prisma-transaction';
+import { PrismaTransaction } from '@/prisma/prisma-transaction';
 import { TransferOrderBalanceDto } from './dto/transfer-order-balance.dto';
 import { OrderBookTradeDto } from '@/order-book/dto/order-book-trade.dto';
 import { OrderSide } from '@prisma/client';
