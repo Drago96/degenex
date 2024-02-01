@@ -8,19 +8,24 @@ import { MailerService } from '../mailer/mailer.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { buildVerificationCodeKey } from './send-verification-code.utils';
 import { Logger } from '@nestjs/common';
+import { BaseProcessor } from '@/base-processor';
 
 export const SEND_VERIFICATION_CODE_QUEUE_NAME = 'send-verification-code';
 
 @Processor(SEND_VERIFICATION_CODE_QUEUE_NAME)
-export class SendVerificationCodeConsumer {
-  private readonly logger: Logger = new Logger(this.constructor.name);
+export class SendVerificationCodeConsumer extends BaseProcessor {
+  protected readonly logger: Logger = new Logger(
+    SendVerificationCodeConsumer.name,
+  );
 
   constructor(
     private readonly mailerService: MailerService,
     private readonly prisma: PrismaService,
     @InjectRedis()
     private readonly redis: Redis,
-  ) {}
+  ) {
+    super();
+  }
 
   @Process()
   async process(job: Job<SendVerificationCodeDto>) {
@@ -41,16 +46,12 @@ export class SendVerificationCodeConsumer {
       60 * 30,
     );
 
-    try {
-      await this.mailerService.sendEmail({
-        body: `<p>In order to verify your account, please use this one time code:</p>
+    await this.mailerService.sendEmail({
+      body: `<p>In order to verify your account, please use this one time code:</p>
                <b>${verificationCode}</b>`,
-        receiver: job.data.email,
-        subject: 'Welcome to Degenex!',
-      });
-    } catch (e) {
-      this.logger.error(e);
-    }
+      receiver: job.data.email,
+      subject: 'Welcome to Degenex!',
+    });
   }
 
   generateVerificationCode() {

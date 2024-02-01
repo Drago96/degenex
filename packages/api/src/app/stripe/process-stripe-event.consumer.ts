@@ -3,12 +3,20 @@ import { Job } from 'bull';
 import Stripe from 'stripe';
 
 import { PrismaService } from '@/prisma/prisma.service';
+import { BaseProcessor } from '@/base-processor';
+import { Logger } from '@nestjs/common';
 
 export const PROCESS_STRIPE_EVENT_QUEUE_NAME = 'process-stripe-event';
 
 @Processor(PROCESS_STRIPE_EVENT_QUEUE_NAME)
-export class ProcessStripeEventConsumer {
-  constructor(private prisma: PrismaService) {}
+export class ProcessStripeEventConsumer extends BaseProcessor {
+  protected readonly logger: Logger = new Logger(
+    ProcessStripeEventConsumer.name,
+  );
+
+  constructor(private prisma: PrismaService) {
+    super();
+  }
 
   @Process()
   async process(job: Job<Stripe.Event>) {
