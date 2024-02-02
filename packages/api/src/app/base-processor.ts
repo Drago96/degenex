@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 
 export abstract class BaseProcessor {
-  protected readonly abstract logger: Logger;
+  protected abstract readonly logger: Logger;
 
   @OnQueueFailed()
   onError(job: Job<unknown>, error: Error) {
